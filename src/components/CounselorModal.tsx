@@ -29,17 +29,14 @@ const CounselorModal = ({ children }: CounselorModalProps) => {
 
   const handleSubmit = async () => {
     setIsLoading(true);
-    
     try {
       const response = await backendAPI.requestCounseling(counselingData);
-      
       if (response.success) {
         toast({
           title: "Request Submitted!",
           description: "Our counselor will contact you within 24 hours.",
         });
         setIsOpen(false);
-        // Reset form
         setCounselingData({
           name: '',
           email: '',
@@ -67,19 +64,19 @@ const CounselorModal = ({ children }: CounselorModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogTrigger asChild>{children}</DialogTrigger>
+
+      <DialogContent className="sm:max-w-md w-full max-h-[90vh] overflow-y-auto bg-white rounded-xl shadow-xl border border-gray-200 scrollbar-hide">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <MessageCircle className="h-5 w-5" />
+          <DialogTitle className="flex items-center gap-2 text-blue-900">
+            <MessageCircle className="h-5 w-5 text-orange-600" />
             Talk to Counselor
           </DialogTitle>
         </DialogHeader>
-        
-        <div className="space-y-4">
-          <div className="space-y-2">
+
+        <div className="space-y-4 mt-2 text-blue-900">
+          {/* Name */}
+          <div className="space-y-1">
             <Label htmlFor="counselor-name">Full Name *</Label>
             <Input
               id="counselor-name"
@@ -87,10 +84,12 @@ const CounselorModal = ({ children }: CounselorModalProps) => {
               onChange={(e) => setCounselingData(prev => ({ ...prev, name: e.target.value }))}
               placeholder="Enter your full name"
               required
+              className="bg-gray-50"
             />
           </div>
-          
-          <div className="space-y-2">
+
+          {/* Email */}
+          <div className="space-y-1">
             <Label htmlFor="counselor-email">Email *</Label>
             <Input
               id="counselor-email"
@@ -99,10 +98,12 @@ const CounselorModal = ({ children }: CounselorModalProps) => {
               onChange={(e) => setCounselingData(prev => ({ ...prev, email: e.target.value }))}
               placeholder="Enter your email"
               required
+              className="bg-gray-50"
             />
           </div>
-          
-          <div className="space-y-2">
+
+          {/* Phone */}
+          <div className="space-y-1">
             <Label htmlFor="counselor-phone">Phone Number *</Label>
             <Input
               id="counselor-phone"
@@ -110,16 +111,18 @@ const CounselorModal = ({ children }: CounselorModalProps) => {
               onChange={(e) => setCounselingData(prev => ({ ...prev, phone: e.target.value }))}
               placeholder="Enter your phone number"
               required
+              className="bg-gray-50"
             />
           </div>
 
-          <div className="space-y-2">
+          {/* Course Interest */}
+          <div className="space-y-1">
             <Label htmlFor="course-interest">Course Interest</Label>
-            <Select 
-              value={counselingData.course_interest} 
+            <Select
+              value={counselingData.course_interest}
               onValueChange={(value) => setCounselingData(prev => ({ ...prev, course_interest: value }))}
             >
-              <SelectTrigger>
+              <SelectTrigger className="bg-gray-50">
                 <SelectValue placeholder="Select course of interest" />
               </SelectTrigger>
               <SelectContent>
@@ -138,13 +141,14 @@ const CounselorModal = ({ children }: CounselorModalProps) => {
             </Select>
           </div>
 
-          <div className="space-y-2">
+          {/* Preferred Time */}
+          <div className="space-y-1">
             <Label htmlFor="preferred-time">Preferred Time</Label>
-            <Select 
-              value={counselingData.preferred_time} 
+            <Select
+              value={counselingData.preferred_time}
               onValueChange={(value) => setCounselingData(prev => ({ ...prev, preferred_time: value }))}
             >
-              <SelectTrigger>
+              <SelectTrigger className="bg-gray-50">
                 <SelectValue placeholder="When should we call you?" />
               </SelectTrigger>
               <SelectContent>
@@ -156,7 +160,8 @@ const CounselorModal = ({ children }: CounselorModalProps) => {
             </Select>
           </div>
 
-          <div className="space-y-2">
+          {/* Message */}
+          <div className="space-y-1">
             <Label htmlFor="counselor-message">Additional Message</Label>
             <Textarea
               id="counselor-message"
@@ -164,28 +169,30 @@ const CounselorModal = ({ children }: CounselorModalProps) => {
               onChange={(e) => setCounselingData(prev => ({ ...prev, message: e.target.value }))}
               placeholder="Tell us about your career goals or any specific questions..."
               rows={3}
+              className="bg-gray-50"
             />
           </div>
 
-          <div className="bg-blue-50 p-3 rounded-lg flex items-start gap-2">
+          {/* Info Box */}
+          <div className="bg-gray-100 p-3 rounded-lg flex items-start gap-2">
             <Clock className="h-4 w-4 text-blue-600 mt-0.5" />
-            <div className="text-sm text-blue-700">
+            <div className="text-sm text-blue-900">
               <strong>Free Career Counseling:</strong> Our experts will help you choose the right cloud career path and certification roadmap.
             </div>
           </div>
 
+          {/* Buttons */}
           <div className="flex gap-2 pt-4">
             <Button
               variant="outline"
-              className="flex-1"
+              className="flex-1 border-gray-300 text-blue-900"
               onClick={() => setIsOpen(false)}
             >
               Cancel
             </Button>
             <Button
-              className="flex-1 bg-orange-600 hover:bg-orange-700"
+              className="flex-1 bg-orange-600 hover:bg-orange-700 text-white"
               onClick={handleSubmit}
-              disabled={isLoading || !isFormValid}
             >
               {isLoading ? "Submitting..." : "Request Callback"}
             </Button>

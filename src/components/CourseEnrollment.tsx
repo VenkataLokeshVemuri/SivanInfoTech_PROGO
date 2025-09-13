@@ -102,9 +102,10 @@ const CourseEnrollment = () => {
     <div className="space-y-12 px-4 md:px-8 max-w-5xl mx-auto">
       {/* Heading */}
       <div className="text-center mb-12">
-        <h2 className="text-5xl font-extrabold bg-gradient-to-r from-emerald-500 to-teal-400 bg-clip-text text-transparent mb-4">
+        <h2 className="text-5xl font-extrabold bg-gradient-to-r from-blue-500 to-teal-500 bg-clip-text text-transparent mb-4">
   Available Courses
 </h2>
+
 
 
         <p className="text-gray-700 text-lg">Choose from our comprehensive cloud training programs</p>
