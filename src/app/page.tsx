@@ -10,7 +10,6 @@ import SuccessStoriesNew from '@/components/SuccessStoriesNew';
 import BatchSchedule from '@/components/BatchSchedule';
 import PlacementPartners from '@/components/PlacementPartners';
 import Gallery from '@/components/Gallery';
-import Evaluation from '@/components/Evaluation';
 import Testimonials from '@/components/Testimonials';
 import Blog from '@/components/Blog';
 import Footer from '@/components/Footer';
@@ -90,9 +89,8 @@ const Index = () => {
       <HowItWorks />
       <CourseTracksNew />
       <SuccessStoriesNew />
-      <BatchSchedule />
+      {/* <BatchSchedule /> */}
       <PlacementPartners />
-      <Evaluation />
       <Gallery />
       <Testimonials />
       <Blog />

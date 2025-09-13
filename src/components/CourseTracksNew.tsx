@@ -143,7 +143,7 @@ const CourseTracksNew = () => {
             <div className="inline-flex items-center space-x-4 bg-white rounded-2xl p-6 shadow-lg border border-primary/10">
               <div className="text-center">
                 <p className="text-muted-foreground mb-2">Not sure which track to choose?</p>
-                <Button variant="outline" className="border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold">
+                <Button variant="outline" className="border-2 bg-[#ff5600] border-primary text-white hover:bg-[#ca3500] hover:size-md font-semibold">
                   Get Free Career Counseling
                 </Button>
               </div>

@@ -73,25 +73,31 @@ const WhySivanInfoTech = () => {
   const features = [
     {
       icon: CheckCircle,
-      title: "Industry Expert Trainers",
+      title: "Real Time Experts as Trainers",
       description: "Learn from certified professionals with 10+ years experience",
       color: "bg-primary"
     },
     {
       icon: Star,
-      title: "Hands-on Project Training",
+      title: "Placement support",
       description: "Real-world projects to build your portfolio",
       color: "bg-secondary"
     },
     {
       icon: Shield,
-      title: "100% Placement Guarantee",
+      title: "Certification",
       description: "We ensure you get placed or provide continuous support",
       color: "bg-orange-600"
     },
     {
       icon: Briefcase,
-      title: "Career Transformation",
+      title: "Affordable Fees",
+      description: "From zero to cloud professional in 90 days",
+      color: "bg-purple-600"
+    },
+    {
+      icon: Briefcase,
+      title: "custom batch training",
       description: "From zero to cloud professional in 90 days",
       color: "bg-purple-600"
     }
@@ -107,11 +113,8 @@ const WhySivanInfoTech = () => {
               <Star className="mr-2 h-4 w-4 fill-current" />
               Why Choose Sivan InfoTech
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 animate-fade-in">
-              India's <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">#1 Cloud Training</span> Institute
-            </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto animate-fade-in">
-              Join thousands of successful cloud professionals who transformed their careers with our comprehensive training programs and real-world projects
+              A Training and Placement company by IT veterans with over two decades of experience in top notch MNC companies. Tailor made curriculam for each student's need delivered by our expert trainers from diverse streams. You get a lifetime certification of merit, guidance to grab certification from Amazon, Microsoft and more.
             </p>
           </div>
 
@@ -148,23 +151,7 @@ const WhySivanInfoTech = () => {
             ))}
           </div>
 
-          {/* CTA Section */}
-          <div className="bg-gradient-to-r from-primary via-secondary to-primary rounded-2xl p-8 text-white text-center mt-16 animate-fade-in">
-            <h3 className="text-2xl md:text-3xl font-bold mb-4">
-              Ready to Transform Your Career?
-            </h3>
-            <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-              Join our next batch and become a certified cloud professional with guaranteed placement support and real-world project experience
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 animate-pulse-glow">
-                📞 Talk to Counselor
-              </button>
-              <button className="bg-white text-primary hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
-                📅 View Batch Schedule
-              </button>
-            </div>
-          </div>
+          
         </div>
       </div>
     </section>

@@ -167,23 +167,7 @@ const Gallery = () => {
             ))}
           </div>
 
-          {/* CTA Section */}
-          <div className="bg-gradient-to-r from-primary to-secondary rounded-2xl p-8 text-white text-center mt-16">
-            <h3 className="text-2xl md:text-3xl font-bold mb-4">
-              Visit Our Centers
-            </h3>
-            <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-              Experience our world-class facilities firsthand. Schedule a visit to see where your cloud career journey will begin.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button className="bg-white text-primary hover:bg-gray-100">
-                Schedule Campus Visit
-              </Button>
-              <Button variant="outline" className="border-white text-white hover:bg-white hover:text-primary">
-                Get Directions
-              </Button>
-            </div>
-          </div>
+          
         </div>
       </div>
 
