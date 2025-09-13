@@ -1,4 +1,4 @@
-
+import Image from "next/image";
 import { ArrowRight, Play, Star, Users, Award, CheckCircle, Clock, MapPin, Phone, MessageCircle, CloudIcon, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import EnrollModal from './EnrollModal';
@@ -26,69 +26,98 @@ const Hero = () => {
               </div>
 
               {/* Main Headline with Motion Reveal */}
-              <div className="space-y-4 animate-fade-in" style={{animationDelay: '0.2s'}}>
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
-                  <span className="block text-gradient-primary">
-                    Launch Your
-                  </span>
-                  <span className="block text-gradient-aws">
-                    Cloud Career
-                  </span>
-                  <span className="block text-2xl md:text-3xl lg:text-4xl text-muted-foreground font-medium">
-                    with Hands-on Real-World Projects
-                  </span>
-                </h1>
-                <p className="text-xl text-muted-foreground leading-relaxed font-medium">
-                  Master <span className="text-gradient-aws font-bold">AWS, Azure & GCP</span> with industry-certified mentorship. 
-                  Join our alumni working at top tech companies.
-                </p>
-              </div>
+              <div
+  className="space-y-6 text-center animate-fade-in"
+  style={{ animationDelay: "0.2s", animationFillMode: "both" }}
+>
+  <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight">
+    <span className="block bg-gradient-to-r from-green-400 to-green-600 bg-clip-text text-transparent">
+      Launch Your
+    </span>
+    <span className="block bg-gradient-to-r from-green-600 to-emerald-400 bg-clip-text text-transparent">
+      Cloud Career
+    </span>
+    <span className="block text-2xl md:text-3xl lg:text-4xl  font-medium mt-4">
+      Get Trained by Industry Experts via
+    </span>
+  </h1>
+
+  <p className="text-xl leading-relaxed font-medium">
+    Instructor-led classes
+  </p>
+  <p className="text-xl leading-relaxed font-medium">
+    Live Online & Classroom Training
+  </p>
+  <p className="text-xl leading-relaxed font-medium">
+    With 100% Placement Support
+  </p>
+</div>
+
 
               {/* Key Points */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in" style={{animationDelay: '0.4s'}}>
-                <div className="flex items-center space-x-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-gradient-to-r from-secondary to-secondary/80 rounded-full flex items-center justify-center">
-                    <CheckCircle className="h-4 w-4 text-white" />
-                  </div>
-                  <span className="text-foreground font-medium">Multi-Cloud Certifications</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-gradient-to-r from-secondary to-secondary/80 rounded-full flex items-center justify-center">
-                    <CheckCircle className="h-4 w-4 text-white" />
-                  </div>
-                  <span className="text-foreground font-medium">100% Placement Assistance</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-gradient-to-r from-secondary to-secondary/80 rounded-full flex items-center justify-center">
-                    <CheckCircle className="h-4 w-4 text-white" />
-                  </div>
-                  <span className="text-foreground font-medium">Industry Expert Trainers</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-gradient-to-r from-secondary to-secondary/80 rounded-full flex items-center justify-center">
-                    <CheckCircle className="h-4 w-4 text-white" />
-                  </div>
-                  <span className="text-foreground font-medium">Live Project Training</span>
-                </div>
-              </div>
+             {/* Feature Buttons */}
+{/* CTA Section */}
+<div className="w-full flex flex-col items-center gap-6 animate-fade-in" style={{ animationDelay: "0.3s", animationFillMode: "both" }}>
+  
+  {/* Row 1: Enquire Now */}
+  <div className="flex items-center space-x-3">
+    <div className="flex-shrink-0 w-6 h-6 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
+      <CheckCircle className="h-4 w-4 text-white" />
+    </div>
+    <Button
+      size="lg"
+      variant="outline"
+      className="px-8 py-4 text-lg rounded-xl border-2 border-green-600 text-green-700 font-semibold
+                 hover:bg-green-600 hover:text-white transition-all duration-300 shadow-md"
+    >
+      Enquire Now
+    </Button>
+  </div>
 
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 animate-fade-in" style={{animationDelay: '0.6s'}}>
-                <EnrollModal courseName="Cloud Computing Career Track">
-                  <Button size="lg" className="btn-gradient-primary px-8 py-4 text-lg rounded-xl">
-                    <Zap className="mr-2 h-5 w-5" />
-                    Explore Career Tracks
-                  </Button>
-                </EnrollModal>
-                <CounselorModal>
-                  <Button size="lg" variant="outline" className="px-8 py-4 text-lg rounded-xl border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold transition-all duration-300">
+  {/* Row 2: Demo Class + Explore Career Tracks */}
+  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+    
+    {/* Demo Class */}
+    <div className="flex items-center space-x-3">
+      <div className="flex-shrink-0 w-6 h-6 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
+        <CheckCircle className="h-4 w-4 text-white" />
+      </div>
+      <Button
+        size="lg"
+        variant="outline"
+        className="px-8 py-4 text-lg rounded-xl border-2 border-green-600 text-green-700 font-semibold
+                   hover:bg-green-600 hover:text-white transition-all duration-300 shadow-md"
+      >
+        📞 Make a Demo Class Now
+      </Button>
+    </div>
+
+    {/* Explore Career Tracks */}
+    <EnrollModal courseName="Cloud Computing Career Track">
+      <Button
+        size="lg"
+        variant="outline"
+        className="px-8 py-4 text-lg rounded-xl font-semibold shadow-md
+                   bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0
+                   hover:from-emerald-600 hover:to-green-700 transition-all duration-300"
+      >
+        <Zap className="mr-2 h-5 w-5" />
+        Explore Career Tracks
+      </Button>
+    </EnrollModal>
+  </div>
+
+
+
+                {/* <CounselorModal>
+                  <Button size="lg" variant="outline" className="px-8 py-4 text-lg rounded-xl border-2 border-primary text-primary hover:bg-primary  font-semibold transition-all duration-300">
                     <MessageCircle className="mr-2 h-5 w-5" />
                     Get Free Career Guidance
                   </Button>
-                </CounselorModal>
+                </CounselorModal> */}
               </div>
 
-              {/* Contact Info */}
+              {/* Contact Info
               <div className="space-y-3 text-muted-foreground animate-fade-in" style={{animationDelay: '0.8s'}}>
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-aws-orange/10 to-aws-orange/5 rounded-lg">
@@ -108,7 +137,7 @@ const Hero = () => {
                   </div>
                   <span className="font-medium">Online & Offline Classes Available</span>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             {/* Right Content - 3D Animation Placeholder & Stats */}
@@ -131,42 +160,86 @@ const Hero = () => {
                 </div>
               </div>
 
-              {/* Enhanced Stats */}
-              <div className="grid grid-cols-2 gap-6">
-                <div className="text-center p-6 bg-gradient-to-br from-primary/5 to-azure-blue/5 rounded-2xl border border-primary/10 card-hover">
-                  <div className="text-4xl font-bold text-gradient-primary mb-2">200+</div>
-                  <div className="text-muted-foreground font-medium">Success Stories</div>
-                  <div className="text-xs text-muted-foreground/80 mt-1">Across Top Tech Companies</div>
-                </div>
-                <div className="text-center p-6 bg-gradient-to-br from-secondary/5 to-secondary/10 rounded-2xl border border-secondary/10 card-hover">
-                  <div className="text-4xl font-bold text-gradient-aws mb-2">₹8.5L</div>
-                  <div className="text-muted-foreground font-medium">Avg. Package</div>
-                  <div className="text-xs text-muted-foreground/80 mt-1">For Our Alumni</div>
-                </div>
-                <div className="text-center p-6 bg-gradient-to-br from-aws-orange/5 to-gcp-red/5 rounded-2xl border border-aws-orange/10 card-hover">
-                  <div className="text-4xl font-bold text-gradient-aws mb-2">98%</div>
-                  <div className="text-muted-foreground font-medium">Pass Rate</div>
-                  <div className="text-xs text-muted-foreground/80 mt-1">Certification Success</div>
-                </div>
-                <div className="text-center p-6 bg-gradient-to-br from-gcp-yellow/5 to-gcp-red/5 rounded-2xl border border-gcp-yellow/10 card-hover">
-                  <div className="text-4xl font-bold text-gradient-primary mb-2">3</div>
-                  <div className="text-muted-foreground font-medium">Cloud Platforms</div>
-                  <div className="text-xs text-muted-foreground/80 mt-1">AWS, Azure, GCP</div>
-                </div>
-              </div>
+              
+              
+
+              
+            </div>
+            
+          </div>
+          <div className="flex flex-wrap gap-6 mt-12 sm:flex-row justify-between">
+  {/* Card 1 - Orange */}
+  <div className="flex-1 min-w-[250px] text-center p-8 
+                  bg-gradient-to-br from-orange-100 to-orange-200 
+                  rounded-2xl animate-fade-in" style={{ animationDelay: "0.2s", animationFillMode: "both" }}>
+    <div className="text-5xl md:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-orange-600 mb-3">
+      200+
+    </div>
+    <div className="text-lg md:text-xl text-orange-700 font-semibold">
+      Success Stories
+    </div>
+    <div className="text-sm md:text-base text-orange-600 mt-2">
+      Across Top Tech Companies
+    </div>
+  </div>
+
+  {/* Card 2 - Yellow */}
+  <div className="flex-1 min-w-[250px] text-center p-8 
+                  bg-gradient-to-br from-yellow-100 to-yellow-200 
+                  rounded-2xl animate-fade-in" style={{ animationDelay: "0.4s", animationFillMode: "both" }}>
+    <div className="text-5xl md:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-yellow-500 to-yellow-600 mb-3">
+      ₹8.5L
+    </div>
+    <div className="text-lg md:text-xl text-yellow-700 font-semibold">
+      Avg. Package
+    </div>
+    <div className="text-sm md:text-base text-yellow-600 mt-2">
+      For Our Alumni
+    </div>
+  </div>
+
+  {/* Card 3 - Light Blue */}
+  <div className="flex-1 min-w-[250px] text-center p-8 
+                  bg-gradient-to-br from-sky-100 to-sky-200 
+                  rounded-2xl animate-fade-in" style={{ animationDelay: "0.6s", animationFillMode: "both" }}>
+    <div className="text-5xl md:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-sky-500 to-sky-600 mb-3">
+      98%
+    </div>
+    <div className="text-lg md:text-xl text-sky-700 font-semibold">
+      Pass Rate
+    </div>
+    <div className="text-sm md:text-base text-sky-600 mt-2">
+      Certification Success
+    </div>
+  </div>
+
+  {/* Card 4 - Pink */}
+  <div className="flex-1 min-w-[250px] text-center p-8 
+                  bg-gradient-to-br from-pink-100 to-pink-200 
+                  rounded-2xl animate-fade-in" style={{ animationDelay: "0.8s", animationFillMode: "both" }}>
+    <div className="text-5xl md:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-pink-600 mb-3">
+      3
+    </div>
+    <div className="text-lg md:text-xl text-pink-700 font-semibold">
+      Cloud Platforms
+    </div>
+    <div className="text-sm md:text-base text-pink-600 mt-2">
+      AWS, Azure, GCP
+    </div>
+  </div>
+</div>
+
 
               {/* Company Logos Preview */}
-              <div className="text-center space-y-4">
+              <div className="text-center mt-0 space-y-4">
                 <p className="text-sm font-medium text-muted-foreground">Our Alumni Work At</p>
                 <div className="flex justify-center items-center space-x-6 opacity-60">
-                  <div className="text-lg font-bold text-primary">TCS</div>
-                  <div className="text-lg font-bold text-azure-blue">Infosys</div>
-                  <div className="text-lg font-bold text-aws-orange">Accenture</div>
-                  <div className="text-lg font-bold text-secondary">Zoho</div>
+                  <div><Image src="/lovable-uploads/tcs-logo.png" alt="TCS logo" width={80} height={40} /></div>
+                  <div ><Image src="/lovable-uploads/infosys-logo.png" alt="Infosys logo" width={80} height={40} /></div>
+<div><Image src="/lovable-uploads/accenture-logo.png" alt="Accenture logo" width={80} height={40} /></div>
+                  <div ><Image src="/lovable-uploads/zoho-logo.png" alt="Zoho logo" width={80} height={40} /></div>
                 </div>
               </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>

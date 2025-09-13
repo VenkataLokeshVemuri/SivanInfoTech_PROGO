@@ -63,11 +63,9 @@ const WhySitCloud = () => {
               <Star className="mr-2 h-4 w-4 fill-current" />
               Why Choose SitCloud
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              India's <span className="text-blue-600">#1 Cloud Training</span> Institute
-            </h2>
+            
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Join thousands of successful cloud professionals who transformed their careers with our comprehensive training programs
+              A Training and Placement company by IT veterans with over two decades of experience in top notch MNC companies. Tailor made curriculam for each student's need delivered by our expert trainers from diverse streams. You get a lifetime certification of merit, guidance to grab certification from Amazon, Microsoft and more.
             </p>
           </div>
 

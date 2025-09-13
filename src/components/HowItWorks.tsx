@@ -83,24 +83,14 @@ const HowItWorks = () => {
                       )}
                     </div>
 
-                    {/* Timeline dot */}
-                    <div className={`hidden md:block absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-gradient-to-r from-${step.color} to-${step.color}/80 border-4 border-white shadow-lg`}></div>
+                   
                   </div>
                 );
               })}
             </div>
           </div>
 
-          {/* CTA Section */}
-          <div className="text-center mt-16">
-            <div className="bg-white rounded-2xl p-8 shadow-lg border border-primary/10 max-w-2xl mx-auto">
-              <h3 className="text-2xl font-bold text-foreground mb-4">Ready to Start Your Journey?</h3>
-              <p className="text-muted-foreground mb-6">Join hundreds of successful alumni who transformed their careers with our proven methodology</p>
-              <button className="btn-gradient-primary px-8 py-4 rounded-xl text-lg font-semibold text-white">
-                Start Your Cloud Career Today
-              </button>
-            </div>
-          </div>
+         
         </div>
       </div>
     </section>
