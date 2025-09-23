@@ -61,12 +61,12 @@ const CourseTracksNew = () => {
           {/* Course Cards */}
           <div className="grid lg:grid-cols-3 gap-8 mb-12">
             {tracks.map((track, index) => (
-              <div key={index} className="relative bg-white rounded-3xl border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
+              <div key={index} className="relative bg-white rounded-3xl border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group flex flex-col">
                 {/* Top Colored Header */}
                 <div className={`h-3 w-full ${
-                  index === 0 ? 'bg-orange-500' : 
-                  index === 1 ? 'bg-blue-500' : 
-                  'bg-green-500'
+                  index === 0 ? 'bg-blue-500' : 
+                  index === 1 ? 'bg-green-500' : 
+                  'bg-blue-600'
                 }`}></div>
                 
                 {/* Header */}
@@ -149,9 +149,9 @@ const CourseTracksNew = () => {
                     {track.highlights.map((highlight, highlightIndex) => (
                       <div key={highlightIndex} className="flex items-center space-x-2">
                         <div className={`w-3 h-3 rounded-full ${
-                          index === 0 ? 'bg-orange-500' : 
-                          index === 1 ? 'bg-blue-500' : 
-                          'bg-green-500'
+                          index === 0 ? 'bg-blue-500' : 
+                          index === 1 ? 'bg-green-500' : 
+                          'bg-blue-600'
                         } flex-shrink-0`}></div>
                         <span className="text-sm text-gray-600">{highlight}</span>
                       </div>
@@ -160,11 +160,11 @@ const CourseTracksNew = () => {
                 </div>
 
                 {/* CTA Button */}
-                <div className="px-8 pb-8">
+                <div className="px-8 pb-8 mb-2.5 mt-auto">
                   <Button className={`w-full shadow-lg hover:shadow-xl font-semibold py-5 rounded-xl transition-all duration-300 ${
-                    index === 0 ? 'bg-orange-500 hover:bg-orange-600' : 
-                    index === 1 ? 'bg-blue-500 hover:bg-blue-600' : 
-                    'bg-green-500 hover:bg-green-600'
+                    index === 0 ? 'bg-blue-500 hover:bg-blue-600' : 
+                    index === 1 ? 'bg-green-500 hover:bg-green-600' : 
+                    'bg-blue-600 hover:bg-blue-700'
                   } text-white`}>
                     View Curriculum
                     <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -179,7 +179,7 @@ const CourseTracksNew = () => {
             <div className="inline-flex items-center space-x-4 bg-white rounded-2xl p-6 shadow-lg border border-primary/10">
               <div className="text-center">
                 <p className="text-muted-foreground mb-2">Not sure which track to choose?</p>
-                <Button variant="outline" className="border-2 bg-[#ff5600] border-primary text-white hover:bg-[#ca3500] hover:size-md font-semibold">
+                <Button variant="outline" className="border-2 bg-green-500 border-primary text-white hover:bg-green-600 hover:size-md font-semibold">
                   Get Free Career Counseling
                 </Button>
               </div>

@@ -60,7 +60,7 @@ const TrainingCenters = () => {
                     <MapPin className="h-5 w-5 text-blue-600 mr-2" />
                     {center.name}
                   </CardTitle>
-                  <div className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium inline-block">
+                  <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium inline-block">
                     {center.specialization}
                   </div>
                 </CardHeader>
@@ -98,7 +98,7 @@ const TrainingCenters = () => {
                       <ExternalLink className="h-4 w-4 mr-2" />
                       Get Directions
                     </Button>
-                    <Button variant="outline" className="w-full border-orange-500 text-orange-600 hover:bg-orange-50">
+                    <Button variant="outline" className="w-full border-blue-500 text-blue-600 hover:bg-blue-50">
                       📞 Call Center
                     </Button>
                   </div>

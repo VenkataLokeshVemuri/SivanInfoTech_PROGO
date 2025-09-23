@@ -151,9 +151,9 @@ const Services = () => {
   const renderCertificationCards = (certifications:any) => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {certifications.map((cert:any, index:any) => (
-        <Card key={index} className={`relative bg-white hover:shadow-xl transition-all duration-300 border ${cert.popular ? 'border-orange-300 ring-2 ring-orange-100 scale-105' : 'border-gray-200'}`}>
+        <Card key={index} className={`relative bg-white hover:shadow-xl transition-all duration-300 border ${cert.popular ? 'border-blue-300 ring-2 ring-blue-100 scale-105' : 'border-gray-200'}`}>
           {cert.popular && (
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white px-4 py-1 rounded-full text-sm font-bold">
+            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-bold">
               Most Popular
             </div>
           )}
@@ -217,7 +217,7 @@ const Services = () => {
               </div>
               
               <div className="space-y-2">
-                <Button className={`w-full ${cert.popular ? 'bg-orange-600 hover:bg-orange-700' : 'bg-blue-600 hover:bg-blue-700'} text-white font-semibold py-3`}>
+                <Button className={`w-full ${cert.popular ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-600 hover:bg-green-700'} text-white font-semibold py-3`}>
                   Enroll in Certification
                 </Button>
                 <Button variant="outline" className="w-full text-blue-600 border-blue-600 hover:bg-blue-50">

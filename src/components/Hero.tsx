@@ -50,10 +50,10 @@ const Hero = () => {
   <div className="flex items-center gap-4 mb-2">
     <RocketIcon />
     <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold">
-      <span className="block bg-gradient-to-r from-green-400 to-green-600 bg-clip-text text-transparent animate-typewriter">
+      <span className="block bg-gradient-to-r from-green-400 to-green-600 bg-clip-text text-transparent">
         Transform Your
       </span>
-      <span className="block bg-gradient-to-r from-green-600 to-emerald-400 bg-clip-text text-transparent animate-typewriter-delay-1">
+      <span className="block bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-transparent animate-writing">
         Career Today!
       </span>
     </h1>
@@ -100,7 +100,7 @@ const Hero = () => {
         Start Your Journey Now
       </Button>
     </EnrollModal>
-  </div>Transform Your Career Today!
+  </div>
 
   {/* Row 2: Secondary Actions */}
   <div className="flex flex-col sm:flex-row gap-5">

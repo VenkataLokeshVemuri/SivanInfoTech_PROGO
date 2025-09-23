@@ -210,7 +210,7 @@ const SuccessStories = () => {
                 <div className="text-blue-100">Placement Rate</div>
               </div>
             </div>
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 text-lg font-semibold">
+            <Button className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 text-lg font-semibold">
               Start Your Transformation Today!
             </Button>
           </div>

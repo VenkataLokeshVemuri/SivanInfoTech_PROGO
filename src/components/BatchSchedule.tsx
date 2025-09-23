@@ -104,9 +104,9 @@ const BatchSchedule = () => {
           {/* Batch Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {upcomingBatches.map((batch, index) => (
-              <div key={index} className={`relative bg-white rounded-xl shadow-lg border p-6 hover:shadow-xl transition-all duration-300 ${batch.popular ? 'border-orange-300 ring-2 ring-orange-100' : 'border-gray-200'}`}>
+              <div key={index} className={`relative bg-white rounded-xl shadow-lg border p-6 hover:shadow-xl transition-all duration-300 ${batch.popular ? 'border-blue-300 ring-2 ring-blue-100' : 'border-gray-200'}`}>
                 {batch.popular && (
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white px-4 py-1 rounded-full text-sm font-bold">
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-bold">
                     Most Popular
                   </div>
                 )}
@@ -163,8 +163,8 @@ const BatchSchedule = () => {
                     <Button 
                       className={`w-full ${
                         batch.popular 
-                          ? 'bg-orange-600 hover:bg-orange-700' 
-                          : 'bg-blue-600 hover:bg-blue-700'
+                          ? 'bg-blue-600 hover:bg-blue-700' 
+                          : 'bg-green-600 hover:bg-green-700'
                       } text-white py-3 font-semibold`}
                     >
                       {batch.seatsLeft <= 3 ? 'Hurry! Enroll Now' : 'Enroll Now'}
@@ -203,8 +203,8 @@ const BatchSchedule = () => {
                 <p className="text-sm text-gray-600">Weekday & weekend options</p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <MapPin className="h-6 w-6 text-orange-600" />
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <MapPin className="h-6 w-6 text-blue-600" />
                 </div>
                 <h4 className="font-semibold text-gray-900 mb-2">Multiple Modes</h4>
                 <p className="text-sm text-gray-600">Online, offline, hybrid</p>
@@ -224,7 +224,7 @@ const BatchSchedule = () => {
               <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3">
                 📞 Talk to Counselor
               </Button>
-              <Button variant="outline" className="border-orange-600 text-orange-600 hover:bg-orange-50 px-8 py-3">
+              <Button variant="outline" className="border-green-600 text-green-600 hover:bg-green-50 px-8 py-3">
                 📅 Request Custom Schedule
               </Button>
             </div>

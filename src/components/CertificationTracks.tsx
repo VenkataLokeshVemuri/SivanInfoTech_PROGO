@@ -151,12 +151,12 @@ const CertificationTracks = () => {
   const renderTrackCards = (track: any[], provider: string) => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {track.map((course, index) => (
-        <Card key={index} className={`relative hover:shadow-xl transition-all duration-300 overflow-hidden ${course.popular ? 'border-orange-400 ring-2 ring-orange-100' : 'border-gray-200'}`}>
+        <Card key={index} className={`relative hover:shadow-xl transition-all duration-300 overflow-hidden ${course.popular ? 'border-blue-400 ring-2 ring-blue-100' : 'border-gray-200'}`}>
           {/* Top colored bar for popular courses */}
           {course.popular && (
             <>
-              <div className="absolute top-0 left-0 w-full h-1 bg-orange-500"></div>
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white px-4 py-1 rounded-full text-sm font-bold shadow-md">
+              <div className="absolute top-0 left-0 w-full h-1 bg-blue-500"></div>
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-bold shadow-md">
                 Most Popular
               </div>
             </>
@@ -201,7 +201,7 @@ const CertificationTracks = () => {
                 courseName={course.title} 
                 coursePrice={parseInt(course.price.replace('₹', '').replace(',', ''))}
               >
-                <Button className={`w-full ${course.popular ? 'bg-orange-500 hover:bg-orange-600' : 'bg-blue-600 hover:bg-blue-700'} text-white font-semibold py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300`}>
+                <Button className={`w-full ${course.popular ? 'bg-blue-500 hover:bg-blue-600' : 'bg-green-600 hover:bg-green-700'} text-white font-semibold py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300`}>
                   Enroll Now
                 </Button>
               </EnrollModal>
