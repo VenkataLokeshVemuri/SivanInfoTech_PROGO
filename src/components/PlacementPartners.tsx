@@ -88,7 +88,7 @@ const PlacementPartners = () => {
                 Our 5-Step Placement Process
               </h3>
               <p className="text-blue-100 max-w-2xl mx-auto">
-                We don't just train you - we ensure you get placed with our comprehensive placement support program
+                We don&apos;t just train you - we ensure you get placed with our comprehensive placement support program
               </p>
             </div>
             

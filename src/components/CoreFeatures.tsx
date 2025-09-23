@@ -107,7 +107,7 @@ const CoreFeatures = () => {
               </span>
             </h2>
             <p className="text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-              Industry's most comprehensive hands-on cloud training with real-world projects, expert mentorship, and guaranteed career transformation
+              Industry&apos;s most comprehensive hands-on cloud training with real-world projects, expert mentorship, and guaranteed career transformation
             </p>
           </div>
 

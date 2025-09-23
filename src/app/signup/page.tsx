@@ -69,7 +69,7 @@ const Signup = () => {
           variant: "destructive",
         });
       }
-    } catch (error) {
+    } catch {
       toast({
         title: "Signup Failed",
         description: "Something went wrong. Please try again.",

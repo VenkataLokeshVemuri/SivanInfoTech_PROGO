@@ -148,9 +148,9 @@ const Services = () => {
     { icon: Briefcase, title: 'Placement Support', desc: '100% assistance' }
   ];
 
-  const renderCertificationCards = (certifications) => (
+  const renderCertificationCards = (certifications:any) => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {certifications.map((cert, index) => (
+      {certifications.map((cert:any, index:any) => (
         <Card key={index} className={`relative bg-white hover:shadow-xl transition-all duration-300 border ${cert.popular ? 'border-orange-300 ring-2 ring-orange-100 scale-105' : 'border-gray-200'}`}>
           {cert.popular && (
             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white px-4 py-1 rounded-full text-sm font-bold">
@@ -183,7 +183,7 @@ const Services = () => {
             <div>
               <h4 className="font-semibold text-gray-900 mb-3">Key Topics:</h4>
               <div className="grid grid-cols-2 gap-2">
-                {cert.highlights.map((highlight, idx) => (
+                {cert.highlights.map((highlight:any, idx:any) => (
                   <div key={idx} className="text-sm text-gray-600 flex items-start">
                     <CheckCircle className="h-3 w-3 text-green-500 mr-2 mt-1 flex-shrink-0" />
                     <span>{highlight}</span>

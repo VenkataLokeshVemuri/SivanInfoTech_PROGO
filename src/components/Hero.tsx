@@ -27,17 +27,17 @@ const Hero = () => {
 
               {/* Main Headline with Motion Reveal */}
               <div
-  className="space-y-6 text-center animate-fade-in"
+  className="space-y-6  animate-fade-in"
   style={{ animationDelay: "0.2s", animationFillMode: "both" }}
 >
-  <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight">
-    <span className="block bg-gradient-to-r from-green-400 to-green-600 bg-clip-text text-transparent">
+  <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold ">
+    <span className="block bg-gradient-to-r from-green-400 to-green-600 bg-clip-text text-transparent animate-typewriter">
       Launch Your
     </span>
-    <span className="block bg-gradient-to-r from-green-600 to-emerald-400 bg-clip-text text-transparent">
+    <span className="block bg-gradient-to-r from-green-600 to-emerald-400 bg-clip-text text-transparent animate-typewriter-delay-1">
       Cloud Career
     </span>
-    <span className="block text-2xl md:text-3xl lg:text-4xl  font-medium mt-4">
+    <span className="block text-2xl md:text-3xl lg:text-4xl font-medium mt-4 ">
       Get Trained by Industry Experts via
     </span>
   </h1>
@@ -144,10 +144,19 @@ const Hero = () => {
             <div className="space-y-8 animate-fade-in" style={{animationDelay: '1s'}}>
               {/* 3D Animation Placeholder */}
               <div className="relative">
-                <div className="aspect-square bg-gradient-to-br from-primary/5 via-azure-blue/5 to-aws-orange/5 rounded-3xl border border-primary/10 flex items-center justify-center relative overflow-hidden">
+                <div className="aspect-square bg-gradient-to-br from-primary/5 via-azure-blue/5 to-aws-orange/5 rounded-3xl flex items-center justify-center relative overflow-hidden">
                   {/* Cloud Animation */}
                   <div className="relative">
-                    <CloudIcon className="h-32 w-32 text-primary/30 animate-float" />
+                    <div className="animate-float">
+                      <Image 
+                        src="/lovable-uploads/homepage-logo.jpg" 
+                        alt="Homepage Logo"
+                        width={613}
+                        height={600}
+                        className="rounded-2xl shadow-lg object-contain"
+                        priority
+                      />
+                    </div>
                     <div className="absolute -top-4 -right-4 w-16 h-16 bg-gradient-to-r from-aws-orange to-gcp-red rounded-full opacity-20 animate-float" style={{animationDelay: '1s'}}></div>
                     <div className="absolute -bottom-6 -left-6 w-20 h-20 bg-gradient-to-r from-azure-blue to-gcp-yellow rounded-full opacity-20 animate-float" style={{animationDelay: '2s'}}></div>
                   </div>
@@ -155,7 +164,7 @@ const Hero = () => {
                   {/* Floating Elements */}
                   <div className="absolute top-8 left-8 flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2">
                     <div className="w-3 h-3 bg-secondary rounded-full animate-pulse"></div>
-                    <span className="text-xs font-medium text-foreground">Live: 8 Students in Class</span>
+                   
                   </div>
                 </div>
               </div>
@@ -231,13 +240,50 @@ const Hero = () => {
 
 
               {/* Company Logos Preview */}
-              <div className="text-center mt-0 space-y-4">
-                <p className="text-sm font-medium text-muted-foreground">Our Alumni Work At</p>
-                <div className="flex justify-center items-center space-x-6 opacity-60">
-                  <div><Image src="/lovable-uploads/tcs-logo.png" alt="TCS logo" width={80} height={40} /></div>
-                  <div ><Image src="/lovable-uploads/infosys-logo.png" alt="Infosys logo" width={80} height={40} /></div>
-<div><Image src="/lovable-uploads/accenture-logo.png" alt="Accenture logo" width={80} height={40} /></div>
-                  <div ><Image src="/lovable-uploads/zoho-logo.png" alt="Zoho logo" width={80} height={40} /></div>
+              <div className="text-center mt-16 space-y-8">
+                <div className="space-y-3">
+                  <p className="text-lg font-semibold text-gray-800">Our Alumni Work At</p>
+                  <p className="text-sm text-gray-600">Trusted by professionals at leading technology companies</p>
+                </div>
+                <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-100">
+                  <div className="flex justify-center items-center flex-wrap gap-8 md:gap-12">
+                    <div className="group transition-all duration-300 hover:scale-110 hover:shadow-md rounded-lg p-3">
+                      <Image 
+                        src="/lovable-uploads/tcs-logo.png" 
+                        alt="TCS logo" 
+                        width={100} 
+                        height={50} 
+                        className="grayscale hover:grayscale-0 transition-all duration-300 object-contain"
+                      />
+                    </div>
+                    <div className="group transition-all duration-300 hover:scale-110 hover:shadow-md rounded-lg p-3">
+                      <Image 
+                        src="/lovable-uploads/infosys-logo.png" 
+                        alt="Infosys logo" 
+                        width={100} 
+                        height={50} 
+                        className="grayscale hover:grayscale-0 transition-all duration-300 object-contain"
+                      />
+                    </div>
+                    <div className="group transition-all duration-300 hover:scale-110 hover:shadow-md rounded-lg p-3">
+                      <Image 
+                        src="/lovable-uploads/accenture-logo.png" 
+                        alt="Accenture logo" 
+                        width={100} 
+                        height={50} 
+                        className="grayscale hover:grayscale-0 transition-all duration-300 object-contain"
+                      />
+                    </div>
+                    <div className="group transition-all duration-300 hover:scale-110 hover:shadow-md rounded-lg p-3">
+                      <Image 
+                        src="/lovable-uploads/zoho-logo.png" 
+                        alt="Zoho logo" 
+                        width={100} 
+                        height={50} 
+                        className="grayscale hover:grayscale-0 transition-all duration-300 object-contain"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
         </div>

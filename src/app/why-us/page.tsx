@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
-import { CheckCircle, Users, Award, Clock, TrendingUp, Monitor, MessageSquare, FileCheck, UserCheck, Briefcase } from "lucide-react";
+import { Users, Award, TrendingUp, Monitor, MessageSquare, FileCheck, UserCheck, Briefcase } from "lucide-react";
 import Link from 'next/link';
 
 const WhyUs = () => {

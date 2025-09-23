@@ -124,7 +124,7 @@ const SuccessStories = () => {
                         ))}
                       </div>
                       <p className="text-gray-700 text-lg leading-relaxed italic">
-                        "{testimonial.quote}"
+                        &quot;{testimonial.quote}&quot;
                       </p>
                     </div>
 

@@ -38,10 +38,10 @@ const Contact = () => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       toast.success(
-        "Thank you! Your message has been sent successfully. We'll get back to you soon."
+        "Thank you! Your message has been sent successfully. We&apos;ll get back to you soon."
       );
       setFormData({ name: "", email: "", subject: "", message: "" });
-    } catch (error) {
+    } catch {
       toast.error(
         "Something went wrong. Please try again or contact us directly."
       );
@@ -104,7 +104,7 @@ const Contact = () => {
                 Get in <span className="text-secondary">Touch</span>
               </h1>
               <p className="text-xl md:text-2xl mb-8 text-white/90">
-                Ready to start your IT career journey? We're here to help with
+                Ready to start your IT career journey? We&apos;re here to help with
                 any questions about admissions, courses, or support.
               </p>
             </div>
@@ -119,7 +119,7 @@ const Contact = () => {
                 <div className="mb-8">
                   <h2 className="text-3xl font-bold mb-4">Send us a Message</h2>
                   <p className="text-muted-foreground text-lg">
-                    Fill out the form below and we'll get back to you as soon as
+                    Fill out the form below and we&apos;ll get back to you as soon as
                     possible.
                   </p>
                 </div>
@@ -207,7 +207,7 @@ const Contact = () => {
                     Contact Information
                   </h2>
                   <p className="text-muted-foreground text-lg">
-                    Reach out to us through any of these channels. We're always
+                    Reach out to us through any of these channels. We&apos;re always
                     happy to help!
                   </p>
                 </div>
@@ -305,7 +305,7 @@ const Contact = () => {
               Ready to Start Your Journey?
             </h2>
             <p className="text-xl mb-8 text-white/90 max-w-2xl mx-auto">
-              Don't wait – reach out today and take the first step towards your
+              Don&apos;t wait – reach out today and take the first step towards your
               IT career transformation.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

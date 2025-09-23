@@ -215,7 +215,7 @@ const BatchSchedule = () => {
           {/* CTA Section */}
           <div className="text-center">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Don't See Your Preferred Schedule?
+              Don&apos;t See Your Preferred Schedule?
             </h3>
             <p className="text-gray-600 mb-6">
               We offer flexible batch timings. Talk to our counselor to find the perfect schedule for you.

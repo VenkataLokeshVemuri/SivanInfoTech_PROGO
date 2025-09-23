@@ -1,4 +1,4 @@
-
+import Image from 'next/image';
 import { MapPin, Phone, Clock, Star, ExternalLink } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -48,7 +48,7 @@ const TrainingCenters = () => {
               <Card key={index} className="overflow-hidden hover:shadow-2xl transition-all duration-300 group border-0 shadow-lg">
                 {/* Center Image */}
                 <div className="relative h-48 overflow-hidden">
-                  <img 
+                  <Image 
                     src={center.image} 
                     alt={center.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -111,7 +111,7 @@ const TrainingCenters = () => {
           <div className="mt-16 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8">
             <div className="text-center">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Can't Visit Our Centers? No Problem!
+                Can&apos;t Visit Our Centers? No Problem!
               </h3>
               <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
                 Join our live online classes with the same quality training, hands-on labs, and placement support from anywhere in India.

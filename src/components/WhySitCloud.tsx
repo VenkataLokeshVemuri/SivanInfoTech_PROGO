@@ -65,7 +65,7 @@ const WhySitCloud = () => {
             </div>
             
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              A Training and Placement company by IT veterans with over two decades of experience in top notch MNC companies. Tailor made curriculam for each student's need delivered by our expert trainers from diverse streams. You get a lifetime certification of merit, guidance to grab certification from Amazon, Microsoft and more.
+              A Training and Placement company by IT veterans with over two decades of experience in top notch MNC companies. Tailor made curriculam for each student&apos;s need delivered by our expert trainers from diverse streams. You get a lifetime certification of merit, guidance to grab certification from Amazon, Microsoft and more.
             </p>
           </div>
 

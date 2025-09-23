@@ -1,13 +1,13 @@
 "use client";
 // Migrated from src/pages/Dashboard.tsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { User, Award, Download, Calendar, BookOpen, Cloud, LogOut, Mail } from 'lucide-react';
+import { User, Award, BookOpen, Cloud, LogOut, Mail } from 'lucide-react';
 import CertificateGenerator from '@/components/CertificateGenerator';
 import CloudProviderLogos from '@/components/CloudProviderLogos';
 import { apiService } from '@/lib/api';
@@ -22,7 +22,7 @@ interface Enrollment {
   enrollmentStatus: string;
   certificationID?: string;
   certifiedOn?: string;
-  batchDetails: any;
+  batchDetails: Record<string, unknown>;
 }
 
 interface UserData {
@@ -50,9 +50,9 @@ const Dashboard = () => {
       return;
     }
     fetchUserData();
-  }, []);
+  }, [fetchUserData, router]);
 
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     try {
       const response = await apiService.getEnrollments();
       if (response.status === 200) {
@@ -60,7 +60,7 @@ const Dashboard = () => {
       } else {
         throw new Error(response.Message);
       }
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to fetch user data",
@@ -70,13 +70,13 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast, router]);
 
   const handleLogout = async () => {
     try {
       await apiService.logout();
       router.push('/login');
-    } catch (error) {
+    } catch {
       toast({
         title: "Logout Error",
         description: "Failed to logout properly",

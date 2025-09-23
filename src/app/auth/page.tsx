@@ -34,7 +34,7 @@ const Auth = () => {
       if (result.success) {
         router.push('/dashboard');
       }
-    } catch (err) {
+    } catch {
       // handle error
     }
     setIsLoading(false);
@@ -58,7 +58,7 @@ const Auth = () => {
         setSignInData({ email: signUpData.email, password: '' });
         setSignUpData({ name: '', email: '', phone: '', password: '', confirmPassword: '' });
       }
-    } catch (err) {
+    } catch {
       // handle error
     }
     setIsLoading(false);

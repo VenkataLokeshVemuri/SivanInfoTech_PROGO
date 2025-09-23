@@ -133,7 +133,7 @@ const SuccessStoriesNew = () => {
                   <div className="mb-6">
                     <Quote className="h-12 w-12 text-primary/20 mb-4" />
                     <p className="text-lg text-foreground leading-relaxed mb-6">
-                      "{stories[currentStory].testimonial}"
+                      &quot;{stories[currentStory].testimonial}&quot;
                     </p>
                     
                     <div className="flex items-center space-x-1 mb-4">
