@@ -100,7 +100,7 @@ const Hero = () => {
         Start Your Journey Now
       </Button>
     </EnrollModal>
-  </div>
+  </div>Transform Your Career Today!
 
   {/* Row 2: Secondary Actions */}
   <div className="flex flex-col sm:flex-row gap-5">
