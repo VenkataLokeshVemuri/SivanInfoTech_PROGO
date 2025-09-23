@@ -1,4 +1,4 @@
-import { Target, BookOpen, Briefcase, Trophy, ArrowRight } from 'lucide-react';
+import { Target, BookOpen, Briefcase, Trophy, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 const HowItWorks = () => {
   const steps = [
@@ -7,6 +7,8 @@ const HowItWorks = () => {
       title: "Choose Your Cloud Path",
       description: "Select from AWS, Azure, or GCP certification tracks based on your career goals",
       icon: Target,
+      iconClass: "text-primary",
+      bgColor: "bg-primary/10",
       color: "primary"
     },
     {
@@ -14,6 +16,8 @@ const HowItWorks = () => {
       title: "Attend Live Sessions",
       description: "Join interactive sessions with industry experts and hands-on practical training",
       icon: BookOpen,
+      iconClass: "text-blue-600",
+      bgColor: "bg-blue-100",
       color: "azure-blue"
     },
     {
@@ -21,6 +25,8 @@ const HowItWorks = () => {
       title: "Work on Real Projects", 
       description: "Build real-world projects and case studies to strengthen your portfolio",
       icon: Briefcase,
+      iconClass: "text-orange-600",
+      bgColor: "bg-orange-100",
       color: "aws-orange"
     },
     {
@@ -28,6 +34,8 @@ const HowItWorks = () => {
       title: "Get Placed with Support",
       description: "Receive comprehensive placement assistance and career guidance",
       icon: Trophy,
+      iconClass: "text-amber-600",
+      bgColor: "bg-amber-100",
       color: "secondary"
     }
   ];
@@ -49,7 +57,7 @@ const HowItWorks = () => {
           {/* Timeline */}
           <div className="relative">
             {/* Timeline Line */}
-            <div className="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-gradient-to-r from-primary via-azure-blue via-aws-orange to-secondary transform -translate-y-1/2 rounded-full"></div>
+            <div className="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-gradient-to-r from-primary via-blue-500 to-amber-500 transform -translate-y-1/2 rounded-full"></div>
             
             {/* Steps */}
             <div className="grid md:grid-cols-4 gap-8 relative z-10">
@@ -58,32 +66,32 @@ const HowItWorks = () => {
                 return (
                   <div key={index} className="relative">
                     {/* Step Card */}
-                    <div className="bg-white rounded-2xl p-8 shadow-lg card-hover border border-primary/10 text-center relative">
+                    <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 text-center relative">
                       {/* Step Number */}
-                      <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-${step.color} to-${step.color}/80 text-white font-bold text-xl mb-6 mx-auto`}>
+                      <div className={`inline-flex items-center justify-center w-14 h-14 rounded-full ${index === 0 ? 'bg-primary' : index === 1 ? 'bg-blue-600' : index === 2 ? 'bg-orange-600' : 'bg-amber-600'} text-white font-bold text-xl mb-6 mx-auto shadow-md`}>
                         {step.step}
                       </div>
 
                       {/* Icon */}
-                      <div className="mb-4 flex justify-center">
-                        <div className={`w-12 h-12 rounded-lg bg-gradient-to-r from-${step.color}/10 to-${step.color}/5 flex items-center justify-center`}>
-                          <IconComponent className={`h-6 w-6 text-${step.color}`} />
+                      <div className="mb-6 flex justify-center">
+                        <div className={`w-16 h-16 rounded-full ${step.bgColor} flex items-center justify-center shadow-sm`}>
+                          <IconComponent className={`h-8 w-8 ${step.iconClass}`} strokeWidth={1.5} />
                         </div>
                       </div>
 
                       {/* Content */}
-                      <h3 className="text-xl font-bold text-foreground mb-4">{step.title}</h3>
-                      <p className="text-muted-foreground leading-relaxed">{step.description}</p>
+                      <h3 className="text-xl font-bold text-gray-800 mb-4">{step.title}</h3>
+                      <p className="text-gray-600 leading-relaxed">{step.description}</p>
 
                       {/* Arrow for desktop */}
                       {index < steps.length - 1 && (
-                        <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2">
-                          <ArrowRight className="h-8 w-8 text-primary/30" />
+                        <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-20">
+                          <div className="bg-white rounded-full p-1 shadow-md">
+                            <ArrowRight className="h-8 w-8 text-gray-400" />
+                          </div>
                         </div>
                       )}
                     </div>
-
-                   
                   </div>
                 );
               })}
