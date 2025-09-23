@@ -7,9 +7,9 @@ const HowItWorks = () => {
       title: "Choose Your Cloud Path",
       description: "Select from AWS, Azure, or GCP certification tracks based on your career goals",
       icon: Target,
-      iconClass: "text-primary",
-      bgColor: "bg-primary/10",
-      color: "primary"
+      iconClass: "text-pink-600",
+      bgColor: "bg-pink-100",
+      color: "pink"
     },
     {
       step: "02", 
@@ -25,8 +25,8 @@ const HowItWorks = () => {
       title: "Work on Real Projects", 
       description: "Build real-world projects and case studies to strengthen your portfolio",
       icon: Briefcase,
-      iconClass: "text-orange-600",
-      bgColor: "bg-orange-100",
+      iconClass: "text-green-600",
+      bgColor: "bg-green-100",
       color: "aws-orange"
     },
     {
@@ -57,7 +57,7 @@ const HowItWorks = () => {
           {/* Timeline */}
           <div className="relative">
             {/* Timeline Line */}
-            <div className="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-gradient-to-r from-primary via-blue-500 to-amber-500 transform -translate-y-1/2 rounded-full"></div>
+            <div className="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-gradient-to-r from-pink-500 via-blue-500 to-amber-500 transform -translate-y-1/2 rounded-full"></div>
             
             {/* Steps */}
             <div className="grid md:grid-cols-4 gap-8 relative z-10">
@@ -68,7 +68,7 @@ const HowItWorks = () => {
                     {/* Step Card */}
                     <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 text-center relative">
                       {/* Step Number */}
-                      <div className={`inline-flex items-center justify-center w-14 h-14 rounded-full ${index === 0 ? 'bg-primary' : index === 1 ? 'bg-blue-600' : index === 2 ? 'bg-orange-600' : 'bg-amber-600'} text-white font-bold text-xl mb-6 mx-auto shadow-md`}>
+                      <div className={`inline-flex items-center justify-center w-14 h-14 rounded-full ${index === 0 ? 'bg-pink-500' : index === 1 ? 'bg-blue-600' : index === 2 ? 'bg-green-600' : 'bg-amber-600'} text-white font-bold text-xl mb-6 mx-auto shadow-md`}>
                         {step.step}
                       </div>
 

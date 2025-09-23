@@ -81,7 +81,7 @@ const Contact = () => {
     { icon: Facebook, name: "Facebook", url: "#", color: "text-blue-600" },
     { icon: Instagram, name: "Instagram", url: "#", color: "text-pink-600" },
     { icon: Linkedin, name: "LinkedIn", url: "#", color: "text-blue-700" },
-    { icon: Youtube, name: "YouTube", url: "#", color: "text-red-600" },
+    { icon: Youtube, name: "YouTube", url: "#", color: "text-green-600" },
   ];
 
   return (

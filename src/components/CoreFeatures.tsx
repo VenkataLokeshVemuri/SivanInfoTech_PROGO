@@ -49,8 +49,8 @@ const CoreFeatures = () => {
     {
       icon: Briefcase,
       title: "Business & Pre-Sales Skills",
-      color: "from-orange-600 to-red-600",
-      bgColor: "bg-orange-50",
+      color: "from-blue-600 to-green-600",
+      bgColor: "bg-blue-50",
       features: [
         "Guidelines to Understand Business Requirements",
         "Guidelines for RFP / Pre-Sales Work",
@@ -97,13 +97,13 @@ const CoreFeatures = () => {
         <div className="max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="text-center mb-20">
-            <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-full text-sm font-bold mb-6 shadow-lg">
+            <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r Our Premium Training Features text-black rounded-full text-sm font-bold mb-6 shadow-lg">
               <Award className="mr-2 h-5 w-5" />
               Our Premium Training Features
             </div>
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight">
               What Makes Our Training 
-              <span className="block bg-gradient-to-r from-primary via-secondary to-orange-500 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-primary via-secondary to-green-500 bg-clip-text text-transparent">
                 Absolutely Unique
               </span>
             </h2>
@@ -169,7 +169,7 @@ const CoreFeatures = () => {
                 
                 <div className="flex flex-col sm:flex-row gap-6 justify-center">
                   <Button 
-                    className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-7 rounded-xl font-bold text-lg 
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-10 py-7 rounded-xl font-bold text-lg 
                              transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl 
                              border-0 flex items-center"
                   >

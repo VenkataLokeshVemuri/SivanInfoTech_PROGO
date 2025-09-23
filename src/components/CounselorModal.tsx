@@ -69,7 +69,7 @@ const CounselorModal = ({ children }: CounselorModalProps) => {
       <DialogContent className="sm:max-w-md w-full max-h-[90vh] overflow-y-auto bg-white rounded-xl shadow-xl border border-gray-200 scrollbar-hide">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-blue-900">
-            <MessageCircle className="h-5 w-5 text-orange-600" />
+            <MessageCircle className="h-5 w-5 text-blue-600" />
             Talk to Counselor
           </DialogTitle>
         </DialogHeader>
@@ -191,7 +191,7 @@ const CounselorModal = ({ children }: CounselorModalProps) => {
               Cancel
             </Button>
             <Button
-              className="flex-1 bg-orange-600 hover:bg-orange-700 text-white"
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white"
               onClick={handleSubmit}
             >
               {isLoading ? "Submitting..." : "Request Callback"}

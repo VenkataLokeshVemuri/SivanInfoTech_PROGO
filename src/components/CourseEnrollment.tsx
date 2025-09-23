@@ -170,7 +170,7 @@ const CourseEnrollment = () => {
                         <Button
                           onClick={() => handleEnroll(course, batch)}
                           disabled={batch.enrolled >= batch.capacity || enrolling === `${course.courseid}-${batch.batchid}`}
-                          className="w-56 bg-gradient-to-r from-orange-500 to-orange-400 hover:from-green-500 hover:to-green-400 text-white hover:opacity-90"
+                          className="w-56 bg-gradient-to-r from-blue-500 to-blue-400 hover:from-green-500 hover:to-green-400 text-white hover:opacity-90"
                           size="sm"
                         >
                           <Award className="h-4 w-4 mr-2" />

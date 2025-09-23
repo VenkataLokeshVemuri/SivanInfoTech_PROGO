@@ -68,6 +68,53 @@ body {
   }
 }
 
+@keyframes writing {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+@keyframes pen-stroke {
+  0% {
+    stroke-dashoffset: 100%;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0%;
+    opacity: 1;
+  }
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
@@ -81,6 +128,13 @@ body {
   border-right: 2px solid;
   white-space: nowrap;
   animation: typewriter 3s steps(40, end), blink 0.75s step-end infinite;
+}
+
+.animate-typewriter-delay-05 {
+  overflow: hidden;
+  border-right: 2px solid;
+  white-space: nowrap;
+  animation: typewriter 3s steps(40, end) 0.5s both, blink 0.75s step-end infinite 0.5s;
 }
 
 .animate-typewriter-delay-1 {
@@ -97,6 +151,38 @@ body {
   animation: typewriter 4s steps(60, end) 6s both, blink 0.75s step-end infinite 6s;
 }
 
+.animate-writing {
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  animation: writing 2s ease-out 0.5s both;
+}
+
+.animate-writing::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2px;
+  height: 100%;
+  background: currentColor;
+  animation: blink 1s ease-in-out infinite;
+}
+
+.animate-writing-text {
+  display: inline-block;
+  opacity: 0;
+  animation: writing 2.5s ease-out 0.5s both;
+}
+
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.3s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.2s ease-out forwards;
 }
