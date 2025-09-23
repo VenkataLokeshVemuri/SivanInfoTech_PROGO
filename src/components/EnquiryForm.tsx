@@ -143,7 +143,11 @@ const EnquiryForm = () => {
                       />
                     </div>
 
-                    <Button type="submit" disabled={submitting} className="w-full">
+                    <Button 
+                      type="submit" 
+                      disabled={submitting} 
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-300"
+                    >
                       <Send className="h-4 w-4 mr-2" />
                       {submitting ? 'Sending...' : 'Send Enquiry'}
                     </Button>

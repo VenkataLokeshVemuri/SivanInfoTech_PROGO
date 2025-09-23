@@ -185,14 +185,15 @@ const CounselorModal = ({ children }: CounselorModalProps) => {
           <div className="flex gap-2 pt-4">
             <Button
               variant="outline"
-              className="flex-1 border-gray-300 text-blue-900"
+              className="flex-1 border-gray-300 text-blue-900 transition-colors duration-300"
               onClick={() => setIsOpen(false)}
             >
               Cancel
             </Button>
             <Button
-              className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white transition-colors duration-300"
               onClick={handleSubmit}
+              disabled={!isFormValid || isLoading}
             >
               {isLoading ? "Submitting..." : "Request Callback"}
             </Button>

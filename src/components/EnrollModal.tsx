@@ -181,13 +181,13 @@ const EnrollModal = ({ courseId, courseName, coursePrice, children }: EnrollModa
           <div className="flex gap-2 pt-4">
             <Button
               variant="outline"
-              className="flex-1"
+              className="flex-1 transition-colors duration-300"
               onClick={() => setIsOpen(false)}
             >
               Cancel
             </Button>
             <Button
-              className="flex-1"
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-300"
               onClick={handleEnrollment}
               disabled={isLoading || (!isAuthenticated && (!enrollmentData.name || !enrollmentData.email || !enrollmentData.phone))}
             >

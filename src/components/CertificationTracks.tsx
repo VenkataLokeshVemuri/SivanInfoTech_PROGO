@@ -201,13 +201,13 @@ const CertificationTracks = () => {
                 courseName={course.title} 
                 coursePrice={parseInt(course.price.replace('₹', '').replace(',', ''))}
               >
-                <Button className={`w-full ${course.popular ? 'bg-blue-500 hover:bg-blue-600' : 'bg-green-600 hover:bg-green-700'} text-white font-semibold py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300`}>
+                <Button className={`w-full ${course.popular ? 'bg-blue-500 hover:bg-blue-600' : 'bg-green-600 hover:bg-green-700'} text-white font-semibold py-6 rounded-xl shadow-lg hover:shadow-xl transition-colors duration-300`}>
                   Enroll Now
                 </Button>
               </EnrollModal>
               <Button 
                 variant="outline" 
-                className="w-full text-gray-700 border-gray-300 hover:bg-gray-50 py-5 rounded-xl"
+                className="w-full text-gray-700 border-gray-300 hover:bg-gray-50 py-5 rounded-xl transition-colors duration-300"
                 disabled={!isLoggedIn}
               >
                 <Download className="h-4 w-4 mr-2" strokeWidth={2} />

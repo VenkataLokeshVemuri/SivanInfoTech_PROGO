@@ -161,7 +161,7 @@ const CourseTracksNew = () => {
 
                 {/* CTA Button */}
                 <div className="px-8 pb-8 mb-2.5 mt-auto">
-                  <Button className={`w-full shadow-lg hover:shadow-xl font-semibold py-5 rounded-xl transition-all duration-300 ${
+                  <Button className={`w-full shadow-lg hover:shadow-xl font-semibold py-5 rounded-xl transition-colors duration-300 ${
                     index === 0 ? 'bg-blue-500 hover:bg-blue-600' : 
                     index === 1 ? 'bg-green-500 hover:bg-green-600' : 
                     'bg-blue-600 hover:bg-blue-700'
@@ -179,7 +179,7 @@ const CourseTracksNew = () => {
             <div className="inline-flex items-center space-x-4 bg-white rounded-2xl p-6 shadow-lg border border-primary/10">
               <div className="text-center">
                 <p className="text-muted-foreground mb-2">Not sure which track to choose?</p>
-                <Button variant="outline" className="border-2 bg-green-500 border-primary text-white hover:bg-green-600 hover:size-md font-semibold">
+                <Button variant="outline" className="border-2 bg-green-500 border-primary text-white hover:bg-green-600 transition-colors duration-300 font-semibold">
                   Get Free Career Counseling
                 </Button>
               </div>

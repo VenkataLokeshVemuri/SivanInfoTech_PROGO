@@ -93,7 +93,7 @@ const Hero = () => {
         size="lg"
         className="px-8 py-6 text-lg rounded-xl font-semibold shadow-lg
                   bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0
-                  hover:from-emerald-600 hover:to-green-700 transition-all duration-300
+                  hover:from-emerald-600 hover:to-green-700 transition-colors duration-300
                   transform hover:scale-105 hover:shadow-xl"
       >
         <Zap className="mr-3 h-5 w-5" strokeWidth={2.5} />
@@ -113,7 +113,7 @@ const Hero = () => {
         size="lg"
         variant="outline"
         className="px-6 py-5 text-base rounded-xl border-2 border-green-600 text-green-700 font-semibold
-                 hover:bg-green-600 hover:text-white transition-all duration-300 shadow-md"
+                 hover:bg-green-600 hover:text-white transition-colors duration-300 shadow-md"
       >
         Enquire Now
       </Button>
@@ -128,7 +128,7 @@ const Hero = () => {
         size="lg"
         variant="outline"
         className="px-6 py-5 text-base rounded-xl border-2 border-green-600 text-green-700 font-semibold
-                 hover:bg-green-600 hover:text-white transition-all duration-300 shadow-md"
+                 hover:bg-green-600 hover:text-white transition-colors duration-300 shadow-md"
       >
         Schedule Demo Class
       </Button>
