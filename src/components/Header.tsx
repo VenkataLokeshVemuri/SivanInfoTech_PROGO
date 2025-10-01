@@ -14,8 +14,8 @@ const Header = () => {
   const navItems = [
     { name: 'Home', href: '/' },
     { name: 'Courses', href: '/courses' },
-    { name: 'Why SitCloud', href: '#why-sitcloud' },
-    { name: 'Batch Schedule', href: '#batch-schedule' },
+    { name: 'Why SitCloud', href: '/why-us' },
+    { name: 'View Schedule', href: '/view-schedule' },
     { name: 'Verify Certificate', href: '/verify' },
     { name: 'Contact', href: '#contact' },
   ];

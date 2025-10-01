@@ -3,6 +3,7 @@ import { MapPin, Phone, Clock, Star, ExternalLink } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import chennaiEntrance from '@/assets/chennai-entrance.jpg';
+import bengaluruBuilding from '@/assets/bengaluru-building.jpg';
 
 const TrainingCenters = () => {
   const centers = [
@@ -12,7 +13,7 @@ const TrainingCenters = () => {
       phone: "+91 89255 30011",
       specialization: "Cloud Specialization Centre",
       landmarks: ["Near Old Madiwala", "BTM Layout Area", "Outer Ring Road Access"],
-      image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=250&fit=crop"
+      image: bengaluruBuilding
     },
     {
       name: "Registered Office (Chennai)",
@@ -43,16 +44,24 @@ const TrainingCenters = () => {
           </div>
 
           {/* Centers Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
             {centers.map((center, index) => (
-              <Card key={index} className="overflow-hidden hover:shadow-2xl transition-all duration-300 group border-0 shadow-lg">
+              <Card key={index} className="overflow-hidden hover:shadow-2xl transition-all duration-300 group border-0 shadow-xl bg-white">
                 {/* Center Image */}
-                <div className="relative h-48 overflow-hidden">
+                <div className="relative h-56 overflow-hidden bg-gray-100">
                   <Image 
                     src={center.image} 
                     alt={center.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    priority={index === 0}
+                    placeholder="blur"
                   />
+                  <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full">
+                    <div className="flex items-center text-xs font-semibold text-gray-700">
+                      <Star className="h-3 w-3 text-yellow-500 mr-1 fill-current" />
+                      Premium
+                    </div>
+                  </div>
                 </div>
 
                 <CardHeader className="pb-4">
