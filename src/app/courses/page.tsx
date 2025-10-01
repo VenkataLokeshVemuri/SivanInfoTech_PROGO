@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CourseEnrollment from '@/components/CourseEnrollment';
@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Award, Users, Clock } from 'lucide-react';
 
 const Courses = () => {
+  const [activeTab, setActiveTab] = useState('overview');
   const coursesOverview = [
     {
       logo: "/logos/aws.svg",
@@ -53,7 +54,7 @@ const Courses = () => {
       {/* Main Content */}
       <div className="flex-1 py-12 bg-gray-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <Tabs defaultValue="overview" className="space-y-8">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
             {/* Tabs */}
             <TabsList className="flex justify-center space-x-6">
               <TabsTrigger
@@ -115,6 +116,7 @@ const Courses = () => {
                       {/* Enroll Button with Gradient */}
                       <div className="flex-shrink-0 mt-4 md:mt-0">
                         <button
+                          onClick={() => setActiveTab('enroll')}
                           className="px-6 py-2 rounded-lg text-white font-medium 
                                      bg-gradient-to-r from-blue-500 to-indigo-600 
                                      hover:from-blue-600 hover:to-indigo-700 

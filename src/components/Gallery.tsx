@@ -137,18 +137,35 @@ const Gallery = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {location.images.map((image, imageIndex) => (
                     <Card 
                       key={imageIndex} 
-                      className="overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group"
+                      className="overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group border-2 hover:border-blue-200"
                       onClick={() => openLightbox(image.url)}
                     >
-                      <div className="relative">
+                      <div className="relative bg-gray-100">
                         <img
                           src={image.url}
                           alt={image.caption}
                           className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                          loading="eager"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const parent = target.parentElement;
+                            if (parent) {
+                              parent.innerHTML = `
+                                <div class="w-full h-64 bg-gray-200 flex items-center justify-center">
+                                  <div class="text-center text-gray-500">
+                                    <div class="text-4xl mb-2">🏢</div>
+                                    <p class="text-sm">${image.caption}</p>
+                                    <p class="text-xs text-gray-400">Image Preview</p>
+                                  </div>
+                                </div>
+                              `;
+                            }
+                          }}
                         />
                         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-opacity duration-300 flex items-center justify-center">
                           <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-semibold">
@@ -156,9 +173,11 @@ const Gallery = () => {
                           </span>
                         </div>
                       </div>
-                      <CardContent className="p-4">
-                        <h4 className="font-semibold text-gray-900">{image.caption}</h4>
-                        <span className="text-sm text-gray-600 capitalize">{image.type}</span>
+                      <CardContent className="p-4 bg-white">
+                        <h4 className="font-semibold text-gray-900 mb-2">{image.caption}</h4>
+                        <span className="text-sm text-blue-600 capitalize bg-blue-50 px-2 py-1 rounded-full">
+                          {image.type}
+                        </span>
                       </CardContent>
                     </Card>
                   ))}

@@ -48,6 +48,7 @@ const CourseEnrollment = () => {
       }
     } catch (error) {
       console.error('Error fetching courses:', error);
+      console.error('Error fetching courses:', error);
       toast({
         title: "Error",
         description: "Failed to fetch courses. Please try again.",
