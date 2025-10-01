@@ -35,11 +35,18 @@ const CourseEnrollment = () => {
 
   const fetchCourses = async () => {
     try {
+      console.log('Fetching courses...');
       const response = await apiService.getCourseAndBatchDetails();
+      console.log('API Response:', response);
+      
       if (response.status === 200) {
         setCourses(response.details);
+        console.log('Courses set:', response.details);
+      } else {
+        throw new Error(response.Message || 'Failed to fetch courses');
       }
     } catch (error) {
+      console.error('Error fetching courses:', error);
       toast({
         title: "Error",
         description: "Failed to fetch courses",
@@ -96,6 +103,15 @@ const CourseEnrollment = () => {
 
   if (loading) {
     return <div className="flex justify-center p-8 text-lg font-semibold">Loading courses...</div>;
+  }
+
+  if (courses.length === 0) {
+    return (
+      <div className="text-center p-8">
+        <h3 className="text-xl font-semibold text-gray-600 mb-4">No courses available</h3>
+        <p className="text-gray-500">Please check back later or contact support.</p>
+      </div>
+    );
   }
 
   return (
