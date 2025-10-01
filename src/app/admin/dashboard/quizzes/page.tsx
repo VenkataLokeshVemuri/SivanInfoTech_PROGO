@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { 
   Search, Filter, PlusCircle, MoreHorizontal,
   Edit, Trash2, FileText, Eye, Download,
-  CheckCircle, Clock, BarChart, Loader2
+  CheckCircle, Clock, BarChart, Loader2, Award
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -195,6 +195,13 @@ export default function QuizzesPage() {
     return matchesSearch && matchesStatus;
   });
 
+  // Calculate statistics
+  const activeQuizzes = quizzes.filter(quiz => quiz.status === 'active').length;
+  const draftQuizzes = quizzes.filter(quiz => quiz.status === 'draft').length;
+  const totalAttempts = quizzes.reduce((total, quiz) => total + (quiz.attempts || 0), 0);
+  const avgScore = quizzes.length > 0 ? 
+    (quizzes.reduce((total, quiz) => total + (quiz.avgScore || 0), 0) / quizzes.length).toFixed(1) : '0';
+
   // Get badge color based on status
   const getStatusBadge = (status: string) => {
     switch(status) {
@@ -224,48 +231,126 @@ export default function QuizzesPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight mb-1">Quizzes</h1>
-          <p className="text-gray-500">Manage quizzes and assessments</p>
-        </div>
-        <Link href="/admin/dashboard/quizzes/create">
-          <Button className="bg-[#80b742] hover:bg-[#80b742]/90">
-            <PlusCircle className="h-4 w-4 mr-2" />
-            Create New Quiz
-          </Button>
-        </Link>
-      </div>
-      
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center w-full max-w-md">
-              <div className="relative w-full">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
-                <Input
-                  type="search"
-                  placeholder="Search quizzes..."
-                  className="pl-8"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+      <div className="p-8 space-y-8">
+        {/* Enhanced Header */}
+        <div className="relative">
+          <div className="bg-gradient-to-r from-blue-600 to-green-600 rounded-2xl p-8 text-white shadow-xl">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+              <div className="mb-6 lg:mb-0">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                    <FileText className="h-8 w-8" />
+                  </div>
+                  <div>
+                    <h1 className="text-3xl font-bold">Quiz Management</h1>
+                    <p className="text-blue-100 text-lg">Create and manage assessments and quizzes</p>
+                  </div>
+                </div>
+                
+                {/* Statistics */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                    <div className="flex items-center space-x-2">
+                      <FileText className="h-5 w-5 text-blue-200" />
+                      <span className="text-sm font-medium text-blue-100">Total Quizzes</span>
+                    </div>
+                    <p className="text-2xl font-bold mt-1">{quizzes.length}</p>
+                  </div>
+                  
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                    <div className="flex items-center space-x-2">
+                      <CheckCircle className="h-5 w-5 text-green-200" />
+                      <span className="text-sm font-medium text-blue-100">Active</span>
+                    </div>
+                    <p className="text-2xl font-bold mt-1">{activeQuizzes}</p>
+                  </div>
+                  
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                    <div className="flex items-center space-x-2">
+                      <BarChart className="h-5 w-5 text-yellow-200" />
+                      <span className="text-sm font-medium text-blue-100">Attempts</span>
+                    </div>
+                    <p className="text-2xl font-bold mt-1">{totalAttempts}</p>
+                  </div>
+                  
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                    <div className="flex items-center space-x-2">
+                      <Award className="h-5 w-5 text-purple-200" />
+                      <span className="text-sm font-medium text-blue-100">Avg Score</span>
+                    </div>
+                    <p className="text-2xl font-bold mt-1">{avgScore}%</p>
+                  </div>
+                </div>
               </div>
-              <Button variant="outline" className="ml-2 shrink-0">
-                <Filter className="h-4 w-4 mr-1" />
-                <span className="hidden sm:inline">Filters</span>
-              </Button>
+              
+              <div className="space-y-3">
+                <Link href="/admin/dashboard/quizzes/create">
+                  <Button className="w-full lg:w-auto bg-white text-blue-600 hover:bg-blue-50 shadow-lg">
+                    <PlusCircle className="h-4 w-4 mr-2" />
+                    Create New Quiz
+                  </Button>
+                </Link>
+                <Button variant="outline" className="w-full lg:w-auto border-white/30 text-white hover:bg-white/10">
+                  <BarChart className="h-4 w-4 mr-2" />
+                  Quiz Analytics
+                </Button>
+              </div>
             </div>
-            
-            <Tabs defaultValue="all">
-              <TabsList className="grid w-full sm:w-auto grid-cols-3 h-auto">
-                <TabsTrigger value="all">All</TabsTrigger>
-                <TabsTrigger value="active">Active</TabsTrigger>
-                <TabsTrigger value="draft">Draft</TabsTrigger>
-              </TabsList>
-            </Tabs>
           </div>
+        </div>
+
+        {/* Enhanced Search and Filters */}
+        <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+          <CardHeader className="pb-4">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+              <div className="flex-1 max-w-md">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="Search quizzes by title, code, or course..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-3">
+                <Tabs defaultValue="all" className="w-auto">
+                  <TabsList className="grid grid-cols-4 bg-gray-100 p-1 rounded-xl">
+                    <TabsTrigger value="all" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                      All
+                    </TabsTrigger>
+                    <TabsTrigger value="active" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                      Active
+                    </TabsTrigger>
+                    <TabsTrigger value="draft" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                      Draft
+                    </TabsTrigger>
+                    <TabsTrigger value="archived" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                      Archived
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
+                
+                <Button variant="outline" className="border-gray-200 hover:bg-gray-50">
+                  <Filter className="h-4 w-4 mr-2" />
+                  Filters
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+        </Card>
+
+      <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100/50 border-b border-gray-100">
+          <CardTitle className="text-xl font-semibold text-gray-800">
+            Quizzes Overview ({filteredQuizzes.length} quizzes)
+          </CardTitle>
+          <CardDescription className="text-gray-600">
+            Manage quiz assessments, monitor performance, and track student progress
+          </CardDescription>
         </CardHeader>
         
         <CardContent>
@@ -367,32 +452,52 @@ export default function QuizzesPage() {
                               <Button 
                                 size="sm" 
                                 variant="outline" 
-                                className="h-8 w-8 p-0"
+                                className="h-8 w-8 p-0 hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 hover:border-green-300 transition-all duration-200"
                               >
                                 <MoreHorizontal className="h-4 w-4" />
                                 <span className="sr-only">More</span>
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem>
-                                <Eye className="h-4 w-4 mr-2" />
-                                <span>Preview Quiz</span>
+                            <DropdownMenuContent align="end" className="w-56 p-2 border-0 shadow-xl bg-white rounded-xl overflow-hidden">
+                              <DropdownMenuItem className="cursor-pointer flex items-center px-3 py-2.5 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-green-50 hover:text-blue-700 rounded-lg transition-all duration-200 group">
+                                <div className="flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-600 rounded-lg group-hover:bg-blue-200 transition-colors mr-3">
+                                  <Eye className="h-4 w-4" />
+                                </div>
+                                <div className="flex-1">
+                                  <div className="font-medium text-sm">Preview Quiz</div>
+                                  <div className="text-xs text-gray-500">View as student</div>
+                                </div>
                               </DropdownMenuItem>
-                              <DropdownMenuItem>
-                                <BarChart className="h-4 w-4 mr-2" />
-                                <span>View Analytics</span>
+                              <DropdownMenuItem className="cursor-pointer flex items-center px-3 py-2.5 text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 hover:text-purple-700 rounded-lg transition-all duration-200 group">
+                                <div className="flex items-center justify-center w-8 h-8 bg-purple-100 text-purple-600 rounded-lg group-hover:bg-purple-200 transition-colors mr-3">
+                                  <BarChart className="h-4 w-4" />
+                                </div>
+                                <div className="flex-1">
+                                  <div className="font-medium text-sm">View Analytics</div>
+                                  <div className="text-xs text-gray-500">Performance insights</div>
+                                </div>
                               </DropdownMenuItem>
-                              <DropdownMenuItem>
-                                <Download className="h-4 w-4 mr-2" />
-                                <span>Export Results</span>
+                              <DropdownMenuItem className="cursor-pointer flex items-center px-3 py-2.5 text-gray-700 hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 hover:text-green-700 rounded-lg transition-all duration-200 group">
+                                <div className="flex items-center justify-center w-8 h-8 bg-green-100 text-green-600 rounded-lg group-hover:bg-green-200 transition-colors mr-3">
+                                  <Download className="h-4 w-4" />
+                                </div>
+                                <div className="flex-1">
+                                  <div className="font-medium text-sm">Export Results</div>
+                                  <div className="text-xs text-gray-500">Download data</div>
+                                </div>
                               </DropdownMenuItem>
-                              <DropdownMenuSeparator />
+                              <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent mx-2 my-2"></div>
                               <DropdownMenuItem 
-                                className="text-red-600"
+                                className="cursor-pointer flex items-center px-3 py-2.5 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-all duration-200 group"
                                 onClick={() => handleDeleteQuiz(quiz.id || quiz.quizId)}
                               >
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                <span>Delete Quiz</span>
+                                <div className="flex items-center justify-center w-8 h-8 bg-red-100 text-red-600 rounded-lg group-hover:bg-red-200 transition-colors mr-3">
+                                  <Trash2 className="h-4 w-4" />
+                                </div>
+                                <div className="flex-1">
+                                  <div className="font-medium text-sm">Delete Quiz</div>
+                                  <div className="text-xs text-gray-500">Remove permanently</div>
+                                </div>
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -421,6 +526,7 @@ export default function QuizzesPage() {
           </div>
         </CardFooter>
       </Card>
+      </div>
     </div>
   );
 }

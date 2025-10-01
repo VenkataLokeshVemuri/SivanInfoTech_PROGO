@@ -4,7 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { 
   Search, Filter, MoreHorizontal, FileText, 
-  Download, Eye, Mail, Clock, CheckCircle, XCircle
+  Download, Eye, Mail, Clock, CheckCircle, XCircle,
+  Award, BarChart, Users, TrendingUp, Activity
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -136,6 +137,17 @@ export default function AttemptsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredAttempts, setFilteredAttempts] = useState(mockAttempts);
   
+  // Calculate statistics
+  const totalAttempts = mockAttempts.length;
+  const completedAttempts = mockAttempts.filter(attempt => attempt.status === 'completed').length;
+  const passedAttempts = mockAttempts.filter(attempt => 
+    attempt.status === 'completed' && attempt.score !== null && attempt.score >= attempt.passScore
+  ).length;
+  const avgScore = mockAttempts
+    .filter(attempt => attempt.score !== null)
+    .reduce((total, attempt) => total + (attempt.score || 0), 0) / 
+    mockAttempts.filter(attempt => attempt.score !== null).length || 0;
+  
   // Filter attempts based on search term
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
@@ -178,48 +190,124 @@ export default function AttemptsPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight mb-1">Quiz Attempts</h1>
-          <p className="text-gray-500">View and manage student quiz attempts</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" className="bg-white">
-            <Download className="h-4 w-4 mr-2" />
-            Export Data
-          </Button>
-        </div>
-      </div>
-      
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center w-full max-w-md">
-              <div className="relative w-full">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
-                <Input
-                  type="search"
-                  placeholder="Search attempts..."
-                  className="pl-8"
-                  value={searchTerm}
-                  onChange={handleSearch}
-                />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+      <div className="p-8 space-y-8">
+        {/* Enhanced Header */}
+        <div className="relative">
+          <div className="bg-gradient-to-r from-blue-600 to-green-600 rounded-2xl p-8 text-white shadow-xl">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+              <div className="mb-6 lg:mb-0">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                    <Activity className="h-8 w-8" />
+                  </div>
+                  <div>
+                    <h1 className="text-3xl font-bold">Quiz Attempts</h1>
+                    <p className="text-blue-100 text-lg">Monitor student quiz attempts and performance</p>
+                  </div>
+                </div>
+                
+                {/* Statistics */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                    <div className="flex items-center space-x-2">
+                      <Activity className="h-5 w-5 text-blue-200" />
+                      <span className="text-sm font-medium text-blue-100">Total Attempts</span>
+                    </div>
+                    <p className="text-2xl font-bold mt-1">{totalAttempts}</p>
+                  </div>
+                  
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                    <div className="flex items-center space-x-2">
+                      <CheckCircle className="h-5 w-5 text-green-200" />
+                      <span className="text-sm font-medium text-blue-100">Completed</span>
+                    </div>
+                    <p className="text-2xl font-bold mt-1">{completedAttempts}</p>
+                  </div>
+                  
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                    <div className="flex items-center space-x-2">
+                      <Award className="h-5 w-5 text-yellow-200" />
+                      <span className="text-sm font-medium text-blue-100">Passed</span>
+                    </div>
+                    <p className="text-2xl font-bold mt-1">{passedAttempts}</p>
+                  </div>
+                  
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                    <div className="flex items-center space-x-2">
+                      <TrendingUp className="h-5 w-5 text-purple-200" />
+                      <span className="text-sm font-medium text-blue-100">Avg Score</span>
+                    </div>
+                    <p className="text-2xl font-bold mt-1">{avgScore.toFixed(1)}%</p>
+                  </div>
+                </div>
               </div>
-              <Button variant="outline" className="ml-2 shrink-0">
-                <Filter className="h-4 w-4 mr-1" />
-                <span className="hidden sm:inline">Filters</span>
-              </Button>
+              
+              <div className="space-y-3">
+                <Button className="w-full lg:w-auto bg-white text-blue-600 hover:bg-blue-50 shadow-lg">
+                  <Download className="h-4 w-4 mr-2" />
+                  Export Data
+                </Button>
+                <Button variant="outline" className="w-full lg:w-auto border-white/30 text-white hover:bg-white/10">
+                  <BarChart className="h-4 w-4 mr-2" />
+                  Performance Analytics
+                </Button>
+              </div>
             </div>
-            
-            <Tabs defaultValue="all">
-              <TabsList className="grid w-full sm:w-auto grid-cols-3 h-auto">
-                <TabsTrigger value="all">All</TabsTrigger>
-                <TabsTrigger value="passed">Passed</TabsTrigger>
-                <TabsTrigger value="failed">Failed</TabsTrigger>
-              </TabsList>
-            </Tabs>
           </div>
+        </div>
+
+        {/* Enhanced Search and Filters */}
+        <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+          <CardHeader className="pb-4">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+              <div className="flex-1 max-w-md">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="Search attempts by student, quiz, or batch..."
+                    value={searchTerm}
+                    onChange={handleSearch}
+                    className="pl-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-3">
+                <Tabs defaultValue="all" className="w-auto">
+                  <TabsList className="grid grid-cols-4 bg-gray-100 p-1 rounded-xl">
+                    <TabsTrigger value="all" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                      All
+                    </TabsTrigger>
+                    <TabsTrigger value="passed" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                      Passed
+                    </TabsTrigger>
+                    <TabsTrigger value="failed" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                      Failed
+                    </TabsTrigger>
+                    <TabsTrigger value="progress" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                      In Progress
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
+                
+                <Button variant="outline" className="border-gray-200 hover:bg-gray-50">
+                  <Filter className="h-4 w-4 mr-2" />
+                  Filters
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+        </Card>
+
+      <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100/50 border-b border-gray-100">
+          <CardTitle className="text-xl font-semibold text-gray-800">
+            Quiz Attempts Overview ({filteredAttempts.length} attempts)
+          </CardTitle>
+          <CardDescription className="text-gray-600">
+            Track student quiz performance, review scores, and monitor progress
+          </CardDescription>
         </CardHeader>
         
         <CardContent>
@@ -330,32 +418,55 @@ export default function AttemptsPage() {
                               <Button 
                                 size="sm" 
                                 variant="outline" 
-                                className="h-8 w-8 p-0"
+                                className="h-8 w-8 p-0 hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 hover:border-green-300 transition-all duration-200"
                               >
                                 <MoreHorizontal className="h-4 w-4" />
                                 <span className="sr-only">More</span>
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem>
-                                <Download className="h-4 w-4 mr-2" />
-                                <span>Download Report</span>
+                            <DropdownMenuContent align="end" className="w-56 p-2 border-0 shadow-xl bg-white rounded-xl overflow-hidden">
+                              <DropdownMenuItem className="cursor-pointer flex items-center px-3 py-2.5 text-gray-700 hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 hover:text-green-700 rounded-lg transition-all duration-200 group">
+                                <div className="flex items-center justify-center w-8 h-8 bg-green-100 text-green-600 rounded-lg group-hover:bg-green-200 transition-colors mr-3">
+                                  <Download className="h-4 w-4" />
+                                </div>
+                                <div className="flex-1">
+                                  <div className="font-medium text-sm">Download Report</div>
+                                  <div className="text-xs text-gray-500">Get detailed results</div>
+                                </div>
                               </DropdownMenuItem>
-                              <DropdownMenuItem>
-                                <Mail className="h-4 w-4 mr-2" />
-                                <span>Email Results</span>
+                              <DropdownMenuItem className="cursor-pointer flex items-center px-3 py-2.5 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-green-50 hover:text-blue-700 rounded-lg transition-all duration-200 group">
+                                <div className="flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-600 rounded-lg group-hover:bg-blue-200 transition-colors mr-3">
+                                  <Mail className="h-4 w-4" />
+                                </div>
+                                <div className="flex-1">
+                                  <div className="font-medium text-sm">Email Results</div>
+                                  <div className="text-xs text-gray-500">Send to student</div>
+                                </div>
                               </DropdownMenuItem>
                               {attempt.status === 'completed' && attempt.score !== null && attempt.score < attempt.passScore && (
-                                <DropdownMenuItem>
-                                  <CheckCircle className="h-4 w-4 mr-2" />
-                                  <span>Allow Retake</span>
+                                <DropdownMenuItem className="cursor-pointer flex items-center px-3 py-2.5 text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-green-50 hover:text-purple-700 rounded-lg transition-all duration-200 group">
+                                  <div className="flex items-center justify-center w-8 h-8 bg-purple-100 text-purple-600 rounded-lg group-hover:bg-purple-200 transition-colors mr-3">
+                                    <CheckCircle className="h-4 w-4" />
+                                  </div>
+                                  <div className="flex-1">
+                                    <div className="font-medium text-sm">Allow Retake</div>
+                                    <div className="text-xs text-gray-500">Give another chance</div>
+                                  </div>
                                 </DropdownMenuItem>
                               )}
                               {attempt.status === 'in-progress' && (
-                                <DropdownMenuItem className="text-red-600">
-                                  <XCircle className="h-4 w-4 mr-2" />
-                                  <span>Force End Attempt</span>
-                                </DropdownMenuItem>
+                                <>
+                                  <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent mx-2 my-2"></div>
+                                  <DropdownMenuItem className="cursor-pointer flex items-center px-3 py-2.5 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-all duration-200 group">
+                                    <div className="flex items-center justify-center w-8 h-8 bg-red-100 text-red-600 rounded-lg group-hover:bg-red-200 transition-colors mr-3">
+                                      <XCircle className="h-4 w-4" />
+                                    </div>
+                                    <div className="flex-1">
+                                      <div className="font-medium text-sm">Force End Attempt</div>
+                                      <div className="text-xs text-gray-500">Stop current attempt</div>
+                                    </div>
+                                  </DropdownMenuItem>
+                                </>
                               )}
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -384,6 +495,7 @@ export default function AttemptsPage() {
           </div>
         </CardFooter>
       </Card>
+      </div>
     </div>
   );
 }

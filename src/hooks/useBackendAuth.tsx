@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { backendAPI } from '@/lib/backend-api';
 
-interface User {
+export interface User {
   id: string;
   name: string;
   email: string;
@@ -129,7 +129,7 @@ export function BackendAuthProvider({ children }: { children: React.ReactNode })
 
   const verifyEmail = async (email: string, otp: string) => {
     try {
-      const response = await backendAPI.verifyEmail(email, otp);
+      const response = await backendAPI.verifyEmail({ email, otp });
       
       if (response.success) {
         toast({
