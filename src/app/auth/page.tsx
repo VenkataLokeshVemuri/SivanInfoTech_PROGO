@@ -31,8 +31,9 @@ const Auth = () => {
     setIsLoading(true);
     try {
       const result = await login(signInData.email, signInData.password);
-      if (result.success) {
-        router.push('/dashboard');
+      if (result.success && result.user) {
+        // Redirect to home page for both admin and student users
+        router.push('/');
       }
     } catch (err) {
       // handle error

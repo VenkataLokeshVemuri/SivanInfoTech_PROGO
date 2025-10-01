@@ -15,7 +15,9 @@ interface BackendAuthContextType {
   user: User | null;
   loading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  isAdmin: boolean;
+  isStudent: boolean;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string; user?: User }>;
   register: (userData: {
     name: string;
     email: string;
@@ -63,12 +65,13 @@ export function BackendAuthProvider({ children }: { children: React.ReactNode })
       const response = await backendAPI.login(email, password);
       
       if (response.success && response.data) {
-        setUser(response.data.user);
+        const userData = response.data.user;
+        setUser(userData);
         toast({
           title: "Welcome Back!",
           description: "You have successfully signed in.",
         });
-        return { success: true };
+        return { success: true, user: userData };
       } else {
         toast({
           title: "Login Failed",
@@ -176,12 +179,16 @@ export function BackendAuthProvider({ children }: { children: React.ReactNode })
   };
 
   const isAuthenticated = !!user && backendAPI.isAuthenticated();
+  const isAdmin = user?.role === 'admin';
+  const isStudent = user?.role === 'student';
 
   return (
     <BackendAuthContext.Provider value={{
       user,
       loading,
       isAuthenticated,
+      isAdmin,
+      isStudent,
       login,
       register,
       logout,

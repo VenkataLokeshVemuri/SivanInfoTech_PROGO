@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
   Search, Filter, PlusCircle, MoreHorizontal,
   Edit, Trash2, Users, Calendar, BookOpen,
-  CheckCircle, XCircle, Clock
+  CheckCircle, XCircle, Clock, Loader2
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,9 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
+import { backendAPI } from '@/lib/backend-api';
+import { useBackendAuth } from '@/hooks/useBackendAuth';
+import { useToast } from '@/hooks/use-toast';
 
 // Mock batch data
 const mockBatches = [
@@ -85,28 +89,107 @@ const mockBatches = [
 ];
 
 export default function BatchesPage() {
+  const [batches, setBatches] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredBatches, setFilteredBatches] = useState(mockBatches);
+  const [filterStatus, setFilterStatus] = useState('all');
   
-  // Filter batches based on search term
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const term = e.target.value;
-    setSearchTerm(term);
-    
-    if (!term.trim()) {
-      setFilteredBatches(mockBatches);
+  const { user, isAuthenticated, isAdmin } = useBackendAuth();
+  const { toast } = useToast();
+  const router = useRouter();
+
+  // Authentication check
+  useEffect(() => {
+    if (!isAuthenticated || !isAdmin) {
+      router.push('/auth');
+      return;
+    }
+  }, [isAuthenticated, isAdmin, router]);
+
+  // Load batches data
+  useEffect(() => {
+    if (isAuthenticated && isAdmin) {
+      loadBatches();
+    }
+  }, [isAuthenticated, isAdmin]);
+
+  const loadBatches = async () => {
+    try {
+      setLoading(true);
+      const response = await backendAPI.getAllBatches();
+      if (response.success && response.data) {
+        setBatches(response.data.batches || []);
+      } else {
+        // Fallback to mock data if API fails
+        setBatches(mockBatches);
+        toast({
+          title: "Info",
+          description: "Using mock data - backend not available",
+          variant: "default",
+        });
+      }
+    } catch (error) {
+      // Fallback to mock data on error
+      setBatches(mockBatches);
+      toast({
+        title: "Info", 
+        description: "Using mock data - backend not available",
+        variant: "default",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteBatch = async (batchId: string) => {
+    if (!confirm('Are you sure you want to delete this batch? This action cannot be undone.')) {
       return;
     }
     
-    const filtered = mockBatches.filter(
-      batch => 
-        batch.name.toLowerCase().includes(term.toLowerCase()) ||
-        batch.code.toLowerCase().includes(term.toLowerCase()) ||
-        batch.trainer.toLowerCase().includes(term.toLowerCase())
-    );
-    
-    setFilteredBatches(filtered);
+    try {
+      const response = await backendAPI.deleteBatch(batchId);
+      if (response.success) {
+        toast({
+          title: "Success",
+          description: "Batch deleted successfully",
+        });
+        loadBatches(); // Reload the list
+      } else {
+        toast({
+          title: "Error",
+          description: response.error || "Failed to delete batch",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete batch",
+        variant: "destructive",
+      });
+    }
   };
+
+  // Show loading state while checking authentication
+  if (!isAuthenticated || !isAdmin || loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Filter batches based on search and status
+  const filteredBatches = batches.filter(batch => {
+    const matchesSearch = batch.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         batch.code?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         batch.trainer?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = filterStatus === 'all' || batch.status === filterStatus;
+    return matchesSearch && matchesStatus;
+  });
 
   // Get current date for comparison
   const currentDate = new Date('September 23, 2025');
@@ -151,7 +234,7 @@ export default function BatchesPage() {
                   placeholder="Search batches..."
                   className="pl-8"
                   value={searchTerm}
-                  onChange={handleSearch}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
               <Button variant="outline" className="ml-2 shrink-0">
@@ -270,7 +353,10 @@ export default function BatchesPage() {
                                 <span>Schedule Classes</span>
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
-                              <DropdownMenuItem className="text-red-600">
+                              <DropdownMenuItem 
+                                className="text-red-600"
+                                onClick={() => handleDeleteBatch(batch.code)}
+                              >
                                 <Trash2 className="h-4 w-4 mr-2" />
                                 <span>Delete Batch</span>
                               </DropdownMenuItem>

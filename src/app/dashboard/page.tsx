@@ -43,15 +43,6 @@ const Dashboard = () => {
   const { toast } = useToast();
   const router = useRouter();
 
-  useEffect(() => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-    fetchUserData();
-  }, [fetchUserData, router]);
-
   const fetchUserData = useCallback(async () => {
     try {
       const response = await apiService.getEnrollments();
@@ -71,6 +62,15 @@ const Dashboard = () => {
       setLoading(false);
     }
   }, [toast, router]);
+
+  useEffect(() => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+    fetchUserData();
+  }, [fetchUserData, router]);
 
   const handleLogout = async () => {
     try {

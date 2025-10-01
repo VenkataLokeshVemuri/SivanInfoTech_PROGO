@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, XCircle, Search } from 'lucide-react';
-import { apiService } from '@/lib/api';
+import { CheckCircle, XCircle, Search, Loader2 } from 'lucide-react';
+import { backendAPI } from '@/lib/backend-api';
 import { useToast } from '@/hooks/use-toast';
 
 interface VerificationResult {
@@ -28,10 +28,30 @@ const CertificateVerification = () => {
   const { toast } = useToast();
 
   const handleVerify = async () => {
-    if (!enrollmentID || !certificateID) {
+    // Validation
+    if (!enrollmentID.trim() || !certificateID.trim()) {
       toast({
         title: "Missing Information",
         description: "Please enter both Enrollment ID and Certificate ID",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Basic format validation
+    if (enrollmentID.length < 10) {
+      toast({
+        title: "Invalid Format",
+        description: "Enrollment ID must be at least 10 characters long",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (certificateID.length < 10) {
+      toast({
+        title: "Invalid Format",
+        description: "Certificate ID must be at least 10 characters long",
         variant: "destructive",
       });
       return;
@@ -42,27 +62,30 @@ const CertificateVerification = () => {
     setResult(null);
 
     try {
-      const response = await apiService.verifyCertificate(enrollmentID, certificateID);
+      const response = await backendAPI.verifyCertificate(enrollmentID.trim(), certificateID.trim());
       
-      if (response.status === 200) {
-        setResult(response);
+      if (response.success) {
+        setResult(response.data);
         toast({
           title: "Verification Successful",
           description: "Certificate is valid and verified",
         });
       } else {
-        setError(response.Message);
+        const errorMsg = response.error || 'Certificate verification failed';
+        setError(errorMsg);
         toast({
           title: "Verification Failed",
-          description: response.Message,
+          description: errorMsg,
           variant: "destructive",
         });
       }
     } catch (error) {
-      setError('Verification failed. Please try again.');
+      console.error('Certificate verification error:', error);
+      const errorMsg = error instanceof Error ? error.message : 'Unable to verify certificate. Please try again.';
+      setError(errorMsg);
       toast({
         title: "Error",
-        description: "Unable to verify certificate",
+        description: errorMsg,
         variant: "destructive",
       });
     } finally {
@@ -70,12 +93,29 @@ const CertificateVerification = () => {
     }
   };
 
+  const handleReset = () => {
+    setEnrollmentID('');
+    setCertificateID('');
+    setResult(null);
+    setError('');
+  };
+
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    try {
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch {
+      return dateString;
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !verifying && enrollmentID.trim() && certificateID.trim()) {
+      handleVerify();
+    }
   };
 
   return (
@@ -94,34 +134,64 @@ const CertificateVerification = () => {
 
         <CardContent className="space-y-5 p-6">
           <div className="space-y-4">
-            <Label htmlFor="enrollmentID" className="font-semibold text-gray-700">Enrollment ID</Label>
+            <Label htmlFor="enrollmentID" className="font-semibold text-gray-700">
+              Enrollment ID *
+            </Label>
             <Input
               id="enrollmentID"
               placeholder="Enter Enrollment ID (e.g., EID20241201ABCDE)"
               value={enrollmentID}
               onChange={(e) => setEnrollmentID(e.target.value)}
+              onKeyPress={handleKeyPress}
               className="border-gray-300 focus:ring-2 focus:ring-green-400 rounded-lg transition-all duration-200"
+              disabled={verifying}
+              maxLength={50}
             />
           </div>
 
           <div className="space-y-4">
-            <Label htmlFor="certificateID" className="font-semibold text-gray-700">Certificate ID</Label>
+            <Label htmlFor="certificateID" className="font-semibold text-gray-700">
+              Certificate ID *
+            </Label>
             <Input
               id="certificateID"
               placeholder="Enter Certificate ID (e.g., SIT20241201ABCDEAWS)"
               value={certificateID}
               onChange={(e) => setCertificateID(e.target.value)}
+              onKeyPress={handleKeyPress}
               className="border-gray-300 focus:ring-2 focus:ring-green-400 rounded-lg transition-all duration-200"
+              disabled={verifying}
+              maxLength={50}
             />
           </div>
 
-          <Button
-            onClick={handleVerify}
-            disabled={verifying}
-            className="w-48 py-2 text-base font-semibold bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-500 transition-all duration-300 rounded-lg shadow-md mx-auto block"
-          >
-            {verifying ? 'Verifying...' : 'Verify Certificate'}
-          </Button>
+          <div className="flex gap-3 justify-center pt-2">
+            <Button
+              onClick={handleVerify}
+              disabled={verifying || !enrollmentID.trim() || !certificateID.trim()}
+              className="px-6 py-2 text-base font-semibold bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-500 transition-all duration-300 rounded-lg shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {verifying ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Verifying...
+                </>
+              ) : (
+                'Verify Certificate'
+              )}
+            </Button>
+
+            {(result || error) && (
+              <Button
+                onClick={handleReset}
+                variant="outline"
+                className="px-6 py-2 text-base font-semibold border-gray-300 text-gray-700 hover:bg-gray-50 transition-all duration-300 rounded-lg"
+                disabled={verifying}
+              >
+                Reset
+              </Button>
+            )}
+          </div>
         </CardContent>
       </Card>
 
@@ -134,6 +204,16 @@ const CertificateVerification = () => {
               <span>Verification Failed</span>
             </div>
             <p className="text-red-600 mt-3">{error}</p>
+            <div className="mt-4 p-3 bg-red-100 rounded-lg">
+              <p className="text-sm text-red-700">
+                <strong>Please check:</strong>
+              </p>
+              <ul className="text-sm text-red-600 mt-1 list-disc list-inside">
+                <li>Enrollment ID and Certificate ID are correct</li>
+                <li>IDs are copied exactly as shown on your certificate</li>
+                <li>Certificate has been issued and is active</li>
+              </ul>
+            </div>
           </CardContent>
         </Card>
       )}
@@ -159,11 +239,15 @@ const CertificateVerification = () => {
               </div>
               <div>
                 <Label className="text-sm font-medium text-gray-600">Enrollment ID</Label>
-                <p className="text-sm text-gray-900">{result.enrollmentDetails.enrollmentID}</p>
+                <p className="text-sm text-gray-900 font-mono bg-gray-100 p-2 rounded border">
+                  {result.enrollmentDetails.enrollmentID}
+                </p>
               </div>
               <div>
                 <Label className="text-sm font-medium text-gray-600">Certificate ID</Label>
-                <p className="text-sm text-gray-900">{result.enrollmentDetails.certificationID}</p>
+                <p className="text-sm text-gray-900 font-mono bg-gray-100 p-2 rounded border">
+                  {result.enrollmentDetails.certificationID}
+                </p>
               </div>
               <div>
                 <Label className="text-sm font-medium text-gray-600">Certification Date</Label>
@@ -176,9 +260,31 @@ const CertificateVerification = () => {
                 </Badge>
               </div>
             </div>
+
+            <div className="mt-6 p-4 bg-green-100 rounded-lg border border-green-200">
+              <div className="flex items-center space-x-2 text-green-800">
+                <CheckCircle className="h-5 w-5" />
+                <span className="font-semibold">Certificate Authentic</span>
+              </div>
+              <p className="text-sm text-green-700 mt-1">
+                This certificate has been verified as authentic and was issued by SitCloud Training Institute.
+              </p>
+            </div>
           </CardContent>
         </Card>
       )}
+
+      {/* Info Section */}
+      <Card className="bg-gray-50 border-gray-200">
+        <CardContent className="p-6">
+          <h3 className="font-semibold text-gray-800 mb-3">How to find your IDs:</h3>
+          <div className="space-y-2 text-sm text-gray-600">
+            <p>• <strong>Enrollment ID:</strong> Found in your enrollment confirmation email or dashboard</p>
+            <p>• <strong>Certificate ID:</strong> Located on your certificate document (usually at the bottom)</p>
+            <p>• Both IDs are case-sensitive and must be entered exactly as shown</p>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

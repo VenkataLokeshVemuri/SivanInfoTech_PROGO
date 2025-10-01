@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { backendAPI } from '@/lib/backend-api';
-import { MessageCircle, Clock } from 'lucide-react';
+import { MessageCircle, Clock, Loader2 } from 'lucide-react';
 
 interface CounselorModalProps {
   children: React.ReactNode;
@@ -28,23 +28,49 @@ const CounselorModal = ({ children }: CounselorModalProps) => {
   const { toast } = useToast();
 
   const handleSubmit = async () => {
+    // Validate required fields
+    if (!counselingData.name || !counselingData.email || !counselingData.phone) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields (Name, Email, Phone).",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(counselingData.email)) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate phone number (basic validation)
+    const phoneRegex = /^[\+]?[\d\s\-\(\)]{10,}$/;
+    if (!phoneRegex.test(counselingData.phone)) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter a valid phone number.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
       const response = await backendAPI.requestCounseling(counselingData);
+      
       if (response.success) {
         toast({
           title: "Request Submitted!",
-          description: "Our counselor will contact you within 24 hours.",
+          description: response.message || "Our counselor will contact you within 24 hours.",
         });
         setIsOpen(false);
-        setCounselingData({
-          name: '',
-          email: '',
-          phone: '',
-          course_interest: '',
-          preferred_time: '',
-          message: '',
-        });
+        resetForm();
       } else {
         throw new Error(response.error || 'Failed to submit request');
       }
@@ -58,6 +84,17 @@ const CounselorModal = ({ children }: CounselorModalProps) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const resetForm = () => {
+    setCounselingData({
+      name: '',
+      email: '',
+      phone: '',
+      course_interest: '',
+      preferred_time: '',
+      message: '',
+    });
   };
 
   const isFormValid = counselingData.name && counselingData.email && counselingData.phone;
@@ -85,6 +122,7 @@ const CounselorModal = ({ children }: CounselorModalProps) => {
               placeholder="Enter your full name"
               required
               className="bg-gray-50"
+              disabled={isLoading}
             />
           </div>
 
@@ -95,10 +133,11 @@ const CounselorModal = ({ children }: CounselorModalProps) => {
               id="counselor-email"
               type="email"
               value={counselingData.email}
-              onChange={(e) => setCounselingData(prev => ({ ...prev, email: e.target.value }))}
+              onChange={(e) => setCounselingData(prev => ({ ...prev, email: e.target.value.toLowerCase() }))}
               placeholder="Enter your email"
               required
               className="bg-gray-50"
+              disabled={isLoading}
             />
           </div>
 
@@ -112,6 +151,7 @@ const CounselorModal = ({ children }: CounselorModalProps) => {
               placeholder="Enter your phone number"
               required
               className="bg-gray-50"
+              disabled={isLoading}
             />
           </div>
 
@@ -121,6 +161,7 @@ const CounselorModal = ({ children }: CounselorModalProps) => {
             <Select
               value={counselingData.course_interest}
               onValueChange={(value) => setCounselingData(prev => ({ ...prev, course_interest: value }))}
+              disabled={isLoading}
             >
               <SelectTrigger className="bg-gray-50">
                 <SelectValue placeholder="Select course of interest" />
@@ -147,6 +188,7 @@ const CounselorModal = ({ children }: CounselorModalProps) => {
             <Select
               value={counselingData.preferred_time}
               onValueChange={(value) => setCounselingData(prev => ({ ...prev, preferred_time: value }))}
+              disabled={isLoading}
             >
               <SelectTrigger className="bg-gray-50">
                 <SelectValue placeholder="When should we call you?" />
@@ -170,6 +212,7 @@ const CounselorModal = ({ children }: CounselorModalProps) => {
               placeholder="Tell us about your career goals or any specific questions..."
               rows={3}
               className="bg-gray-50"
+              disabled={isLoading}
             />
           </div>
 
@@ -187,6 +230,7 @@ const CounselorModal = ({ children }: CounselorModalProps) => {
               variant="outline"
               className="flex-1 border-gray-300 text-blue-900 transition-colors duration-300"
               onClick={() => setIsOpen(false)}
+              disabled={isLoading}
             >
               Cancel
             </Button>
@@ -195,7 +239,14 @@ const CounselorModal = ({ children }: CounselorModalProps) => {
               onClick={handleSubmit}
               disabled={!isFormValid || isLoading}
             >
-              {isLoading ? "Submitting..." : "Request Callback"}
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                "Request Callback"
+              )}
             </Button>
           </div>
         </div>

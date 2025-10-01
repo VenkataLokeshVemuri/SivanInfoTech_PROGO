@@ -1,8 +1,17 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Cloud, LogOut, User, Sparkles, ArrowRight } from 'lucide-react';
+import { Menu, X, Cloud, LogOut, User, Sparkles, ArrowRight, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useBackendAuth } from '@/hooks/useBackendAuth';
 import CounselorModal from './CounselorModal';
 
@@ -65,22 +74,45 @@ const Header = () => {
           {/* CTA Buttons */}
           <div className="hidden lg:flex items-center space-x-3">
             {user ? (
-              <>
-                <Link href="/dashboard">
-                  <Button variant="outline" className="border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-blue-300 hover:text-blue-600 transition-all duration-300 backdrop-blur-sm">
-                    <User className="h-4 w-4 mr-2" />
-                    {user?.name || 'Dashboard'}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 hover:bg-slate-100">
+                    <Avatar className="h-10 w-10 border-2 border-slate-200 hover:border-blue-400 transition-colors">
+                      <AvatarImage src="" alt={user?.name || 'User'} />
+                      <AvatarFallback className="bg-gradient-to-br from-blue-500 to-green-500 text-white font-semibold text-sm">
+                        {user?.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U'}
+                      </AvatarFallback>
+                    </Avatar>
                   </Button>
-                </Link>
-                <Button 
-                  onClick={logout}
-                  variant="outline" 
-                  className="border-red-300 text-red-700 hover:bg-red-50 hover:border-red-400 transition-all duration-300 backdrop-blur-sm"
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Logout
-                </Button>
-              </>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-64 p-2" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{user?.name}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
+                      <p className="text-xs leading-none text-muted-foreground capitalize">{user?.role} Account</p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href={user.role === 'admin' ? '/admin/dashboard' : '/dashboard'} className="flex items-center">
+                      <User className="h-4 w-4 mr-2" />
+                      {user.role === 'admin' ? 'Admin Dashboard' : 'My Dashboard'}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile" className="flex items-center">
+                      <Settings className="h-4 w-4 mr-2" />
+                      Profile Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={logout} className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <>
                 <Link href="/auth">
@@ -140,10 +172,28 @@ const Header = () => {
                 <div className="mt-6 pt-6 border-t border-slate-200/50 space-y-3">
                   {user ? (
                     <>
-                      <Link href="/dashboard" className="block">
+                      <div className="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
+                        <Avatar className="h-10 w-10 border-2 border-slate-200">
+                          <AvatarImage src="" alt={user?.name || 'User'} />
+                          <AvatarFallback className="bg-gradient-to-br from-blue-500 to-green-500 text-white font-semibold text-sm">
+                            {user?.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U'}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">{user?.name}</p>
+                          <p className="text-xs text-muted-foreground capitalize">{user?.role} Account</p>
+                        </div>
+                      </div>
+                      <Link href={user.role === 'admin' ? '/admin/dashboard' : '/dashboard'} className="block">
                         <Button variant="outline" className="w-full border-slate-300 text-slate-700 hover:border-blue-300 hover:text-blue-600 transition-all duration-300 justify-start">
                           <User className="h-4 w-4 mr-2" />
-                          {user?.name || 'Dashboard'}
+                          {user.role === 'admin' ? 'Admin Dashboard' : 'My Dashboard'}
+                        </Button>
+                      </Link>
+                      <Link href="/profile" className="block">
+                        <Button variant="outline" className="w-full border-slate-300 text-slate-700 hover:border-blue-300 hover:text-blue-600 transition-all duration-300 justify-start">
+                          <Settings className="h-4 w-4 mr-2" />
+                          Profile Settings
                         </Button>
                       </Link>
                       <Button 

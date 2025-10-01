@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Calendar, Clock, Users, Award, CreditCard, ChevronDown, ChevronUp } from 'lucide-react';
-import { apiService } from '@/lib/api';
+import { Calendar, Clock, Users, Award, CreditCard, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
+import { backendAPI } from '@/lib/backend-api';
+import { useBackendAuth } from '@/hooks/useBackendAuth';
 import { useToast } from '@/hooks/use-toast';
+import EnrollModal from './EnrollModal';
 
 interface Course {
   courseid: string;
@@ -25,8 +27,11 @@ interface Batch {
 const CourseEnrollment = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
-  const [enrolling, setEnrolling] = useState<string | null>(null);
   const [openCourse, setOpenCourse] = useState<string | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [selectedBatch, setSelectedBatch] = useState<Batch | null>(null);
+  const [showEnrollModal, setShowEnrollModal] = useState(false);
+  const { user, isAuthenticated } = useBackendAuth();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -35,14 +40,17 @@ const CourseEnrollment = () => {
 
   const fetchCourses = async () => {
     try {
-      const response = await apiService.getCourseAndBatchDetails();
-      if (response.status === 200) {
+      const response = await backendAPI.getCourseAndBatchDetails();
+      if (response.success && response.details) {
         setCourses(response.details);
+      } else {
+        throw new Error(response.error || 'Failed to fetch courses');
       }
     } catch (error) {
+      console.error('Error fetching courses:', error);
       toast({
         title: "Error",
-        description: "Failed to fetch courses",
+        description: "Failed to fetch courses. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -50,52 +58,50 @@ const CourseEnrollment = () => {
     }
   };
 
-  const handleEnroll = async (course: Course, batch: Batch) => {
-    setEnrolling(`${course.courseid}-${batch.batchid}`);
-    try {
-      const response = await apiService.enroll({
-        courseid: course.courseid,
-        courseshortform: course.courseshortform || '',
-        coursetitle: course.coursetitle || '',
-        batchtoenroll: batch,
-      });
+  const handleEnrollClick = (course: Course, batch: Batch) => {
+    setSelectedCourse(course);
+    setSelectedBatch(batch);
+    setShowEnrollModal(true);
+  };
 
-      if (response.status === 200) {
-        toast({
-          title: "Enrollment Successful",
-          description: `Enrollment ID: ${response.EnrollmentID}`,
-        });
-      } else {
-        throw new Error(response.Message);
-      }
-    } catch (error) {
-      toast({
-        title: "Enrollment Failed",
-        description: "Please try again later",
-        variant: "destructive",
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
       });
-    } finally {
-      setEnrolling(null);
+    } catch {
+      return dateString;
     }
   };
 
-  const handlePayment = async (amount: number, userId: string) => {
-    try {
-      const response = await apiService.initiatePayment(amount, userId);
-      if (response.pay_page_url) {
-        window.location.href = response.pay_page_url;
-      }
-    } catch (error) {
-      toast({
-        title: "Payment Failed",
-        description: "Unable to process payment",
-        variant: "destructive",
-      });
-    }
+  const calculateSeatsLeft = (capacity: number, enrolled: number) => {
+    const seatsLeft = Number(capacity || 0) - Number(enrolled || 0);
+    return Math.max(0, seatsLeft);
+  };
+
+  const isBatchFull = (capacity: number, enrolled: number) => {
+    return Number(enrolled || 0) >= Number(capacity || 0);
   };
 
   if (loading) {
-    return <div className="flex justify-center p-8 text-lg font-semibold">Loading courses...</div>;
+    return (
+      <div className="flex justify-center items-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        <span className="ml-2 text-lg font-semibold text-blue-900">Loading courses...</span>
+      </div>
+    );
+  }
+
+  if (courses.length === 0) {
+    return (
+      <div className="text-center p-8">
+        <h3 className="text-xl font-semibold text-gray-600 mb-2">No courses available</h3>
+        <p className="text-gray-500">Please check back later for new course offerings.</p>
+      </div>
+    );
   }
 
   return (
@@ -103,98 +109,157 @@ const CourseEnrollment = () => {
       {/* Heading */}
       <div className="text-center mb-12">
         <h2 className="text-5xl font-extrabold bg-gradient-to-r from-blue-500 to-teal-500 bg-clip-text text-transparent mb-4">
-  Available Courses
-</h2>
-
-
-
+          Available Courses
+        </h2>
         <p className="text-gray-700 text-lg">Choose from our comprehensive cloud training programs</p>
       </div>
 
-      {/* Accordion for courses */}
+      {/* User Authentication Status */}
+      {!isAuthenticated && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+          <p className="text-yellow-800 text-center">
+            <strong>Note:</strong> You can browse courses as a guest, but you'll need to provide your details during enrollment.
+          </p>
+        </div>
+      )}
+
+      {/* Courses Accordion */}
       <div className="space-y-4">
         {courses.map((course) => {
           const isOpen = openCourse === course.courseid;
           return (
             <div
               key={course.courseid}
-              className="border rounded-2xl shadow-md bg-white hover:shadow-lg transition"
+              className="border rounded-2xl shadow-md bg-white hover:shadow-lg transition-shadow duration-300"
             >
               {/* Accordion Header */}
               <button
                 onClick={() => setOpenCourse(isOpen ? null : course.courseid)}
-                className="flex justify-between items-center w-full px-6 py-4 text-left focus:outline-none"
+                className="flex justify-between items-center w-full px-6 py-4 text-left focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset rounded-t-2xl hover:bg-gray-50 transition-colors"
               >
                 <div>
                   <h3 className="text-2xl font-bold text-blue-600">{course.coursetitle}</h3>
                   <p className="text-lg text-cyan-700 font-medium">
                     Course ID: <span className="text-xl font-semibold">{course.courseid}</span>
                   </p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {course.batches?.length || 0} batch{course.batches?.length !== 1 ? 'es' : ''} available
+                  </p>
                 </div>
-                <div>{isOpen ? <ChevronUp className="w-6 h-6" /> : <ChevronDown className="w-6 h-6" />}</div>
+                <div className="flex items-center">
+                  {isOpen ? (
+                    <ChevronUp className="w-6 h-6 text-blue-600" />
+                  ) : (
+                    <ChevronDown className="w-6 h-6 text-blue-600" />
+                  )}
+                </div>
               </button>
 
               {/* Accordion Content */}
               {isOpen && (
-                <div className="px-6 pb-6 space-y-4">
-                  {course.batches.map((batch) => (
-                    <div
-                      key={batch.batchid}
-                      className="bg-gray-50 rounded-xl p-4 shadow-sm hover:shadow-md transition flex flex-col gap-3"
-                    >
-                      <div className="flex justify-between items-center">
-                        <p className="text-blue-600 font-semibold">Batch {batch.batchid}</p>
-                        <p
-                          className={`px-2 py-1 text-sm font-semibold rounded ${
-                            batch.enrolled >= batch.capacity
-                              ? 'bg-red-100 text-red-700'
-                              : 'bg-green-100 text-green-700'
-                          }`}
+                <div className="px-6 pb-6 space-y-4 border-t border-gray-100">
+                  {course.batches && course.batches.length > 0 ? (
+                    course.batches.map((batch) => {
+                      const seatsLeft = calculateSeatsLeft(batch.capacity, batch.enrolled);
+                      const isFullBatch = isBatchFull(batch.capacity, batch.enrolled);
+                      
+                      return (
+                        <div
+                          key={batch.batchid}
+                          className="bg-gray-50 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col gap-3"
                         >
-                          {batch.enrolled}/{batch.capacity} seats
-                        </p>
-                      </div>
-                      <div className="flex flex-col gap-1 text-sm">
-                        <div className="flex items-center text-blue-600">
-                          <Calendar className="w-4 h-4 mr-1" /> {batch.startdate} → {batch.enddate}
-                        </div>
-                        <div className="flex items-center text-purple-600">
-                          <Clock className="w-4 h-4 mr-1" /> {batch.timing || 'Timing not available'}
-                        </div>
-                        <div className="flex items-center text-green-600">
-                          <Users className="w-4 h-4 mr-1" /> Seats left: {Number(batch.capacity || 0) - Number(batch.enrolled || 0)}
-                        </div>
-                      </div>
-                      <div className="flex gap-2 mt-2">
-                        {/* Enroll Button updated */}
-                        <Button
-                          onClick={() => handleEnroll(course, batch)}
-                          disabled={batch.enrolled >= batch.capacity || enrolling === `${course.courseid}-${batch.batchid}`}
-                          className="w-56 bg-gradient-to-r from-blue-500 to-blue-400 hover:from-green-500 hover:to-green-400 text-white hover:opacity-90"
-                          size="sm"
-                        >
-                          <Award className="h-4 w-4 mr-2" />
-                          {enrolling === `${course.courseid}-${batch.batchid}` ? 'Enrolling...' : 'Enroll'}
-                        </Button>
+                          <div className="flex justify-between items-center">
+                            <p className="text-blue-600 font-semibold text-lg">Batch {batch.batchid}</p>
+                            <p
+                              className={`px-3 py-1 text-sm font-semibold rounded-full ${
+                                isFullBatch
+                                  ? 'bg-red-100 text-red-700'
+                                  : seatsLeft <= 5
+                                  ? 'bg-yellow-100 text-yellow-700'
+                                  : 'bg-green-100 text-green-700'
+                              }`}
+                            >
+                              {batch.enrolled}/{batch.capacity} seats
+                            </p>
+                          </div>
 
-                        <Button
-                          onClick={() => handlePayment(5000, 'user123')}
-                          variant="outline"
-                          size="sm"
-                          className="flex items-center hover:bg-gray-200 text-blue-600 border-blue-400"
-                        >
-                          <CreditCard className="h-4 w-4 mr-2" />
-                          Pay
-                        </Button>
-                      </div>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                            <div className="flex items-center text-blue-600">
+                              <Calendar className="w-4 h-4 mr-2" />
+                              <span>
+                                {formatDate(batch.startdate)} → {formatDate(batch.enddate)}
+                              </span>
+                            </div>
+                            <div className="flex items-center text-purple-600">
+                              <Clock className="w-4 h-4 mr-2" />
+                              <span>{batch.timing || 'Timing not available'}</span>
+                            </div>
+                            <div className="flex items-center text-green-600">
+                              <Users className="w-4 h-4 mr-2" />
+                              <span>
+                                {seatsLeft > 0 ? `${seatsLeft} seats left` : 'Batch full'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex gap-3 mt-4">
+                            <Button
+                              onClick={() => handleEnrollClick(course, batch)}
+                              disabled={isFullBatch}
+                              className={`flex-1 ${
+                                isFullBatch
+                                  ? 'bg-gray-400 cursor-not-allowed'
+                                  : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'
+                              } text-white transition-all duration-300`}
+                              size="sm"
+                            >
+                              <Award className="h-4 w-4 mr-2" />
+                              {isFullBatch ? 'Batch Full' : 'Enroll Now'}
+                            </Button>
+
+                            {seatsLeft <= 5 && seatsLeft > 0 && (
+                              <div className="flex items-center text-orange-600 text-xs font-medium">
+                                ⚡ Only {seatsLeft} seats left!
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="text-center py-6 text-gray-500">
+                      <p>No batches available for this course at the moment.</p>
+                      <p className="text-sm mt-1">Please check back later or contact us for updates.</p>
                     </div>
-                  ))}
+                  )}
                 </div>
               )}
             </div>
           );
         })}
       </div>
+
+      {/* Enroll Modal */}
+      {showEnrollModal && selectedCourse && selectedBatch && (
+        <EnrollModal
+          isOpen={showEnrollModal}
+          onClose={() => {
+            setShowEnrollModal(false);
+            setSelectedCourse(null);
+            setSelectedBatch(null);
+          }}
+          course={{
+            courseid: selectedCourse.courseid,
+            coursetitle: selectedCourse.coursetitle || '',
+            courseshortform: selectedCourse.courseshortform || ''
+          }}
+          batch={selectedBatch}
+          onEnrollmentSuccess={() => {
+            // Refresh courses to update enrollment numbers
+            fetchCourses();
+          }}
+        />
+      )}
     </div>
   );
 };
