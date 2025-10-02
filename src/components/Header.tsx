@@ -35,8 +35,8 @@ const Header = () => {
     { name: 'Settings', href: '/settings', icon: Settings, description: 'Manage your preferences' },
   ];
 
-  // Don't show header on auth pages and dashboard
-  if (["/auth", "/dashboard"].includes(pathname || "")) {
+  // Don't show header on auth pages, dashboard, and admin pages
+  if (["/auth", "/dashboard"].includes(pathname || "") || pathname?.startsWith("/admin")) {
     return null;
   }
 
@@ -198,82 +198,90 @@ const Header = () => {
                       </Link>
                     </DropdownMenuItem>
                     
-                    <DropdownMenuItem asChild className="cursor-pointer">
-                      <Link 
-                        href="/courses" 
-                        className="flex items-center w-full px-4 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-700 rounded-xl transition-all duration-200 group"
-                      >
-                        <div className="flex items-center justify-center w-10 h-10 bg-blue-100 text-blue-600 rounded-lg group-hover:bg-blue-200 transition-colors mr-3">
-                          <BookOpen className="h-5 w-5" />
-                        </div>
-                        <div className="flex-1">
-                          <div className="font-medium text-sm">My Courses</div>
-                          <div className="text-xs text-gray-500">
-                            Access your enrolled courses
+                    {user?.role !== 'admin' && (
+                      <DropdownMenuItem asChild className="cursor-pointer">
+                        <Link 
+                          href="/courses" 
+                          className="flex items-center w-full px-4 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-700 rounded-xl transition-all duration-200 group"
+                        >
+                          <div className="flex items-center justify-center w-10 h-10 bg-blue-100 text-blue-600 rounded-lg group-hover:bg-blue-200 transition-colors mr-3">
+                            <BookOpen className="h-5 w-5" />
                           </div>
-                        </div>
-                        <div className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full font-medium">
-                          3 Active
-                        </div>
-                      </Link>
-                    </DropdownMenuItem>
+                          <div className="flex-1">
+                            <div className="font-medium text-sm">My Courses</div>
+                            <div className="text-xs text-gray-500">
+                              Access your enrolled courses
+                            </div>
+                          </div>
+                          <div className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full font-medium">
+                            3 Active
+                          </div>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     
-                    <DropdownMenuItem asChild className="cursor-pointer">
-                      <Link 
-                        href="/progress" 
-                        className="flex items-center w-full px-4 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 hover:text-purple-700 rounded-xl transition-all duration-200 group"
-                      >
-                        <div className="flex items-center justify-center w-10 h-10 bg-purple-100 text-purple-600 rounded-lg group-hover:bg-purple-200 transition-colors mr-3">
-                          <BarChart3 className="h-5 w-5" />
-                        </div>
-                        <div className="flex-1">
-                          <div className="font-medium text-sm">Progress Tracking</div>
-                          <div className="text-xs text-gray-500">
-                            View your learning progress
+                    {user?.role !== 'admin' && (
+                      <DropdownMenuItem asChild className="cursor-pointer">
+                        <Link 
+                          href="/progress" 
+                          className="flex items-center w-full px-4 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 hover:text-purple-700 rounded-xl transition-all duration-200 group"
+                        >
+                          <div className="flex items-center justify-center w-10 h-10 bg-purple-100 text-purple-600 rounded-lg group-hover:bg-purple-200 transition-colors mr-3">
+                            <BarChart3 className="h-5 w-5" />
                           </div>
-                        </div>
-                        <div className="text-xs bg-purple-100 text-purple-600 px-2 py-1 rounded-full font-medium">
-                          78%
-                        </div>
-                      </Link>
-                    </DropdownMenuItem>
+                          <div className="flex-1">
+                            <div className="font-medium text-sm">Progress Tracking</div>
+                            <div className="text-xs text-gray-500">
+                              View your learning progress
+                            </div>
+                          </div>
+                          <div className="text-xs bg-purple-100 text-purple-600 px-2 py-1 rounded-full font-medium">
+                            78%
+                          </div>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     
-                    <DropdownMenuItem asChild className="cursor-pointer">
-                      <Link 
-                        href="/profile" 
-                        className="flex items-center w-full px-4 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-orange-50 hover:to-yellow-50 hover:text-orange-700 rounded-xl transition-all duration-200 group"
-                      >
-                        <div className="flex items-center justify-center w-10 h-10 bg-orange-100 text-orange-600 rounded-lg group-hover:bg-orange-200 transition-colors mr-3">
-                          <Settings className="h-5 w-5" />
-                        </div>
-                        <div className="flex-1">
-                          <div className="font-medium text-sm">Settings</div>
-                          <div className="text-xs text-gray-500">
-                            Profile & preferences
+                    {user?.role !== 'admin' && (
+                      <DropdownMenuItem asChild className="cursor-pointer">
+                        <Link 
+                          href="/profile" 
+                          className="flex items-center w-full px-4 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-orange-50 hover:to-yellow-50 hover:text-orange-700 rounded-xl transition-all duration-200 group"
+                        >
+                          <div className="flex items-center justify-center w-10 h-10 bg-orange-100 text-orange-600 rounded-lg group-hover:bg-orange-200 transition-colors mr-3">
+                            <Settings className="h-5 w-5" />
                           </div>
-                        </div>
-                      </Link>
-                    </DropdownMenuItem>
+                          <div className="flex-1">
+                            <div className="font-medium text-sm">Settings</div>
+                            <div className="text-xs text-gray-500">
+                              Profile & preferences
+                            </div>
+                          </div>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     
-                    <DropdownMenuItem asChild className="cursor-pointer">
-                      <Link 
-                        href="/certificates" 
-                        className="flex items-center w-full px-4 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-yellow-50 hover:to-green-50 hover:text-yellow-700 rounded-xl transition-all duration-200 group"
-                      >
-                        <div className="flex items-center justify-center w-10 h-10 bg-yellow-100 text-yellow-600 rounded-lg group-hover:bg-yellow-200 transition-colors mr-3">
-                          <Award className="h-5 w-5" />
-                        </div>
-                        <div className="flex-1">
-                          <div className="font-medium text-sm">Certificates</div>
-                          <div className="text-xs text-gray-500">
-                            View your achievements
+                    {user?.role !== 'admin' && (
+                      <DropdownMenuItem asChild className="cursor-pointer">
+                        <Link 
+                          href="/certificates" 
+                          className="flex items-center w-full px-4 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-yellow-50 hover:to-green-50 hover:text-yellow-700 rounded-xl transition-all duration-200 group"
+                        >
+                          <div className="flex items-center justify-center w-10 h-10 bg-yellow-100 text-yellow-600 rounded-lg group-hover:bg-yellow-200 transition-colors mr-3">
+                            <Award className="h-5 w-5" />
                           </div>
-                        </div>
-                        <div className="text-xs bg-yellow-100 text-yellow-600 px-2 py-1 rounded-full font-medium">
-                          2 Earned
-                        </div>
-                      </Link>
-                    </DropdownMenuItem>
+                          <div className="flex-1">
+                            <div className="font-medium text-sm">Certificates</div>
+                            <div className="text-xs text-gray-500">
+                              View your achievements
+                            </div>
+                          </div>
+                          <div className="text-xs bg-yellow-100 text-yellow-600 px-2 py-1 rounded-full font-medium">
+                            2 Earned
+                          </div>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                   </div>
                   
                   {/* Divider */}
@@ -417,62 +425,70 @@ const Header = () => {
                         </Button>
                       </Link>
                       
-                      <Link href="/courses" className="block">
-                        <Button variant="outline" className="w-full border-blue-300 text-blue-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:border-blue-400 transition-all duration-300 justify-start h-12">
-                          <div className="flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-600 rounded-lg mr-3">
-                            <BookOpen className="h-4 w-4" />
-                          </div>
-                          <div className="text-left">
-                            <div className="font-medium text-sm">My Courses</div>
-                            <div className="text-xs text-gray-500">Access your enrolled courses</div>
-                          </div>
-                          <div className="ml-auto text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full font-medium">
-                            3 Active
-                          </div>
-                        </Button>
-                      </Link>
+                      {user?.role !== 'admin' && (
+                        <Link href="/courses" className="block">
+                          <Button variant="outline" className="w-full border-blue-300 text-blue-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:border-blue-400 transition-all duration-300 justify-start h-12">
+                            <div className="flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-600 rounded-lg mr-3">
+                              <BookOpen className="h-4 w-4" />
+                            </div>
+                            <div className="text-left">
+                              <div className="font-medium text-sm">My Courses</div>
+                              <div className="text-xs text-gray-500">Access your enrolled courses</div>
+                            </div>
+                            <div className="ml-auto text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full font-medium">
+                              3 Active
+                            </div>
+                          </Button>
+                        </Link>
+                      )}
                       
-                      <Link href="/progress" className="block">
-                        <Button variant="outline" className="w-full border-purple-300 text-purple-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 hover:border-purple-400 transition-all duration-300 justify-start h-12">
-                          <div className="flex items-center justify-center w-8 h-8 bg-purple-100 text-purple-600 rounded-lg mr-3">
-                            <BarChart3 className="h-4 w-4" />
-                          </div>
-                          <div className="text-left">
-                            <div className="font-medium text-sm">Progress Tracking</div>
-                            <div className="text-xs text-gray-500">View your learning progress</div>
-                          </div>
-                          <div className="ml-auto text-xs bg-purple-100 text-purple-600 px-2 py-1 rounded-full font-medium">
-                            78%
-                          </div>
-                        </Button>
-                      </Link>
+                      {user?.role !== 'admin' && (
+                        <Link href="/progress" className="block">
+                          <Button variant="outline" className="w-full border-purple-300 text-purple-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 hover:border-purple-400 transition-all duration-300 justify-start h-12">
+                            <div className="flex items-center justify-center w-8 h-8 bg-purple-100 text-purple-600 rounded-lg mr-3">
+                              <BarChart3 className="h-4 w-4" />
+                            </div>
+                            <div className="text-left">
+                              <div className="font-medium text-sm">Progress Tracking</div>
+                              <div className="text-xs text-gray-500">View your learning progress</div>
+                            </div>
+                            <div className="ml-auto text-xs bg-purple-100 text-purple-600 px-2 py-1 rounded-full font-medium">
+                              78%
+                            </div>
+                          </Button>
+                        </Link>
+                      )}
                       
-                      <Link href="/profile" className="block">
-                        <Button variant="outline" className="w-full border-orange-300 text-orange-700 hover:bg-gradient-to-r hover:from-orange-50 hover:to-yellow-50 hover:border-orange-400 transition-all duration-300 justify-start h-12">
-                          <div className="flex items-center justify-center w-8 h-8 bg-orange-100 text-orange-600 rounded-lg mr-3">
-                            <Settings className="h-4 w-4" />
-                          </div>
-                          <div className="text-left">
-                            <div className="font-medium text-sm">Settings</div>
-                            <div className="text-xs text-gray-500">Profile & preferences</div>
-                          </div>
-                        </Button>
-                      </Link>
+                      {user?.role !== 'admin' && (
+                        <Link href="/profile" className="block">
+                          <Button variant="outline" className="w-full border-orange-300 text-orange-700 hover:bg-gradient-to-r hover:from-orange-50 hover:to-yellow-50 hover:border-orange-400 transition-all duration-300 justify-start h-12">
+                            <div className="flex items-center justify-center w-8 h-8 bg-orange-100 text-orange-600 rounded-lg mr-3">
+                              <Settings className="h-4 w-4" />
+                            </div>
+                            <div className="text-left">
+                              <div className="font-medium text-sm">Settings</div>
+                              <div className="text-xs text-gray-500">Profile & preferences</div>
+                            </div>
+                          </Button>
+                        </Link>
+                      )}
                       
-                      <Link href="/certificates" className="block">
-                        <Button variant="outline" className="w-full border-yellow-300 text-yellow-700 hover:bg-gradient-to-r hover:from-yellow-50 hover:to-green-50 hover:border-yellow-400 transition-all duration-300 justify-start h-12">
-                          <div className="flex items-center justify-center w-8 h-8 bg-yellow-100 text-yellow-600 rounded-lg mr-3">
-                            <Award className="h-4 w-4" />
-                          </div>
-                          <div className="text-left">
-                            <div className="font-medium text-sm">Certificates</div>
-                            <div className="text-xs text-gray-500">View your achievements</div>
-                          </div>
-                          <div className="ml-auto text-xs bg-yellow-100 text-yellow-600 px-2 py-1 rounded-full font-medium">
-                            2 Earned
-                          </div>
-                        </Button>
-                      </Link>
+                      {user?.role !== 'admin' && (
+                        <Link href="/certificates" className="block">
+                          <Button variant="outline" className="w-full border-yellow-300 text-yellow-700 hover:bg-gradient-to-r hover:from-yellow-50 hover:to-green-50 hover:border-yellow-400 transition-all duration-300 justify-start h-12">
+                            <div className="flex items-center justify-center w-8 h-8 bg-yellow-100 text-yellow-600 rounded-lg mr-3">
+                              <Award className="h-4 w-4" />
+                            </div>
+                            <div className="text-left">
+                              <div className="font-medium text-sm">Certificates</div>
+                              <div className="text-xs text-gray-500">View your achievements</div>
+                            </div>
+                            <div className="ml-auto text-xs bg-yellow-100 text-yellow-600 px-2 py-1 rounded-full font-medium">
+                              2 Earned
+                            </div>
+                          </Button>
+                        </Link>
+                      )}
                       <Button 
                         onClick={logout}
                         variant="outline" 

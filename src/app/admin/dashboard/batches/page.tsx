@@ -259,7 +259,10 @@ export default function BatchesPage() {
     startDate: '',
     endDate: '',
     timing: '',
-    mode: 'Online'
+    mode: 'Online',
+    maxStudents: '',
+    instructor: '',
+    status: 'upcoming'
   });
 
   // Event handlers
@@ -385,7 +388,10 @@ export default function BatchesPage() {
           startDate: '',
           endDate: '',
           timing: '',
-          mode: 'Online'
+          mode: 'Online',
+          maxStudents: '',
+          instructor: '',
+          status: 'upcoming'
         });
         // Refresh batches data
         const batchesResponse = await backendAPI.getAllBatches();
@@ -1133,109 +1139,234 @@ export default function BatchesPage() {
 
       {/* Create Batch Modal */}
       <Dialog open={showCreateBatchModal} onOpenChange={setShowCreateBatchModal}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Create New Batch</DialogTitle>
-            <DialogDescription>
-              Create a new training batch for students
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white">
+          <DialogHeader className="border-b border-gray-100 pb-6 bg-white">
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+              Create New Batch
+            </DialogTitle>
+            <DialogDescription className="text-gray-600 mt-2">
+              Set up a new training batch with comprehensive configuration options
             </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="batchId">Batch ID</Label>
-                <Input
-                  id="batchId"
-                  value={createBatchForm.batchId}
-                  onChange={(e) => setCreateBatchForm({...createBatchForm, batchId: e.target.value})}
-                  placeholder="e.g., AWS-SA-15"
-                />
+          <div className="space-y-8 py-6 bg-white">
+            {/* Basic Information Section */}
+            <div className="space-y-6 bg-gray-50 p-6 rounded-lg border border-gray-100">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+                  <BookOpen className="h-4 w-4 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">Basic Information</h3>
               </div>
-              <div>
-                <Label htmlFor="courseSelection">Course</Label>
-                <Select 
-                  value={createBatchForm.courseId} 
-                  onValueChange={(value) => {
-                    const selectedCourse = availableCourses.find(course => course.courseid === value);
-                    setCreateBatchForm({
-                      ...createBatchForm, 
-                      courseId: value,
-                      courseTitle: selectedCourse?.title || ''
-                    });
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select course" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availableCourses.map((course) => (
-                      <SelectItem key={course.courseid} value={course.courseid}>
-                        {course.title}
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="batchId" className="text-sm font-medium text-gray-700">
+                    Batch ID <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="batchId"
+                    value={createBatchForm.batchId}
+                    onChange={(e) => setCreateBatchForm({...createBatchForm, batchId: e.target.value})}
+                    placeholder="e.g., AWS-SA-15"
+                    className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                  />
+                  <p className="text-xs text-gray-500">Unique identifier for the batch</p>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="courseSelection" className="text-sm font-medium text-gray-700">
+                    Course <span className="text-red-500">*</span>
+                  </Label>
+                  <Select 
+                    value={createBatchForm.courseId} 
+                    onValueChange={(value) => {
+                      const selectedCourse = availableCourses.find(course => course.courseid === value);
+                      setCreateBatchForm({
+                        ...createBatchForm, 
+                        courseId: value,
+                        courseTitle: selectedCourse?.title || ''
+                      });
+                    }}
+                  >
+                    <SelectTrigger className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                      <SelectValue placeholder="Select a course" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white">
+                      {availableCourses.map((course) => (
+                        <SelectItem key={course.courseid} value={course.courseid}>
+                          <div className="flex items-center space-x-2">
+                            <Award className="h-4 w-4 text-blue-500" />
+                            <span>{course.title}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
+            {/* Schedule Section */}
+            <div className="space-y-6 bg-blue-50 p-6 rounded-lg border border-blue-100">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
+                  <Calendar className="h-4 w-4 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">Schedule & Timing</h3>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="startDate" className="text-sm font-medium text-gray-700">
+                    Start Date <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="startDate"
+                    type="date"
+                    value={createBatchForm.startDate}
+                    onChange={(e) => setCreateBatchForm({...createBatchForm, startDate: e.target.value})}
+                    className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="endDate" className="text-sm font-medium text-gray-700">
+                    End Date <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="endDate"
+                    type="date"
+                    value={createBatchForm.endDate}
+                    onChange={(e) => setCreateBatchForm({...createBatchForm, endDate: e.target.value})}
+                    className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="timing" className="text-sm font-medium text-gray-700">
+                    Class Timing <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="timing"
+                    value={createBatchForm.timing}
+                    onChange={(e) => setCreateBatchForm({...createBatchForm, timing: e.target.value})}
+                    placeholder="e.g., 10:00 AM - 12:00 PM"
+                    className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                  />
+                  <p className="text-xs text-gray-500">Daily class schedule</p>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="mode" className="text-sm font-medium text-gray-700">
+                    Delivery Mode <span className="text-red-500">*</span>
+                  </Label>
+                  <Select 
+                    value={createBatchForm.mode} 
+                    onValueChange={(value) => setCreateBatchForm({...createBatchForm, mode: value})}
+                  >
+                    <SelectTrigger className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                      <SelectValue placeholder="Select delivery mode" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white">
+                      <SelectItem value="Online">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <span>Online</span>
+                        </div>
                       </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                      <SelectItem value="Offline">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                          <span>Offline</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="Hybrid">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                          <span>Hybrid</span>
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="startDate">Start Date</Label>
-                <Input
-                  id="startDate"
-                  type="date"
-                  value={createBatchForm.startDate}
-                  onChange={(e) => setCreateBatchForm({...createBatchForm, startDate: e.target.value})}
-                />
+
+            {/* Additional Configuration */}
+            <div className="space-y-6 bg-green-50 p-6 rounded-lg border border-green-100">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
+                  <Users className="h-4 w-4 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">Batch Configuration</h3>
               </div>
-              <div>
-                <Label htmlFor="endDate">End Date</Label>
-                <Input
-                  id="endDate"
-                  type="date"
-                  value={createBatchForm.endDate}
-                  onChange={(e) => setCreateBatchForm({...createBatchForm, endDate: e.target.value})}
-                />
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="maxStudents" className="text-sm font-medium text-gray-700">
+                    Maximum Students
+                  </Label>
+                  <Input
+                    id="maxStudents"
+                    type="number"
+                    value={createBatchForm.maxStudents || ''}
+                    onChange={(e) => setCreateBatchForm({...createBatchForm, maxStudents: e.target.value})}
+                    placeholder="25"
+                    className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="instructor" className="text-sm font-medium text-gray-700">
+                    Lead Instructor
+                  </Label>
+                  <Input
+                    id="instructor"
+                    value={createBatchForm.instructor || ''}
+                    onChange={(e) => setCreateBatchForm({...createBatchForm, instructor: e.target.value})}
+                    placeholder="Instructor name"
+                    className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="status" className="text-sm font-medium text-gray-700">
+                    Initial Status
+                  </Label>
+                  <Select 
+                    value={createBatchForm.status || 'upcoming'} 
+                    onValueChange={(value) => setCreateBatchForm({...createBatchForm, status: value})}
+                  >
+                    <SelectTrigger className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white">
+                      <SelectItem value="upcoming">Upcoming</SelectItem>
+                      <SelectItem value="ongoing">Active</SelectItem>
+                      <SelectItem value="draft">Draft</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="timing">Timing</Label>
-                <Input
-                  id="timing"
-                  value={createBatchForm.timing}
-                  onChange={(e) => setCreateBatchForm({...createBatchForm, timing: e.target.value})}
-                  placeholder="e.g., 10:00 AM - 12:00 PM"
-                />
-              </div>
-              <div>
-                <Label htmlFor="mode">Mode</Label>
-                <Select 
-                  value={createBatchForm.mode} 
-                  onValueChange={(value) => setCreateBatchForm({...createBatchForm, mode: value})}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select mode" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Online">Online</SelectItem>
-                    <SelectItem value="Offline">Offline</SelectItem>
-                    <SelectItem value="Hybrid">Hybrid</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            
-            <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setShowCreateBatchModal(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleCreateBatch}>
-                Create Batch
-              </Button>
-            </div>
+          </div>
+          
+          <div className="flex justify-end space-x-3 pt-6 border-t border-gray-100 bg-white">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowCreateBatchModal(false)}
+              className="px-6 py-2 border-gray-200 hover:bg-gray-50 bg-white"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleCreateBatch}
+              className="px-6 py-2 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+            >
+              <PlusCircle className="h-4 w-4 mr-2" />
+              Create Batch
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

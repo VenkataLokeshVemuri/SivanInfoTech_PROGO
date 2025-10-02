@@ -754,11 +754,13 @@ export default function AdminDashboardPage() {
               </CardContent>
               
               <CardFooter className="bg-gradient-to-r from-gray-50/90 via-blue-50/40 to-transparent border-t border-gray-100/80 backdrop-blur-sm relative z-10 p-6">
-                <Button className="w-full group/btn bg-gradient-to-r from-white/80 to-blue-50/80 hover:from-blue-50 hover:to-white text-gray-700 hover:text-blue-700 border border-gray-200/80 hover:border-blue-300 shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-105 rounded-2xl py-4">
-                  <Eye className="h-5 w-5 mr-3 group-hover/btn:scale-110 transition-transform duration-300" />
-                  <span className="font-bold">View Complete Activity History</span>
-                  <ArrowRight className="h-5 w-5 ml-3 group-hover/btn:translate-x-2 transition-transform duration-300" />
-                </Button>
+                <Link href="/admin/dashboard/attempts" className="w-full">
+                  <Button className="w-full group/btn bg-gradient-to-r from-white/80 to-blue-50/80 hover:from-blue-50 hover:to-white text-gray-700 hover:text-blue-700 border border-gray-200/80 hover:border-blue-300 shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-105 rounded-2xl py-4">
+                    <Eye className="h-5 w-5 mr-3 group-hover/btn:scale-110 transition-transform duration-300" />
+                    <span className="font-bold">View Complete Activity History</span>
+                    <ArrowRight className="h-5 w-5 ml-3 group-hover/btn:translate-x-2 transition-transform duration-300" />
+                  </Button>
+                </Link>
               </CardFooter>
             </div>
           </Card>
@@ -848,11 +850,13 @@ export default function AdminDashboardPage() {
               </CardContent>
               
               <CardFooter className="bg-gradient-to-r from-gray-50/90 via-green-50/40 to-transparent border-t border-green-100/50 backdrop-blur-sm p-6">
-                <Button className="w-full group/btn bg-gradient-to-r from-white/80 to-green-50/80 hover:from-green-50 hover:to-white text-gray-700 hover:text-green-700 border border-gray-200/80 hover:border-green-300 shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-105 rounded-2xl py-3">
-                  <Trophy className="h-4 w-4 mr-2 group-hover/btn:scale-110 transition-transform duration-300" />
-                  <span className="font-bold">View All Students</span>
-                  <ArrowRight className="h-4 w-4 ml-2 group-hover/btn:translate-x-1 transition-transform duration-300" />
-                </Button>
+                <Link href="/admin/dashboard/users" className="w-full">
+                  <Button className="w-full group/btn bg-gradient-to-r from-white/80 to-green-50/80 hover:from-green-50 hover:to-white text-gray-700 hover:text-green-700 border border-gray-200/80 hover:border-green-300 shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-105 rounded-2xl py-3">
+                    <Trophy className="h-4 w-4 mr-2 group-hover/btn:scale-110 transition-transform duration-300" />
+                    <span className="font-bold">View All Students</span>
+                    <ArrowRight className="h-4 w-4 ml-2 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                  </Button>
+                </Link>
               </CardFooter>
             </div>
           </Card>
@@ -1057,10 +1061,12 @@ export default function AdminDashboardPage() {
               </div>
             </CardContent>
             <CardFooter className="bg-gray-50 border-t">
-              <Button variant="outline" size="sm" className="w-full hover:bg-white">
-                View Calendar
-                <ArrowRight className="h-4 w-4 ml-1" />
-              </Button>
+              <Link href="/admin/dashboard" className="w-full">
+                <Button variant="outline" size="sm" className="w-full hover:bg-white">
+                  View Calendar
+                  <ArrowRight className="h-4 w-4 ml-1" />
+                </Button>
+              </Link>
             </CardFooter>
           </Card>
         </TabsContent>
@@ -1128,10 +1134,12 @@ export default function AdminDashboardPage() {
               </div>
             </CardContent>
             <CardFooter className="bg-gray-50 border-t">
-              <Button variant="outline" size="sm" className="w-full hover:bg-white">
-                View All Tasks
-                <ArrowRight className="h-4 w-4 ml-1" />
-              </Button>
+              <Link href="/admin/dashboard" className="w-full">
+                <Button variant="outline" size="sm" className="w-full hover:bg-white">
+                  View All Tasks
+                  <ArrowRight className="h-4 w-4 ml-1" />
+                </Button>
+              </Link>
             </CardFooter>
           </Card>
         </TabsContent>
@@ -1169,25 +1177,25 @@ export default function AdminDashboardPage() {
             
             <CardContent className="p-6">
               <div className="grid grid-cols-2 gap-6">
-                {/* Add User Action */}
-                <Link href="/admin/dashboard/users/create" className="group/action transform transition-all duration-500 hover:scale-110">
+                {/* Manage Users Action */}
+                <Link href="/admin/dashboard/users" className="group/action transform transition-all duration-500 hover:scale-110">
                   <div className="relative overflow-hidden bg-gradient-to-br from-white/90 via-blue-50/60 to-white/90 border-2 border-gray-100/50 hover:border-[#084fa1]/50 rounded-3xl p-6 flex flex-col items-center justify-center space-y-4 h-full text-center shadow-lg hover:shadow-2xl backdrop-blur-sm group-hover/action:bg-gradient-to-br group-hover/action:from-blue-50/80 group-hover/action:to-white/90 transition-all duration-700">
                     {/* Background Gradient Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-br from-[#084fa1]/5 via-transparent to-blue-500/10 opacity-0 group-hover/action:opacity-100 transition-opacity duration-500"></div>
                     
                     <div className="relative z-10 p-4 rounded-3xl bg-gradient-to-br from-[#084fa1]/10 via-blue-100/60 to-[#084fa1]/5 group-hover/action:from-[#084fa1]/20 group-hover/action:to-blue-200/80 transition-all duration-500 shadow-md group-hover/action:shadow-xl group-hover/action:scale-110">
-                      <UserPlus className="h-8 w-8 text-[#084fa1] group-hover/action:scale-110 transition-transform duration-300" />
+                      <Users className="h-8 w-8 text-[#084fa1] group-hover/action:scale-110 transition-transform duration-300" />
                     </div>
                     
                     <div className="relative z-10 space-y-2">
-                      <span className="font-black text-gray-800 group-hover/action:text-[#084fa1] transition-colors duration-300 text-lg">Add User</span>
-                      <span className="text-sm text-gray-600 font-medium group-hover/action:text-gray-700 transition-colors duration-300">Create new user accounts</span>
+                      <span className="font-black text-gray-800 group-hover/action:text-[#084fa1] transition-colors duration-300 text-lg">Manage Users</span>
+                      <span className="text-sm text-gray-600 font-medium group-hover/action:text-gray-700 transition-colors duration-300">View and manage user accounts</span>
                     </div>
                   </div>
                 </Link>
 
-                {/* New Batch Action */}
-                <Link href="/admin/dashboard/batches/create" className="group/action transform transition-all duration-500 hover:scale-110">
+                {/* Manage Batches Action */}
+                <Link href="/admin/dashboard/batches" className="group/action transform transition-all duration-500 hover:scale-110">
                   <div className="relative overflow-hidden bg-gradient-to-br from-white/90 via-green-50/60 to-white/90 border-2 border-gray-100/50 hover:border-[#80b742]/50 rounded-3xl p-6 flex flex-col items-center justify-center space-y-4 h-full text-center shadow-lg hover:shadow-2xl backdrop-blur-sm group-hover/action:bg-gradient-to-br group-hover/action:from-green-50/80 group-hover/action:to-white/90 transition-all duration-700">
                     {/* Background Gradient Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-br from-[#80b742]/5 via-transparent to-green-500/10 opacity-0 group-hover/action:opacity-100 transition-opacity duration-500"></div>
@@ -1197,25 +1205,25 @@ export default function AdminDashboardPage() {
                     </div>
                     
                     <div className="relative z-10 space-y-2">
-                      <span className="font-black text-gray-800 group-hover/action:text-[#80b742] transition-colors duration-300 text-lg">New Batch</span>
-                      <span className="text-sm text-gray-600 font-medium group-hover/action:text-gray-700 transition-colors duration-300">Create course batches</span>
+                      <span className="font-black text-gray-800 group-hover/action:text-[#80b742] transition-colors duration-300 text-lg">Manage Batches</span>
+                      <span className="text-sm text-gray-600 font-medium group-hover/action:text-gray-700 transition-colors duration-300">View and manage course batches</span>
                     </div>
                   </div>
                 </Link>
 
-                {/* Create Quiz Action */}
-                <Link href="/admin/dashboard/quizzes/create" className="group/action transform transition-all duration-500 hover:scale-110">
+                {/* Manage Quizzes Action */}
+                <Link href="/admin/dashboard/quizzes" className="group/action transform transition-all duration-500 hover:scale-110">
                   <div className="relative overflow-hidden bg-gradient-to-br from-white/90 via-orange-50/60 to-white/90 border-2 border-gray-100/50 hover:border-orange-500/50 rounded-3xl p-6 flex flex-col items-center justify-center space-y-4 h-full text-center shadow-lg hover:shadow-2xl backdrop-blur-sm group-hover/action:bg-gradient-to-br group-hover/action:from-orange-50/80 group-hover/action:to-white/90 transition-all duration-700">
                     {/* Background Gradient Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 via-transparent to-orange-400/10 opacity-0 group-hover/action:opacity-100 transition-opacity duration-500"></div>
                     
                     <div className="relative z-10 p-4 rounded-3xl bg-gradient-to-br from-orange-100/80 via-orange-100/60 to-orange-50/80 group-hover/action:from-orange-200/80 group-hover/action:to-orange-100/80 transition-all duration-500 shadow-md group-hover/action:shadow-xl group-hover/action:scale-110">
-                      <FileText className="h-8 w-8 text-orange-500 group-hover/action:scale-110 transition-transform duration-300" />
+                      <ClipboardList className="h-8 w-8 text-orange-500 group-hover/action:scale-110 transition-transform duration-300" />
                     </div>
                     
                     <div className="relative z-10 space-y-2">
-                      <span className="font-black text-gray-800 group-hover/action:text-orange-600 transition-colors duration-300 text-lg">Create Quiz</span>
-                      <span className="text-sm text-gray-600 font-medium group-hover/action:text-gray-700 transition-colors duration-300">Design assessments</span>
+                      <span className="font-black text-gray-800 group-hover/action:text-orange-600 transition-colors duration-300 text-lg">Manage Quizzes</span>
+                      <span className="text-sm text-gray-600 font-medium group-hover/action:text-gray-700 transition-colors duration-300">View and manage assessments</span>
                     </div>
                   </div>
                 </Link>
@@ -1288,10 +1296,12 @@ export default function AdminDashboardPage() {
             </div>
           </CardContent>
           <CardFooter className="bg-gray-50 border-t">
-            <Button variant="outline" size="sm" className="w-full hover:bg-white">
-              View Detailed Analytics
-              <ArrowRight className="h-4 w-4 ml-1" />
-            </Button>
+            <Link href="/admin/dashboard/analytics" className="w-full">
+              <Button variant="outline" size="sm" className="w-full hover:bg-white">
+                View Detailed Analytics
+                <ArrowRight className="h-4 w-4 ml-1" />
+              </Button>
+            </Link>
           </CardFooter>
         </Card>
       </div>

@@ -721,18 +721,31 @@ const UsersPage: React.FC = () => {
         }
         setShowAddModal(open);
       }}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Add New User</DialogTitle>
-            <DialogDescription>
-              Create a new user account. Fill in all required information.
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-white">
+          <DialogHeader className="border-b border-gray-100 pb-6 bg-white">
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+              Add New User
+            </DialogTitle>
+            <DialogDescription className="text-gray-600 mt-2">
+              Create a new user account with comprehensive profile information
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={(e) => { e.preventDefault(); handleAddUser(); }} autoComplete="off">
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
+          
+          <form onSubmit={(e) => { e.preventDefault(); handleAddUser(); }} autoComplete="off" className="space-y-8 py-6 bg-white">
+            {/* Personal Information Section */}
+            <div className="space-y-6 bg-gray-50 p-6 rounded-lg border border-gray-100">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+                  <UserPlus className="h-4 w-4 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">Personal Information</h3>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
+                  <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">
+                    First Name <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     id="firstName"
                     name="firstName"
@@ -740,11 +753,15 @@ const UsersPage: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                     placeholder="John"
                     autoComplete="off"
+                    className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
                     required
                   />
                 </div>
+                
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
+                  <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">
+                    Last Name <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     id="lastName"
                     name="lastName"
@@ -752,77 +769,154 @@ const UsersPage: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                     placeholder="Doe"
                     autoComplete="off"
+                    className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
                     required
                   />
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="john.doe@example.com"
-                  autoComplete="new-email"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  placeholder="+91 9876543210"
-                  autoComplete="off"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  placeholder="Enter password"
-                  autoComplete="new-password"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="role">Role</Label>
-                <Select value={formData.role} onValueChange={(value) => setFormData({ ...formData, role: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="student">Student</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="course">Course</Label>
-                <Input
-                  id="course"
-                  name="course"
-                  value={formData.course}
-                  onChange={(e) => setFormData({ ...formData, course: e.target.value })}
-                  placeholder="AWS Certification"
-                  autoComplete="off"
-                />
+                
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                    Email Address <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="john.doe@example.com"
+                    autoComplete="new-email"
+                    className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="phone" className="text-sm font-medium text-gray-700">
+                    Phone Number
+                  </Label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    placeholder="+91 9876543210"
+                    autoComplete="off"
+                    className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                  />
+                </div>
               </div>
             </div>
-            <div className="flex justify-end space-x-2">
-              <Button type="button" variant="outline" onClick={() => setShowAddModal(false)}>
+
+            {/* Account Configuration Section */}
+            <div className="space-y-6 bg-blue-50 p-6 rounded-lg border border-blue-100">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
+                  <Award className="h-4 w-4 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">Account Configuration</h3>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                    Password <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    placeholder="Enter secure password"
+                    autoComplete="new-password"
+                    className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                    required
+                  />
+                  <p className="text-xs text-gray-500">Minimum 8 characters recommended</p>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="role" className="text-sm font-medium text-gray-700">
+                    User Role <span className="text-red-500">*</span>
+                  </Label>
+                  <Select value={formData.role} onValueChange={(value) => setFormData({ ...formData, role: value })}>
+                    <SelectTrigger className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                      <SelectValue placeholder="Select user role" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white">
+                      <SelectItem value="student">
+                        <div className="flex items-center space-x-2">
+                          <GraduationCap className="h-4 w-4 text-blue-500" />
+                          <span>Student</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="instructor">
+                        <div className="flex items-center space-x-2">
+                          <Users className="h-4 w-4 text-green-500" />
+                          <span>Instructor</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="admin">
+                        <div className="flex items-center space-x-2">
+                          <Award className="h-4 w-4 text-purple-500" />
+                          <span>Administrator</span>
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="course" className="text-sm font-medium text-gray-700">
+                    Course Assignment
+                  </Label>
+                  <Input
+                    id="course"
+                    name="course"
+                    value={formData.course}
+                    onChange={(e) => setFormData({ ...formData, course: e.target.value })}
+                    placeholder="AWS Certification, Azure Fundamentals, etc."
+                    autoComplete="off"
+                    className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                  />
+                  <p className="text-xs text-gray-500">Optional: Assign user to a specific course</p>
+                </div>
+              </div>
+            </div>
+
+            {error && (
+              <div className="flex items-center space-x-2 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <AlertTriangle className="h-5 w-5 text-red-500" />
+                <span className="text-red-700 text-sm">{error}</span>
+              </div>
+            )}
+
+            <div className="flex justify-end space-x-3 pt-6 border-t border-gray-100 bg-white">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => setShowAddModal(false)}
+                className="px-6 py-2 border-gray-200 hover:bg-gray-50 bg-white"
+              >
                 Cancel
               </Button>
-              <Button type="submit" disabled={loading}>
-                {loading ? 'Creating...' : 'Create User'}
+              <Button 
+                type="submit" 
+                disabled={loading}
+                className="px-6 py-2 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+              >
+                {loading ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    Create User
+                  </>
+                )}
               </Button>
             </div>
           </form>

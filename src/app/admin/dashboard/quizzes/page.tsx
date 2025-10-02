@@ -110,7 +110,11 @@ export default function QuizzesPage() {
     passingMarks: 70,
     description: '',
     instructions: '',
-    difficulty: 'intermediate'
+    difficulty: 'intermediate',
+    questionCount: 0,
+    maxAttempts: 1,
+    randomizeQuestions: false,
+    status: 'draft'
   });
   
   const { user, isAuthenticated, isAdmin } = useBackendAuth();
@@ -189,7 +193,11 @@ export default function QuizzesPage() {
           passingMarks: 70,
           description: '',
           instructions: '',
-          difficulty: 'intermediate'
+          difficulty: 'intermediate',
+          questionCount: 0,
+          maxAttempts: 1,
+          randomizeQuestions: false,
+          status: 'draft'
         });
         // Refresh quizzes data
         loadQuizzes();
@@ -686,127 +694,295 @@ Avg Completion Time: ${stats.averageCompletionTime || 0} minutes`;
 
       {/* Create Quiz Modal */}
       <Dialog open={showCreateQuizModal} onOpenChange={setShowCreateQuizModal}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Create New Quiz</DialogTitle>
-            <DialogDescription>
-              Create a new quiz assessment for your course. Fill in the details below.
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white">
+          <DialogHeader className="border-b border-gray-100 pb-6 bg-white">
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+              Create New Quiz
+            </DialogTitle>
+            <DialogDescription className="text-gray-600 mt-2">
+              Create a comprehensive quiz assessment with advanced configuration options
             </DialogDescription>
           </DialogHeader>
           
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="quiz-title">Quiz Title</Label>
-              <Input
-                id="quiz-title"
-                placeholder="Enter quiz title..."
-                value={createQuizForm.title}
-                onChange={(e) => setCreateQuizForm({...createQuizForm, title: e.target.value})}
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="course-select">Course</Label>
-              <Select
-                value={createQuizForm.courseId}
-                onValueChange={(value) => setCreateQuizForm({...createQuizForm, courseId: value})}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a course" />
-                </SelectTrigger>
-                <SelectContent>
-                  {courses.map((course) => (
-                    <SelectItem key={course.courseid} value={course.courseid}>
-                      {course.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="duration">Duration (minutes)</Label>
-                <Input
-                  id="duration"
-                  type="number"
-                  value={createQuizForm.duration}
-                  onChange={(e) => setCreateQuizForm({...createQuizForm, duration: parseInt(e.target.value) || 60})}
-                />
+          <div className="space-y-8 py-6 bg-white">
+            {/* Basic Information Section */}
+            <div className="space-y-6 bg-gray-50 p-6 rounded-lg border border-gray-100">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+                  <FileText className="h-4 w-4 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">Basic Information</h3>
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="difficulty">Difficulty</Label>
-                <Select
-                  value={createQuizForm.difficulty}
-                  onValueChange={(value) => setCreateQuizForm({...createQuizForm, difficulty: value})}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="beginner">Beginner</SelectItem>
-                    <SelectItem value="intermediate">Intermediate</SelectItem>
-                    <SelectItem value="advanced">Advanced</SelectItem>
-                  </SelectContent>
-                </Select>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="quiz-title" className="text-sm font-medium text-gray-700">
+                    Quiz Title <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="quiz-title"
+                    placeholder="e.g., AWS Solutions Architect Associate Final Assessment"
+                    value={createQuizForm.title}
+                    onChange={(e) => setCreateQuizForm({...createQuizForm, title: e.target.value})}
+                    className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="course-select" className="text-sm font-medium text-gray-700">
+                    Course <span className="text-red-500">*</span>
+                  </Label>
+                  <Select
+                    value={createQuizForm.courseId}
+                    onValueChange={(value) => setCreateQuizForm({...createQuizForm, courseId: value})}
+                  >
+                    <SelectTrigger className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                      <SelectValue placeholder="Select a course" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white">
+                      {courses.map((course) => (
+                        <SelectItem key={course.courseid} value={course.courseid}>
+                          <div className="flex items-center space-x-2">
+                            <Award className="h-4 w-4 text-blue-500" />
+                            <span>{course.title}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="difficulty" className="text-sm font-medium text-gray-700">
+                    Difficulty Level <span className="text-red-500">*</span>
+                  </Label>
+                  <Select
+                    value={createQuizForm.difficulty}
+                    onValueChange={(value) => setCreateQuizForm({...createQuizForm, difficulty: value})}
+                  >
+                    <SelectTrigger className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                      <SelectValue placeholder="Select difficulty" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white">
+                      <SelectItem value="beginner">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <span>Beginner</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="intermediate">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                          <span>Intermediate</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="advanced">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                          <span>Advanced</span>
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="total-marks">Total Marks</Label>
-                <Input
-                  id="total-marks"
-                  type="number"
-                  value={createQuizForm.totalMarks}
-                  onChange={(e) => setCreateQuizForm({...createQuizForm, totalMarks: parseInt(e.target.value) || 100})}
-                />
+            {/* Quiz Configuration Section */}
+            <div className="space-y-6 bg-blue-50 p-6 rounded-lg border border-blue-100">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
+                  <Clock className="h-4 w-4 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">Quiz Configuration</h3>
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="passing-marks">Passing Marks</Label>
-                <Input
-                  id="passing-marks"
-                  type="number"
-                  value={createQuizForm.passingMarks}
-                  onChange={(e) => setCreateQuizForm({...createQuizForm, passingMarks: parseInt(e.target.value) || 70})}
-                />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="duration" className="text-sm font-medium text-gray-700">
+                    Duration (minutes) <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="duration"
+                    type="number"
+                    value={createQuizForm.duration}
+                    onChange={(e) => setCreateQuizForm({...createQuizForm, duration: parseInt(e.target.value) || 60})}
+                    className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                    placeholder="60"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="total-marks" className="text-sm font-medium text-gray-700">
+                    Total Marks <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="total-marks"
+                    type="number"
+                    value={createQuizForm.totalMarks}
+                    onChange={(e) => setCreateQuizForm({...createQuizForm, totalMarks: parseInt(e.target.value) || 100})}
+                    className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                    placeholder="100"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="passing-marks" className="text-sm font-medium text-gray-700">
+                    Passing Marks <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="passing-marks"
+                    type="number"
+                    value={createQuizForm.passingMarks}
+                    onChange={(e) => setCreateQuizForm({...createQuizForm, passingMarks: parseInt(e.target.value) || 70})}
+                    className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                    placeholder="70"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="questionCount" className="text-sm font-medium text-gray-700">
+                    Question Count
+                  </Label>
+                  <Input
+                    id="questionCount"
+                    type="number"
+                    value={createQuizForm.questionCount || ''}
+                    onChange={(e) => setCreateQuizForm({...createQuizForm, questionCount: parseInt(e.target.value) || 0})}
+                    className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                    placeholder="25"
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                placeholder="Enter quiz description..."
-                value={createQuizForm.description}
-                onChange={(e) => setCreateQuizForm({...createQuizForm, description: e.target.value})}
-                rows={3}
-              />
+            {/* Content Section */}
+            <div className="space-y-6 bg-green-50 p-6 rounded-lg border border-green-100">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
+                  <CheckCircle className="h-4 w-4 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">Content & Instructions</h3>
+              </div>
+              
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="description" className="text-sm font-medium text-gray-700">
+                    Quiz Description
+                  </Label>
+                  <Textarea
+                    id="description"
+                    placeholder="Provide a detailed description of the quiz content and objectives..."
+                    value={createQuizForm.description}
+                    onChange={(e) => setCreateQuizForm({...createQuizForm, description: e.target.value})}
+                    rows={4}
+                    className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="instructions" className="text-sm font-medium text-gray-700">
+                    Quiz Instructions
+                  </Label>
+                  <Textarea
+                    id="instructions"
+                    placeholder="Enter detailed instructions for students taking the quiz..."
+                    value={createQuizForm.instructions}
+                    onChange={(e) => setCreateQuizForm({...createQuizForm, instructions: e.target.value})}
+                    rows={4}
+                    className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="instructions">Instructions</Label>
-              <Textarea
-                id="instructions"
-                placeholder="Enter quiz instructions..."
-                value={createQuizForm.instructions}
-                onChange={(e) => setCreateQuizForm({...createQuizForm, instructions: e.target.value})}
-                rows={3}
-              />
+            {/* Advanced Settings Section */}
+            <div className="space-y-6 bg-purple-50 p-6 rounded-lg border border-purple-100">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center">
+                  <BarChart className="h-4 w-4 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">Advanced Settings</h3>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="maxAttempts" className="text-sm font-medium text-gray-700">
+                    Max Attempts
+                  </Label>
+                  <Select
+                    value={createQuizForm.maxAttempts?.toString() || '1'}
+                    onValueChange={(value) => setCreateQuizForm({...createQuizForm, maxAttempts: parseInt(value)})}
+                  >
+                    <SelectTrigger className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white">
+                      <SelectItem value="1">1 Attempt</SelectItem>
+                      <SelectItem value="2">2 Attempts</SelectItem>
+                      <SelectItem value="3">3 Attempts</SelectItem>
+                      <SelectItem value="unlimited">Unlimited</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="randomizeQuestions" className="text-sm font-medium text-gray-700">
+                    Question Order
+                  </Label>
+                  <Select
+                    value={createQuizForm.randomizeQuestions ? 'randomized' : 'sequential'}
+                    onValueChange={(value) => setCreateQuizForm({...createQuizForm, randomizeQuestions: value === 'randomized'})}
+                  >
+                    <SelectTrigger className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white">
+                      <SelectItem value="sequential">Sequential</SelectItem>
+                      <SelectItem value="randomized">Randomized</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="status" className="text-sm font-medium text-gray-700">
+                    Initial Status
+                  </Label>
+                  <Select
+                    value={createQuizForm.status || 'draft'}
+                    onValueChange={(value) => setCreateQuizForm({...createQuizForm, status: value})}
+                  >
+                    <SelectTrigger className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white">
+                      <SelectItem value="draft">Draft</SelectItem>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="scheduled">Scheduled</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </div>
           </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCreateQuizModal(false)}>
+          <div className="flex justify-end space-x-3 pt-6 border-t border-gray-100 bg-white">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowCreateQuizModal(false)}
+              className="px-6 py-2 border-gray-200 hover:bg-gray-50 bg-white"
+            >
               Cancel
             </Button>
             <Button 
               onClick={handleCreateQuiz}
               disabled={!createQuizForm.title || !createQuizForm.courseId}
+              className="px-6 py-2 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
             >
+              <PlusCircle className="h-4 w-4 mr-2" />
               Create Quiz
             </Button>
-          </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
