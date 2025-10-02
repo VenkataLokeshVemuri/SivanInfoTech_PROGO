@@ -473,6 +473,43 @@ class BackendAPI {
     });
   }
 
+  async exportUsers(): Promise<ApiResponse<{ users: any[] }>> {
+    return this.makeRequest('/admin/users/export');
+  }
+
+  async createUser(userData: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    phone?: string;
+    password: string;
+    role?: string;
+    verified?: boolean;
+  }): Promise<ApiResponse> {
+    return this.makeRequest('/admin/users', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    });
+  }
+
+  async updateUser(userEmail: string, userData: {
+    firstName?: string;
+    lastName?: string;
+    phone?: string;
+    password?: string;
+    role?: string;
+    verified?: boolean;
+  }): Promise<ApiResponse> {
+    return this.makeRequest(`/admin/users/${userEmail}`, {
+      method: 'PUT',
+      body: JSON.stringify(userData),
+    });
+  }
+
+  async getUserCertificates(userEmail: string): Promise<ApiResponse<{ certificates: any[] }>> {
+    return this.makeRequest(`/admin/users/${userEmail}/certificates`);
+  }
+
   async listAttempts(quizId?: string, status?: string): Promise<ApiResponse<{ attempts: any[] }>> {
     let endpoint = '/admin/attempts';
     const params = new URLSearchParams();
@@ -481,6 +518,32 @@ class BackendAPI {
     if (params.toString()) endpoint += `?${params.toString()}`;
     
     return this.makeRequest(endpoint);
+  }
+
+  // Quiz Analytics and Export APIs
+  async getQuizAnalytics(quizId: string): Promise<ApiResponse<{ 
+    quiz: any; 
+    statistics: any; 
+    recentAttempts: any[] 
+  }>> {
+    return this.makeRequest(`/admin/quiz/${quizId}/analytics`);
+  }
+
+  async exportQuizResults(quizId: string): Promise<ApiResponse<{ 
+    quiz: any; 
+    results: any[]; 
+    summary: any 
+  }>> {
+    return this.makeRequest(`/admin/quiz/${quizId}/export`);
+  }
+
+  async previewQuiz(quizId: string): Promise<ApiResponse<{ 
+    quiz: any; 
+    questions: any[]; 
+    totalQuestions: number; 
+    totalMarks: number 
+  }>> {
+    return this.makeRequest(`/admin/quiz/${quizId}/preview`);
   }
 
   // Student Quiz APIs
@@ -521,6 +584,122 @@ class BackendAPI {
 
   async getAttemptResult(attemptId: string): Promise<ApiResponse<{ result: any }>> {
     return this.makeRequest(`/student/attempt/${attemptId}/result`);
+  }
+
+  // Advanced Batch Management APIs
+  async getBatchAnalysis(batchId: string): Promise<ApiResponse<{
+    analysis: {
+      batchInfo: any;
+      statistics: any;
+      revenue: any;
+      students: any[];
+      enrollments: any[];
+    };
+  }>> {
+    return this.makeRequest(`/admin/batches/${batchId}/analysis`);
+  }
+
+  async getBatchStudents(batchId: string): Promise<ApiResponse<{ students: any[] }>> {
+    return this.makeRequest(`/admin/batches/${batchId}/students`);
+  }
+
+  async getBatchModules(batchId: string): Promise<ApiResponse<{ modules: any[] }>> {
+    return this.makeRequest(`/admin/batches/${batchId}/modules`);
+  }
+
+  async createBatchModule(batchId: string, moduleData: {
+    title: string;
+    description?: string;
+    duration?: string;
+    order?: number;
+    topics?: string[];
+    resources?: any[];
+    assignments?: any[];
+  }): Promise<ApiResponse<{ moduleId: string }>> {
+    return this.makeRequest(`/admin/batches/${batchId}/modules`, {
+      method: 'POST',
+      body: JSON.stringify(moduleData),
+    });
+  }
+
+  async updateModule(moduleId: string, updateData: {
+    title?: string;
+    description?: string;
+    duration?: string;
+    order?: number;
+    topics?: string[];
+    resources?: any[];
+    assignments?: any[];
+  }): Promise<ApiResponse> {
+    return this.makeRequest(`/admin/modules/${moduleId}`, {
+      method: 'PUT',
+      body: JSON.stringify(updateData),
+    });
+  }
+
+  async deleteModule(moduleId: string): Promise<ApiResponse> {
+    return this.makeRequest(`/admin/modules/${moduleId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async getBatchSchedule(batchId: string): Promise<ApiResponse<{ schedule: any[] }>> {
+    return this.makeRequest(`/admin/batches/${batchId}/schedule`);
+  }
+
+  async scheduleClass(batchId: string, scheduleData: {
+    moduleId?: string;
+    topic: string;
+    description?: string;
+    dateTime: string;
+    duration?: number;
+    instructor?: string;
+    meetingLink?: string;
+    resources?: any[];
+    type?: string;
+  }): Promise<ApiResponse<{ scheduleId: string }>> {
+    return this.makeRequest(`/admin/batches/${batchId}/schedule`, {
+      method: 'POST',
+      body: JSON.stringify(scheduleData),
+    });
+  }
+
+  async updateSchedule(scheduleId: string, updateData: {
+    topic?: string;
+    description?: string;
+    dateTime?: string;
+    duration?: number;
+    instructor?: string;
+    meetingLink?: string;
+    resources?: any[];
+    type?: string;
+    status?: string;
+  }): Promise<ApiResponse> {
+    return this.makeRequest(`/admin/schedule/${scheduleId}`, {
+      method: 'PUT',
+      body: JSON.stringify(updateData),
+    });
+  }
+
+  async cancelSchedule(scheduleId: string): Promise<ApiResponse> {
+    return this.makeRequest(`/admin/schedule/${scheduleId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async getBatchAttendance(batchId: string): Promise<ApiResponse<{ attendance: any[] }>> {
+    return this.makeRequest(`/admin/batches/${batchId}/attendance`);
+  }
+
+  async markAttendance(batchId: string, attendanceData: {
+    scheduleId?: string;
+    date: string;
+    studentAttendance: Array<{ email: string; status: 'present' | 'absent' }>;
+  }): Promise<ApiResponse<{ attendanceId: string }>> {
+    return this.makeRequest(`/admin/batches/${batchId}/attendance`, {
+      method: 'POST',
+      body: JSON.stringify(attendanceData),
+    });
   }
 
   // Utility methods

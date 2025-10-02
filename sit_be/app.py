@@ -162,6 +162,168 @@ try:
             print(f"Sample course created: {course['title']}")
         else:
             print(f"Course already exists: {course['title']}")
+    
+    # Create sample quizzes for testing
+    quizzes = mongo.db.quizzes
+    sample_quizzes = [
+        {
+            'quizId': 'quiz_aws_001',
+            'title': 'AWS Solutions Architect Associate Final Assessment',
+            'courseId': 'AWS-001',
+            'duration': 120,
+            'totalMarks': 100,
+            'passingMarks': 72,
+            'description': 'Comprehensive assessment for AWS Solutions Architect certification',
+            'instructions': 'Read each question carefully. You have 120 minutes to complete this assessment.',
+            'difficulty': 'advanced',
+            'status': 'active',
+            'isActive': True,
+            'createdBy': 'admin@sitcloud.in',
+            'createdAt': datetime.now(tz_NY).isoformat(),
+            'settings': {
+                'shuffleQuestions': True,
+                'shuffleOptions': True,
+                'showResults': True,
+                'allowReview': True
+            },
+            'questions': []
+        },
+        {
+            'quizId': 'quiz_azure_001',
+            'title': 'Azure Fundamentals - Module 1 Quiz',
+            'courseId': 'AZURE-001',
+            'duration': 30,
+            'totalMarks': 50,
+            'passingMarks': 35,
+            'description': 'Assessment for Azure Fundamentals Module 1',
+            'instructions': 'Basic assessment covering Azure cloud concepts.',
+            'difficulty': 'beginner',
+            'status': 'active',
+            'isActive': True,
+            'createdBy': 'admin@sitcloud.in',
+            'createdAt': datetime.now(tz_NY).isoformat(),
+            'settings': {
+                'shuffleQuestions': False,
+                'shuffleOptions': True,
+                'showResults': True,
+                'allowReview': False
+            },
+            'questions': []
+        },
+        {
+            'quizId': 'quiz_gcp_001',
+            'title': 'GCP Associate Cloud Engineer - Practice Test',
+            'courseId': 'GCP-001',
+            'duration': 90,
+            'totalMarks': 75,
+            'passingMarks': 56,
+            'description': 'Practice test for GCP Associate Cloud Engineer certification',
+            'instructions': 'Intermediate level practice test. Take your time and read carefully.',
+            'difficulty': 'intermediate',
+            'status': 'active',
+            'isActive': True,
+            'createdBy': 'admin@sitcloud.in',
+            'createdAt': datetime.now(tz_NY).isoformat(),
+            'settings': {
+                'shuffleQuestions': True,
+                'shuffleOptions': True,
+                'showResults': False,
+                'allowReview': True
+            },
+            'questions': []
+        },
+        {
+            'quizId': 'quiz_aws_draft',
+            'title': 'AWS Developer - CI/CD Pipeline Quiz',
+            'courseId': 'AWS-001',
+            'duration': 45,
+            'totalMarks': 60,
+            'passingMarks': 42,
+            'description': 'Quiz on AWS Developer CI/CD concepts',
+            'instructions': 'Draft quiz - under construction.',
+            'difficulty': 'intermediate',
+            'status': 'draft',
+            'isActive': True,
+            'createdBy': 'admin@sitcloud.in',
+            'createdAt': datetime.now(tz_NY).isoformat(),
+            'settings': {
+                'shuffleQuestions': False,
+                'shuffleOptions': False,
+                'showResults': True,
+                'allowReview': True
+            },
+            'questions': []
+        }
+    ]
+    
+    for quiz in sample_quizzes:
+        existing_quiz = quizzes.find_one({'quizId': quiz['quizId']})
+        if not existing_quiz:
+            quizzes.insert_one(quiz)
+            print(f"Sample quiz created: {quiz['title']}")
+        else:
+            print(f"Quiz already exists: {quiz['title']}")
+    
+    # Create sample quiz attempts for realistic analytics
+    quiz_attempts = mongo.db.quiz_attempts
+    sample_attempts = [
+        {
+            'attemptId': 'attempt_001',
+            'quizId': 'quiz_aws_001',
+            'studentEmail': 'admin@sitcloud.in',
+            'status': 'completed',
+            'startedAt': (datetime.now(tz_NY) - timedelta(days=5)).isoformat(),
+            'submittedAt': (datetime.now(tz_NY) - timedelta(days=5, hours=-2)).isoformat(),
+            'finalScore': 85,
+            'percentage': 85.0,
+            'timeSpent': 118,
+            'responses': []
+        },
+        {
+            'attemptId': 'attempt_002',
+            'quizId': 'quiz_aws_001',
+            'studentEmail': 'student1@example.com',
+            'status': 'completed',
+            'startedAt': (datetime.now(tz_NY) - timedelta(days=3)).isoformat(),
+            'submittedAt': (datetime.now(tz_NY) - timedelta(days=3, hours=-1.5)).isoformat(),
+            'finalScore': 78,
+            'percentage': 78.0,
+            'timeSpent': 95,
+            'responses': []
+        },
+        {
+            'attemptId': 'attempt_003',
+            'quizId': 'quiz_azure_001',
+            'studentEmail': 'admin@sitcloud.in',
+            'status': 'completed',
+            'startedAt': (datetime.now(tz_NY) - timedelta(days=2)).isoformat(),
+            'submittedAt': (datetime.now(tz_NY) - timedelta(days=2, minutes=-25)).isoformat(),
+            'finalScore': 42,
+            'percentage': 84.0,
+            'timeSpent': 25,
+            'responses': []
+        },
+        {
+            'attemptId': 'attempt_004',
+            'quizId': 'quiz_gcp_001',
+            'studentEmail': 'student2@example.com',
+            'status': 'completed',
+            'startedAt': (datetime.now(tz_NY) - timedelta(days=1)).isoformat(),
+            'submittedAt': (datetime.now(tz_NY) - timedelta(days=1, minutes=-75)).isoformat(),
+            'finalScore': 68,
+            'percentage': 90.7,
+            'timeSpent': 75,
+            'responses': []
+        }
+    ]
+    
+    for attempt in sample_attempts:
+        existing_attempt = quiz_attempts.find_one({'attemptId': attempt['attemptId']})
+        if not existing_attempt:
+            quiz_attempts.insert_one(attempt)
+            print(f"Sample quiz attempt created: {attempt['attemptId']}")
+        else:
+            print(f"Quiz attempt already exists: {attempt['attemptId']}")
             
 except Exception as e:
     print(f"MongoDB connection failed: {e}")
@@ -325,6 +487,170 @@ def delete_user(currentuser, user_email):
         return Response(json.dumps({"Message": "User deleted successfully", "status": 200}), status=200)
     except Exception as e:
         return Response(json.dumps({"Message": f"Error deleting user: {str(e)}", "status": 500}), status=500)
+
+@app.route('/api/admin/users/export', methods=['GET'])
+@cross_origin()
+@token_required
+def export_users(currentuser):
+    """Export all users data to CSV format"""
+    if currentuser['role'] != 'ADMIN':
+        return Response(json.dumps({"Message": "Access denied", "status": 403}), status=403)
+    
+    try:
+        users = mongo.db.users
+        enrollments = mongo.db.enrollments
+        
+        # Get all users with their enrollment data
+        all_users = []
+        for user in users.find({'role': 'STUDENT'}, {'password': False}):
+            # Get user's enrollments
+            user_enrollments = list(enrollments.find({'email': user['email']}))
+            
+            user_data = {
+                'email': user['email'],
+                'firstName': user.get('firstName', ''),
+                'lastName': user.get('lastName', ''),
+                'phone': user.get('phone', ''),
+                'role': user['role'],
+                'verified': user.get('verified', False),
+                'registered_on': user.get('registered_on', ''),
+                'total_enrollments': len(user_enrollments),
+                'courses': ', '.join([e.get('courseDetails', {}).get('title', '') for e in user_enrollments])
+            }
+            all_users.append(user_data)
+        
+        return Response(json.dumps({
+            "Message": "Users data exported successfully", 
+            "users": all_users, 
+            "status": 200
+        }), status=200, mimetype='application/json')
+    except Exception as e:
+        return Response(json.dumps({"Message": f"Error exporting users: {str(e)}", "status": 500}), status=500)
+
+@app.route('/api/admin/users', methods=['POST'])
+@cross_origin()
+@token_required  
+def create_user(currentuser):
+    """Create a new user"""
+    if currentuser['role'] != 'ADMIN':
+        return Response(json.dumps({"Message": "Access denied", "status": 403}), status=403)
+    
+    try:
+        user_data = request.json
+        users = mongo.db.users
+        
+        # Check if user already exists
+        existing_user = users.find_one({'email': user_data['email']})
+        if existing_user:
+            return Response(json.dumps({"Message": "User with this email already exists", "status": 400}), status=400)
+        
+        # Hash password
+        hashed_password = bcrypt.hashpw(user_data['password'].encode('utf-8'), bcrypt.gensalt())
+        
+        # Create new user
+        new_user = {
+            'email': user_data['email'].lower(),
+            'firstName': user_data['firstName'],
+            'lastName': user_data['lastName'],
+            'phone': user_data.get('phone', ''),
+            'password': hashed_password,
+            'role': user_data.get('role', 'STUDENT'),
+            'verified': user_data.get('verified', False),
+            'registered_on': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        }
+        
+        result = users.insert_one(new_user)
+        
+        if result.inserted_id:
+            return Response(json.dumps({"Message": "User created successfully", "status": 200}), status=200)
+        else:
+            return Response(json.dumps({"Message": "Failed to create user", "status": 500}), status=500)
+            
+    except Exception as e:
+        return Response(json.dumps({"Message": f"Error creating user: {str(e)}", "status": 500}), status=500)
+
+@app.route('/api/admin/users/<user_email>', methods=['PUT'])
+@cross_origin()
+@token_required
+def update_user(currentuser, user_email):
+    """Update user information"""
+    if currentuser['role'] != 'ADMIN':
+        return Response(json.dumps({"Message": "Access denied", "status": 403}), status=403)
+    
+    try:
+        user_data = request.json
+        users = mongo.db.users
+        
+        # Check if user exists
+        existing_user = users.find_one({'email': user_email})
+        if not existing_user:
+            return Response(json.dumps({"Message": "User not found", "status": 404}), status=404)
+        
+        # Prepare update data
+        update_data = {}
+        if 'firstName' in user_data:
+            update_data['firstName'] = user_data['firstName']
+        if 'lastName' in user_data:
+            update_data['lastName'] = user_data['lastName']
+        if 'phone' in user_data:
+            update_data['phone'] = user_data['phone']
+        if 'verified' in user_data:
+            update_data['verified'] = user_data['verified']
+        if 'role' in user_data:
+            update_data['role'] = user_data['role']
+        
+        # Hash new password if provided
+        if 'password' in user_data and user_data['password']:
+            update_data['password'] = bcrypt.hashpw(user_data['password'].encode('utf-8'), bcrypt.gensalt())
+        
+        # Update user
+        result = users.update_one({'email': user_email}, {'$set': update_data})
+        
+        if result.matched_count > 0:
+            return Response(json.dumps({"Message": "User updated successfully", "status": 200}), status=200)
+        else:
+            return Response(json.dumps({"Message": "User not found", "status": 404}), status=404)
+            
+    except Exception as e:
+        return Response(json.dumps({"Message": f"Error updating user: {str(e)}", "status": 500}), status=500)
+
+@app.route('/api/admin/users/<user_email>/certificates', methods=['GET'])
+@cross_origin()
+@token_required
+def get_user_certificates(currentuser, user_email):
+    """Get user's certificates"""
+    if currentuser['role'] != 'ADMIN':
+        return Response(json.dumps({"Message": "Access denied", "status": 403}), status=403)
+    
+    try:
+        enrollments = mongo.db.enrollments
+        
+        # Get user's completed enrollments (these would have certificates)
+        user_enrollments = list(enrollments.find({
+            'email': user_email,
+            'enrollmentStatus': 'completed'
+        }))
+        
+        certificates = []
+        for enrollment in user_enrollments:
+            cert_data = {
+                'courseTitle': enrollment.get('courseDetails', {}).get('title', 'Unknown Course'),
+                'batchId': enrollment.get('batchDetails', {}).get('batchId', ''),
+                'completionDate': enrollment.get('completionDate', ''),
+                'grade': enrollment.get('finalGrade', 'N/A'),
+                'certificateId': enrollment.get('certificateId', ''),
+                'enrollmentId': enrollment.get('enrollmentID', '')
+            }
+            certificates.append(cert_data)
+        
+        return Response(json.dumps({
+            "Message": "Certificates fetched successfully", 
+            "certificates": certificates, 
+            "status": 200
+        }), status=200)
+        
+    except Exception as e:
+        return Response(json.dumps({"Message": f"Error fetching certificates: {str(e)}", "status": 500}), status=500)
 
 
 @app.route('/api/verify', methods=['GET'])
@@ -858,6 +1184,452 @@ def delete_batch(currentuser, batch_id):
     except Exception as e:
         return Response(json.dumps({"Message": f"Error deleting batch: {str(e)}", "status": 500}), status=500)
 
+@app.route('/api/admin/batches/<batch_id>/analysis', methods=['GET'])
+@cross_origin()
+@token_required
+def get_batch_analysis(currentuser, batch_id):
+    """Get comprehensive batch analysis with statistics"""
+    if currentuser['role'] != 'ADMIN':
+        return Response(json.dumps({"Message": "Access denied", "status": 403}), status=403)
+    
+    try:
+        courses = mongo.db.courses
+        enrollments = mongo.db.enrollments
+        users = mongo.db.users
+        
+        # Find batch details
+        batch_course = courses.find_one({'batches.batchId': batch_id})
+        if not batch_course:
+            return Response(json.dumps({"Message": "Batch not found", "status": 404}), status=404)
+        
+        batch_details = None
+        for batch in batch_course['batches']:
+            if batch['batchId'] == batch_id:
+                batch_details = batch
+                break
+        
+        # Get enrolled students
+        enrolled_students = list(enrollments.find({'batchDetails.batchId': batch_id}))
+        student_emails = [enrollment['email'] for enrollment in enrolled_students]
+        
+        # Get student details
+        students_data = list(users.find(
+            {'email': {'$in': student_emails}},
+            {'_id': False, 'password': False, 'loginToken': False}
+        ))
+        
+        # Calculate statistics
+        total_students = len(enrolled_students)
+        active_students = len([s for s in enrolled_students if s.get('enrollmentStatus') == 'Approved'])
+        completed_students = len([s for s in enrolled_students if s.get('enrollmentStatus') == 'Certified'])
+        pending_students = len([s for s in enrolled_students if s.get('enrollmentStatus') == 'Waiting for Approval'])
+        
+        # Attendance analysis (mock data - you can implement actual attendance tracking)
+        attendance_rate = 85.5  # This would come from actual attendance records
+        
+        # Performance analysis
+        average_progress = sum([s.get('progress', 0) for s in enrolled_students]) / max(total_students, 1)
+        
+        # Revenue analysis
+        course_price = batch_course.get('price', 0)
+        total_revenue = active_students * course_price
+        potential_revenue = total_students * course_price
+        
+        analysis_data = {
+            'batchInfo': {
+                'batchId': batch_id,
+                'courseTitle': batch_course['title'],
+                'courseid': batch_course['courseid'],
+                'startDate': batch_details['startdate'],
+                'endDate': batch_details['enddate'],
+                'timing': batch_details['timing'],
+                'mode': batch_details['mode']
+            },
+            'statistics': {
+                'totalStudents': total_students,
+                'activeStudents': active_students,
+                'completedStudents': completed_students,
+                'pendingStudents': pending_students,
+                'attendanceRate': attendance_rate,
+                'averageProgress': round(average_progress, 2)
+            },
+            'revenue': {
+                'totalRevenue': total_revenue,
+                'potentialRevenue': potential_revenue,
+                'coursePrice': course_price
+            },
+            'students': students_data,
+            'enrollments': enrolled_students
+        }
+        
+        return Response(json.dumps({
+            "Message": "Batch analysis retrieved successfully", 
+            "analysis": analysis_data, 
+            "status": 200
+        }), status=200)
+        
+    except Exception as e:
+        return Response(json.dumps({"Message": f"Error getting batch analysis: {str(e)}", "status": 500}), status=500)
+
+@app.route('/api/admin/batches/<batch_id>/students', methods=['GET'])
+@cross_origin()
+@token_required
+def get_batch_students(currentuser, batch_id):
+    """Get all students enrolled in a specific batch"""
+    if currentuser['role'] != 'ADMIN':
+        return Response(json.dumps({"Message": "Access denied", "status": 403}), status=403)
+    
+    try:
+        enrollments = mongo.db.enrollments
+        users = mongo.db.users
+        
+        # Get enrolled students
+        enrolled_students = list(enrollments.find({'batchDetails.batchId': batch_id}))
+        
+        if not enrolled_students:
+            return Response(json.dumps({
+                "Message": "No students found in this batch", 
+                "students": [], 
+                "status": 200
+            }), status=200)
+        
+        student_emails = [enrollment['email'] for enrollment in enrolled_students]
+        
+        # Get detailed student information
+        students_details = []
+        for email in student_emails:
+            student = users.find_one(
+                {'email': email},
+                {'_id': False, 'password': False, 'loginToken': False}
+            )
+            
+            # Find enrollment details for this student
+            enrollment = next((e for e in enrolled_students if e['email'] == email), None)
+            
+            if student and enrollment:
+                student_info = {
+                    'email': student['email'],
+                    'firstName': student.get('firstName', ''),
+                    'lastName': student.get('lastName', ''),
+                    'phone': student.get('phone', ''),
+                    'enrollmentStatus': enrollment.get('enrollmentStatus', 'Unknown'),
+                    'enrolledDate': enrollment.get('enrolledDate', ''),
+                    'progress': enrollment.get('progress', 0),
+                    'lastActivity': enrollment.get('lastActivity', 'No activity'),
+                    'enrollmentId': enrollment.get('enrollmentID', ''),
+                    'certificationId': enrollment.get('certificationID', ''),
+                    'certifiedOn': enrollment.get('certifiedOn', '')
+                }
+                students_details.append(student_info)
+        
+        return Response(json.dumps({
+            "Message": "Batch students retrieved successfully", 
+            "students": students_details, 
+            "status": 200
+        }), status=200)
+        
+    except Exception as e:
+        return Response(json.dumps({"Message": f"Error retrieving batch students: {str(e)}", "status": 500}), status=500)
+
+@app.route('/api/admin/batches/<batch_id>/modules', methods=['GET'])
+@cross_origin()
+@token_required
+def get_batch_modules(currentuser, batch_id):
+    """Get all modules for a specific batch"""
+    if currentuser['role'] != 'ADMIN':
+        return Response(json.dumps({"Message": "Access denied", "status": 403}), status=403)
+    
+    try:
+        modules = mongo.db.modules
+        
+        # Get modules for this batch
+        batch_modules = list(modules.find({'batchId': batch_id}, {'_id': False}))
+        
+        return Response(json.dumps({
+            "Message": "Batch modules retrieved successfully", 
+            "modules": batch_modules, 
+            "status": 200
+        }), status=200)
+        
+    except Exception as e:
+        return Response(json.dumps({"Message": f"Error retrieving batch modules: {str(e)}", "status": 500}), status=500)
+
+@app.route('/api/admin/batches/<batch_id>/modules', methods=['POST'])
+@cross_origin()
+@token_required
+def create_batch_module(currentuser, batch_id):
+    """Create a new module for a batch"""
+    if currentuser['role'] != 'ADMIN':
+        return Response(json.dumps({"Message": "Access denied", "status": 403}), status=403)
+    
+    try:
+        module_data = request.json
+        modules = mongo.db.modules
+        
+        # Generate module ID
+        module_id = f"mod_{batch_id}_{int(datetime.now().timestamp())}"
+        
+        new_module = {
+            'moduleId': module_id,
+            'batchId': batch_id,
+            'title': module_data['title'],
+            'description': module_data.get('description', ''),
+            'duration': module_data.get('duration', ''),
+            'order': module_data.get('order', 1),
+            'topics': module_data.get('topics', []),
+            'resources': module_data.get('resources', []),
+            'assignments': module_data.get('assignments', []),
+            'isActive': True,
+            'createdAt': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'createdBy': currentuser['email']
+        }
+        
+        modules.insert_one(new_module)
+        
+        return Response(json.dumps({
+            "Message": "Module created successfully", 
+            "moduleId": module_id,
+            "status": 201
+        }), status=201)
+        
+    except Exception as e:
+        return Response(json.dumps({"Message": f"Error creating module: {str(e)}", "status": 500}), status=500)
+
+@app.route('/api/admin/modules/<module_id>', methods=['PUT'])
+@cross_origin()
+@token_required
+def update_module(currentuser, module_id):
+    """Update a module"""
+    if currentuser['role'] != 'ADMIN':
+        return Response(json.dumps({"Message": "Access denied", "status": 403}), status=403)
+    
+    try:
+        update_data = request.json
+        modules = mongo.db.modules
+        
+        update_data['updatedAt'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        update_data['updatedBy'] = currentuser['email']
+        
+        result = modules.update_one(
+            {'moduleId': module_id},
+            {'$set': update_data}
+        )
+        
+        if result.matched_count == 0:
+            return Response(json.dumps({"Message": "Module not found", "status": 404}), status=404)
+        
+        return Response(json.dumps({"Message": "Module updated successfully", "status": 200}), status=200)
+        
+    except Exception as e:
+        return Response(json.dumps({"Message": f"Error updating module: {str(e)}", "status": 500}), status=500)
+
+@app.route('/api/admin/modules/<module_id>', methods=['DELETE'])
+@cross_origin()
+@token_required
+def delete_module(currentuser, module_id):
+    """Delete a module"""
+    if currentuser['role'] != 'ADMIN':
+        return Response(json.dumps({"Message": "Access denied", "status": 403}), status=403)
+    
+    try:
+        modules = mongo.db.modules
+        
+        result = modules.update_one(
+            {'moduleId': module_id},
+            {'$set': {'isActive': False, 'deletedAt': datetime.now().strftime('%Y-%m-%d %H:%M:%S')}}
+        )
+        
+        if result.matched_count == 0:
+            return Response(json.dumps({"Message": "Module not found", "status": 404}), status=404)
+        
+        return Response(json.dumps({"Message": "Module deleted successfully", "status": 200}), status=200)
+        
+    except Exception as e:
+        return Response(json.dumps({"Message": f"Error deleting module: {str(e)}", "status": 500}), status=500)
+
+@app.route('/api/admin/batches/<batch_id>/schedule', methods=['GET'])
+@cross_origin()
+@token_required
+def get_batch_schedule(currentuser, batch_id):
+    """Get class schedule for a batch"""
+    if currentuser['role'] != 'ADMIN':
+        return Response(json.dumps({"Message": "Access denied", "status": 403}), status=403)
+    
+    try:
+        schedules = mongo.db.class_schedules
+        
+        # Get schedule for this batch
+        batch_schedule = list(schedules.find({'batchId': batch_id}, {'_id': False}).sort('dateTime', 1))
+        
+        return Response(json.dumps({
+            "Message": "Batch schedule retrieved successfully", 
+            "schedule": batch_schedule, 
+            "status": 200
+        }), status=200)
+        
+    except Exception as e:
+        return Response(json.dumps({"Message": f"Error retrieving batch schedule: {str(e)}", "status": 500}), status=500)
+
+@app.route('/api/admin/batches/<batch_id>/schedule', methods=['POST'])
+@cross_origin()
+@token_required
+def schedule_class(currentuser, batch_id):
+    """Schedule a new class for a batch"""
+    if currentuser['role'] != 'ADMIN':
+        return Response(json.dumps({"Message": "Access denied", "status": 403}), status=403)
+    
+    try:
+        schedule_data = request.json
+        schedules = mongo.db.class_schedules
+        
+        # Generate schedule ID
+        schedule_id = f"sch_{batch_id}_{int(datetime.now().timestamp())}"
+        
+        new_schedule = {
+            'scheduleId': schedule_id,
+            'batchId': batch_id,
+            'moduleId': schedule_data.get('moduleId', ''),
+            'topic': schedule_data['topic'],
+            'description': schedule_data.get('description', ''),
+            'dateTime': schedule_data['dateTime'],
+            'duration': schedule_data.get('duration', 60),  # minutes
+            'instructor': schedule_data.get('instructor', currentuser['email']),
+            'meetingLink': schedule_data.get('meetingLink', ''),
+            'resources': schedule_data.get('resources', []),
+            'type': schedule_data.get('type', 'lecture'),  # lecture, lab, assignment, exam
+            'status': 'scheduled',  # scheduled, ongoing, completed, cancelled
+            'createdAt': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'createdBy': currentuser['email']
+        }
+        
+        schedules.insert_one(new_schedule)
+        
+        return Response(json.dumps({
+            "Message": "Class scheduled successfully", 
+            "scheduleId": schedule_id,
+            "status": 201
+        }), status=201)
+        
+    except Exception as e:
+        return Response(json.dumps({"Message": f"Error scheduling class: {str(e)}", "status": 500}), status=500)
+
+@app.route('/api/admin/schedule/<schedule_id>', methods=['PUT'])
+@cross_origin()
+@token_required
+def update_schedule(currentuser, schedule_id):
+    """Update a scheduled class"""
+    if currentuser['role'] != 'ADMIN':
+        return Response(json.dumps({"Message": "Access denied", "status": 403}), status=403)
+    
+    try:
+        update_data = request.json
+        schedules = mongo.db.class_schedules
+        
+        update_data['updatedAt'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        update_data['updatedBy'] = currentuser['email']
+        
+        result = schedules.update_one(
+            {'scheduleId': schedule_id},
+            {'$set': update_data}
+        )
+        
+        if result.matched_count == 0:
+            return Response(json.dumps({"Message": "Schedule not found", "status": 404}), status=404)
+        
+        return Response(json.dumps({"Message": "Schedule updated successfully", "status": 200}), status=200)
+        
+    except Exception as e:
+        return Response(json.dumps({"Message": f"Error updating schedule: {str(e)}", "status": 500}), status=500)
+
+@app.route('/api/admin/schedule/<schedule_id>', methods=['DELETE'])
+@cross_origin()
+@token_required
+def cancel_schedule(currentuser, schedule_id):
+    """Cancel a scheduled class"""
+    if currentuser['role'] != 'ADMIN':
+        return Response(json.dumps({"Message": "Access denied", "status": 403}), status=403)
+    
+    try:
+        schedules = mongo.db.class_schedules
+        
+        result = schedules.update_one(
+            {'scheduleId': schedule_id},
+            {'$set': {
+                'status': 'cancelled',
+                'cancelledAt': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'cancelledBy': currentuser['email']
+            }}
+        )
+        
+        if result.matched_count == 0:
+            return Response(json.dumps({"Message": "Schedule not found", "status": 404}), status=404)
+        
+        return Response(json.dumps({"Message": "Class cancelled successfully", "status": 200}), status=200)
+        
+    except Exception as e:
+        return Response(json.dumps({"Message": f"Error cancelling schedule: {str(e)}", "status": 500}), status=500)
+
+@app.route('/api/admin/batches/<batch_id>/attendance', methods=['GET'])
+@cross_origin()
+@token_required
+def get_batch_attendance(currentuser, batch_id):
+    """Get attendance records for a batch"""
+    if currentuser['role'] != 'ADMIN':
+        return Response(json.dumps({"Message": "Access denied", "status": 403}), status=403)
+    
+    try:
+        attendance = mongo.db.attendance
+        
+        # Get attendance records for this batch
+        attendance_records = list(attendance.find({'batchId': batch_id}, {'_id': False}))
+        
+        return Response(json.dumps({
+            "Message": "Attendance records retrieved successfully", 
+            "attendance": attendance_records, 
+            "status": 200
+        }), status=200)
+        
+    except Exception as e:
+        return Response(json.dumps({"Message": f"Error retrieving attendance: {str(e)}", "status": 500}), status=500)
+
+@app.route('/api/admin/batches/<batch_id>/attendance', methods=['POST'])
+@cross_origin()
+@token_required
+def mark_attendance(currentuser, batch_id):
+    """Mark attendance for a class"""
+    if currentuser['role'] != 'ADMIN':
+        return Response(json.dumps({"Message": "Access denied", "status": 403}), status=403)
+    
+    try:
+        attendance_data = request.json
+        attendance = mongo.db.attendance
+        
+        # Generate attendance ID
+        attendance_id = f"att_{batch_id}_{int(datetime.now().timestamp())}"
+        
+        new_attendance = {
+            'attendanceId': attendance_id,
+            'batchId': batch_id,
+            'scheduleId': attendance_data.get('scheduleId', ''),
+            'date': attendance_data['date'],
+            'studentAttendance': attendance_data['studentAttendance'],  # [{"email": "...", "status": "present/absent"}]
+            'totalStudents': len(attendance_data['studentAttendance']),
+            'presentStudents': len([s for s in attendance_data['studentAttendance'] if s['status'] == 'present']),
+            'markedBy': currentuser['email'],
+            'markedAt': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        }
+        
+        attendance.insert_one(new_attendance)
+        
+        return Response(json.dumps({
+            "Message": "Attendance marked successfully", 
+            "attendanceId": attendance_id,
+            "status": 201
+        }), status=201)
+        
+    except Exception as e:
+        return Response(json.dumps({"Message": f"Error marking attendance: {str(e)}", "status": 500}), status=500)
+
 @app.route('/api/admin/quiz', methods=['POST'])
 @cross_origin()
 @token_required
@@ -983,13 +1755,14 @@ def delete_quiz(currentuser, quiz_id):
 @cross_origin()
 @token_required
 def list_quizzes(currentuser):
-    """List all quizzes"""
+    """List all quizzes with performance statistics"""
     if currentuser['role'] != 'ADMIN':
         return Response(json.dumps({"Message": "Access denied", "status": 403}), status=403)
     
     try:
         course_id = request.args.get('courseId')
         quizzes = mongo.db.quizzes
+        attempts = mongo.db.quiz_attempts
         
         query = {'isActive': True}
         if course_id:
@@ -997,14 +1770,246 @@ def list_quizzes(currentuser):
             
         quiz_list = list(quizzes.find(query, {'_id': False}))
         
+        # Enhance each quiz with statistics
+        for quiz in quiz_list:
+            quiz_id = quiz.get('quizId')
+            
+            # Get attempts for this quiz
+            quiz_attempts = list(attempts.find({'quizId': quiz_id}))
+            
+            # Calculate statistics
+            total_attempts = len(quiz_attempts)
+            completed_attempts = [a for a in quiz_attempts if a.get('status') == 'completed']
+            
+            if completed_attempts:
+                scores = [a.get('finalScore', 0) for a in completed_attempts if a.get('finalScore') is not None]
+                avg_score = sum(scores) / len(scores) if scores else 0
+            else:
+                avg_score = 0
+            
+            # Add calculated fields to match frontend expectations
+            quiz['attempts'] = total_attempts
+            quiz['avgScore'] = round(avg_score, 1)
+            quiz['code'] = quiz.get('quizId', '')[:10].upper()  # Short code for display
+            quiz['id'] = quiz.get('quizId')
+            quiz['createdDate'] = quiz.get('createdAt', '')
+            quiz['questionCount'] = len(quiz.get('questions', []))
+            quiz['passScore'] = quiz.get('passingMarks', 0)
+            quiz['status'] = quiz.get('status', 'active').lower()
+            quiz['difficulty'] = quiz.get('difficulty', 'intermediate')
+            
+            # Get course title if available
+            if quiz.get('courseId'):
+                courses = mongo.db.courses
+                course = courses.find_one({'courseid': quiz['courseId']})
+                quiz['course'] = course.get('title', 'Unknown Course') if course else 'Unknown Course'
+            else:
+                quiz['course'] = 'No Course Assigned'
+        
         return Response(json.dumps({
-            "Message": "Quizzes retrieved",
-            "quizzes": quiz_list,
+            "Message": "Quizzes retrieved successfully",
+            "data": {"quizzes": quiz_list},
+            "success": True,
             "status": 200
         }), status=200)
         
     except Exception as e:
         return Response(json.dumps({"Message": f"Error listing quizzes: {str(e)}", "status": 500}), status=500)
+
+
+@app.route('/api/admin/quiz/<quiz_id>/analytics', methods=['GET'])
+@cross_origin()
+@token_required
+def get_quiz_analytics(currentuser, quiz_id):
+    """Get detailed analytics for a specific quiz"""
+    if currentuser['role'] != 'ADMIN':
+        return Response(json.dumps({"Message": "Access denied", "status": 403}), status=403)
+    
+    try:
+        quizzes = mongo.db.quizzes
+        attempts = mongo.db.quiz_attempts
+        
+        # Get quiz details
+        quiz = quizzes.find_one({'quizId': quiz_id}, {'_id': False})
+        if not quiz:
+            return Response(json.dumps({"Message": "Quiz not found", "status": 404}), status=404)
+        
+        # Get all attempts for this quiz
+        quiz_attempts = list(attempts.find({'quizId': quiz_id}))
+        
+        # Calculate detailed analytics
+        total_attempts = len(quiz_attempts)
+        completed_attempts = [a for a in quiz_attempts if a.get('status') == 'completed']
+        in_progress_attempts = [a for a in quiz_attempts if a.get('status') == 'in_progress']
+        
+        if completed_attempts:
+            scores = [a.get('finalScore', 0) for a in completed_attempts if a.get('finalScore') is not None]
+            avg_score = sum(scores) / len(scores) if scores else 0
+            max_score = max(scores) if scores else 0
+            min_score = min(scores) if scores else 0
+            
+            # Pass/fail statistics
+            passing_score = quiz.get('passingMarks', 0)
+            passed_attempts = [s for s in scores if s >= passing_score]
+            pass_rate = (len(passed_attempts) / len(scores)) * 100 if scores else 0
+        else:
+            avg_score = max_score = min_score = pass_rate = 0
+        
+        # Time-based analytics
+        completion_times = []
+        for attempt in completed_attempts:
+            if attempt.get('startedAt') and attempt.get('submittedAt'):
+                try:
+                    start_time = datetime.fromisoformat(attempt['startedAt'].replace('Z', '+00:00'))
+                    end_time = datetime.fromisoformat(attempt['submittedAt'].replace('Z', '+00:00'))
+                    completion_time = (end_time - start_time).total_seconds() / 60  # minutes
+                    completion_times.append(completion_time)
+                except:
+                    pass
+        
+        avg_completion_time = sum(completion_times) / len(completion_times) if completion_times else 0
+        
+        analytics = {
+            'quiz': quiz,
+            'statistics': {
+                'totalAttempts': total_attempts,
+                'completedAttempts': len(completed_attempts),
+                'inProgressAttempts': len(in_progress_attempts),
+                'averageScore': round(avg_score, 1),
+                'maxScore': max_score,
+                'minScore': min_score,
+                'passRate': round(pass_rate, 1),
+                'averageCompletionTime': round(avg_completion_time, 1)
+            },
+            'recentAttempts': quiz_attempts[-10:] if quiz_attempts else []  # Last 10 attempts
+        }
+        
+        return Response(json.dumps({
+            "Message": "Quiz analytics retrieved successfully",
+            "data": analytics,
+            "success": True,
+            "status": 200
+        }), status=200)
+        
+    except Exception as e:
+        return Response(json.dumps({"Message": f"Error getting quiz analytics: {str(e)}", "status": 500}), status=500)
+
+
+@app.route('/api/admin/quiz/<quiz_id>/export', methods=['GET'])
+@cross_origin()
+@token_required
+def export_quiz_results(currentuser, quiz_id):
+    """Export quiz results and performance data"""
+    if currentuser['role'] != 'ADMIN':
+        return Response(json.dumps({"Message": "Access denied", "status": 403}), status=403)
+    
+    try:
+        quizzes = mongo.db.quizzes
+        attempts = mongo.db.quiz_attempts
+        users = mongo.db.users
+        
+        # Get quiz details
+        quiz = quizzes.find_one({'quizId': quiz_id}, {'_id': False})
+        if not quiz:
+            return Response(json.dumps({"Message": "Quiz not found", "status": 404}), status=404)
+        
+        # Get all completed attempts for this quiz
+        quiz_attempts = list(attempts.find({'quizId': quiz_id, 'status': 'completed'}))
+        
+        export_data = []
+        for attempt in quiz_attempts:
+            # Get student details
+            student = users.find_one({'email': attempt.get('studentEmail')}, {'password': False, '_id': False})
+            
+            attempt_data = {
+                'attemptId': attempt.get('attemptId'),
+                'studentName': f"{student.get('firstName', '')} {student.get('lastName', '')}" if student else 'Unknown',
+                'studentEmail': attempt.get('studentEmail'),
+                'startedAt': attempt.get('startedAt'),
+                'submittedAt': attempt.get('submittedAt'),
+                'finalScore': attempt.get('finalScore', 0),
+                'percentage': attempt.get('percentage', 0),
+                'totalQuestions': len(attempt.get('responses', [])),
+                'correctAnswers': len([r for r in attempt.get('responses', []) if r.get('isCorrect')]),
+                'timeSpent': attempt.get('timeSpent', 0),
+                'status': attempt.get('status'),
+                'grade': 'Pass' if attempt.get('finalScore', 0) >= quiz.get('passingMarks', 0) else 'Fail'
+            }
+            export_data.append(attempt_data)
+        
+        return Response(json.dumps({
+            "Message": "Quiz results exported successfully",
+            "data": {
+                "quiz": quiz,
+                "results": export_data,
+                "summary": {
+                    "totalAttempts": len(export_data),
+                    "averageScore": sum([r['finalScore'] for r in export_data]) / len(export_data) if export_data else 0,
+                    "passRate": (len([r for r in export_data if r['grade'] == 'Pass']) / len(export_data)) * 100 if export_data else 0
+                }
+            },
+            "success": True,
+            "status": 200
+        }), status=200)
+        
+    except Exception as e:
+        return Response(json.dumps({"Message": f"Error exporting quiz results: {str(e)}", "status": 500}), status=500)
+
+
+@app.route('/api/admin/quiz/<quiz_id>/preview', methods=['GET'])
+@cross_origin()
+@token_required
+def preview_quiz(currentuser, quiz_id):
+    """Preview quiz as student would see it"""
+    if currentuser['role'] != 'ADMIN':
+        return Response(json.dumps({"Message": "Access denied", "status": 403}), status=403)
+    
+    try:
+        quizzes = mongo.db.quizzes
+        questions = mongo.db.quiz_questions
+        
+        # Get quiz details
+        quiz = quizzes.find_one({'quizId': quiz_id}, {'_id': False})
+        if not quiz:
+            return Response(json.dumps({"Message": "Quiz not found", "status": 404}), status=404)
+        
+        # Get quiz questions
+        quiz_questions = list(questions.find({'quizId': quiz_id}, {'_id': False}))
+        
+        # Format questions for preview (hide correct answers)
+        preview_questions = []
+        for question in quiz_questions:
+            preview_question = {
+                'questionId': question.get('questionId'),
+                'type': question.get('type'),
+                'questionText': question.get('questionText'),
+                'marks': question.get('marks'),
+                'options': question.get('options', []),
+                'explanation': question.get('explanation', ''),
+                'orderIndex': question.get('orderIndex', 0)
+            }
+            # Don't include correct answer in preview
+            preview_questions.append(preview_question)
+        
+        # Sort questions by order
+        preview_questions.sort(key=lambda x: x.get('orderIndex', 0))
+        
+        quiz_preview = {
+            'quiz': quiz,
+            'questions': preview_questions,
+            'totalQuestions': len(preview_questions),
+            'totalMarks': sum([q.get('marks', 0) for q in preview_questions])
+        }
+        
+        return Response(json.dumps({
+            "Message": "Quiz preview generated successfully",
+            "data": quiz_preview,
+            "success": True,
+            "status": 200
+        }), status=200)
+        
+    except Exception as e:
+        return Response(json.dumps({"Message": f"Error generating quiz preview: {str(e)}", "status": 500}), status=500)
 
 
 # ---- Question Management ----

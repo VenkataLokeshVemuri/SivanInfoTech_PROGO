@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
   Search, Filter, PlusCircle, MoreHorizontal,
@@ -14,6 +13,10 @@ import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { backendAPI } from '@/lib/backend-api';
 import { useBackendAuth } from '@/hooks/useBackendAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -97,6 +100,18 @@ export default function QuizzesPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [showCreateQuizModal, setShowCreateQuizModal] = useState(false);
+  const [courses, setCourses] = useState<any[]>([]);
+  const [createQuizForm, setCreateQuizForm] = useState({
+    title: '',
+    courseId: '',
+    duration: 60,
+    totalMarks: 100,
+    passingMarks: 70,
+    description: '',
+    instructions: '',
+    difficulty: 'intermediate'
+  });
   
   const { user, isAuthenticated, isAdmin } = useBackendAuth();
   const { toast } = useToast();
@@ -114,6 +129,7 @@ export default function QuizzesPage() {
   useEffect(() => {
     if (isAuthenticated && isAdmin) {
       loadQuizzes();
+      loadCourses();
     }
   }, [isAuthenticated, isAdmin]);
 
@@ -145,6 +161,54 @@ export default function QuizzesPage() {
     }
   };
 
+  const loadCourses = async () => {
+    try {
+      const response = await backendAPI.getCourseList();
+      if (response.success && response.data) {
+        setCourses(response.data.courses || []);
+      }
+    } catch (error) {
+      console.error('Failed to load courses:', error);
+    }
+  };
+
+  const handleCreateQuiz = async () => {
+    try {
+      const response = await backendAPI.createQuiz(createQuizForm);
+      if (response.success) {
+        toast({
+          title: "Success",
+          description: "Quiz created successfully",
+        });
+        setShowCreateQuizModal(false);
+        setCreateQuizForm({
+          title: '',
+          courseId: '',
+          duration: 60,
+          totalMarks: 100,
+          passingMarks: 70,
+          description: '',
+          instructions: '',
+          difficulty: 'intermediate'
+        });
+        // Refresh quizzes data
+        loadQuizzes();
+      } else {
+        toast({
+          title: "Error",
+          description: response.error || "Failed to create quiz",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create quiz",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleDeleteQuiz = async (quizId: string) => {
     if (!confirm('Are you sure you want to delete this quiz? This action cannot be undone.')) {
       return;
@@ -169,6 +233,98 @@ export default function QuizzesPage() {
       toast({
         title: "Error",
         description: "Failed to delete quiz",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleViewAnalytics = async (quizId: string) => {
+    try {
+      const response = await backendAPI.getQuizAnalytics(quizId);
+      if (response.success && response.data) {
+        // For now, show a simple alert with analytics data
+        // In a real app, you'd open a modal or navigate to an analytics page
+        const analytics = response.data;
+        const stats = analytics.statistics || {};
+        const message = `Quiz Analytics:
+        
+Total Attempts: ${stats.totalAttempts || 0}
+Completed: ${stats.completedAttempts || 0}
+Average Score: ${stats.averageScore || 0}%
+Pass Rate: ${stats.passRate || 0}%
+Avg Completion Time: ${stats.averageCompletionTime || 0} minutes`;
+        
+        alert(message);
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to load analytics",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load analytics",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleExportResults = async (quizId: string) => {
+    try {
+      const response = await backendAPI.exportQuizResults(quizId);
+      if (response.success && response.data) {
+        // Convert data to CSV and trigger download
+        const results = response.data.results || [];
+        if (results.length === 0) {
+          toast({
+            title: "Info",
+            description: "No quiz results to export",
+          });
+          return;
+        }
+
+        const csvHeaders = ['Student Name', 'Email', 'Score', 'Percentage', 'Grade', 'Submitted At'];
+        const csvRows = results.map((result: any) => [
+          result.studentName || '',
+          result.studentEmail || '',
+          result.finalScore || 0,
+          `${result.percentage || 0}%`,
+          result.grade || '',
+          result.submittedAt ? new Date(result.submittedAt).toLocaleDateString() : ''
+        ]);
+
+        const csvContent = [
+          csvHeaders.join(','),
+          ...csvRows.map(row => row.map(field => `"${field}"`).join(','))
+        ].join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `quiz-results-${quizId}-${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        toast({
+          title: "Success",
+          description: "Quiz results exported successfully",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to export results",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to export results",
         variant: "destructive",
       });
     }
@@ -285,12 +441,13 @@ export default function QuizzesPage() {
               </div>
               
               <div className="space-y-3">
-                <Link href="/admin/dashboard/quizzes/create">
-                  <Button className="w-full lg:w-auto bg-white text-blue-600 hover:bg-blue-50 shadow-lg">
-                    <PlusCircle className="h-4 w-4 mr-2" />
-                    Create New Quiz
-                  </Button>
-                </Link>
+                <Button 
+                  onClick={() => setShowCreateQuizModal(true)}
+                  className="w-full lg:w-auto bg-white text-blue-600 hover:bg-blue-50 shadow-lg"
+                >
+                  <PlusCircle className="h-4 w-4 mr-2" />
+                  Create New Quiz
+                </Button>
                 <Button variant="outline" className="w-full lg:w-auto border-white/30 text-white hover:bg-white/10">
                   <BarChart className="h-4 w-4 mr-2" />
                   Quiz Analytics
@@ -437,16 +594,15 @@ export default function QuizzesPage() {
                       </td>
                       <td className="p-4 align-middle">
                         <div className="flex items-center gap-2">
-                          <Link href={`/admin/dashboard/quizzes/${quiz.id}`}>
-                            <Button 
-                              size="sm" 
-                              variant="outline" 
-                              className="h-8 w-8 p-0"
-                            >
-                              <Edit className="h-4 w-4" />
-                              <span className="sr-only">Edit</span>
-                            </Button>
-                          </Link>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="h-8 w-8 p-0"
+                            onClick={() => router.push(`/admin/dashboard/quizzes/${quiz.id}`)}
+                          >
+                            <Edit className="h-4 w-4" />
+                            <span className="sr-only">Edit</span>
+                          </Button>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button 
@@ -472,7 +628,7 @@ export default function QuizzesPage() {
                                 <div className="flex items-center justify-center w-8 h-8 bg-purple-100 text-purple-600 rounded-lg group-hover:bg-purple-200 transition-colors mr-3">
                                   <BarChart className="h-4 w-4" />
                                 </div>
-                                <div className="flex-1">
+                                <div className="flex-1" onClick={() => handleViewAnalytics(quiz.id || quiz.quizId)}>
                                   <div className="font-medium text-sm">View Analytics</div>
                                   <div className="text-xs text-gray-500">Performance insights</div>
                                 </div>
@@ -481,7 +637,7 @@ export default function QuizzesPage() {
                                 <div className="flex items-center justify-center w-8 h-8 bg-green-100 text-green-600 rounded-lg group-hover:bg-green-200 transition-colors mr-3">
                                   <Download className="h-4 w-4" />
                                 </div>
-                                <div className="flex-1">
+                                <div className="flex-1" onClick={() => handleExportResults(quiz.id || quiz.quizId)}>
                                   <div className="font-medium text-sm">Export Results</div>
                                   <div className="text-xs text-gray-500">Download data</div>
                                 </div>
@@ -527,6 +683,132 @@ export default function QuizzesPage() {
         </CardFooter>
       </Card>
       </div>
+
+      {/* Create Quiz Modal */}
+      <Dialog open={showCreateQuizModal} onOpenChange={setShowCreateQuizModal}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Create New Quiz</DialogTitle>
+            <DialogDescription>
+              Create a new quiz assessment for your course. Fill in the details below.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="quiz-title">Quiz Title</Label>
+              <Input
+                id="quiz-title"
+                placeholder="Enter quiz title..."
+                value={createQuizForm.title}
+                onChange={(e) => setCreateQuizForm({...createQuizForm, title: e.target.value})}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="course-select">Course</Label>
+              <Select
+                value={createQuizForm.courseId}
+                onValueChange={(value) => setCreateQuizForm({...createQuizForm, courseId: value})}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a course" />
+                </SelectTrigger>
+                <SelectContent>
+                  {courses.map((course) => (
+                    <SelectItem key={course.courseid} value={course.courseid}>
+                      {course.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="duration">Duration (minutes)</Label>
+                <Input
+                  id="duration"
+                  type="number"
+                  value={createQuizForm.duration}
+                  onChange={(e) => setCreateQuizForm({...createQuizForm, duration: parseInt(e.target.value) || 60})}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="difficulty">Difficulty</Label>
+                <Select
+                  value={createQuizForm.difficulty}
+                  onValueChange={(value) => setCreateQuizForm({...createQuizForm, difficulty: value})}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="beginner">Beginner</SelectItem>
+                    <SelectItem value="intermediate">Intermediate</SelectItem>
+                    <SelectItem value="advanced">Advanced</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="total-marks">Total Marks</Label>
+                <Input
+                  id="total-marks"
+                  type="number"
+                  value={createQuizForm.totalMarks}
+                  onChange={(e) => setCreateQuizForm({...createQuizForm, totalMarks: parseInt(e.target.value) || 100})}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="passing-marks">Passing Marks</Label>
+                <Input
+                  id="passing-marks"
+                  type="number"
+                  value={createQuizForm.passingMarks}
+                  onChange={(e) => setCreateQuizForm({...createQuizForm, passingMarks: parseInt(e.target.value) || 70})}
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                placeholder="Enter quiz description..."
+                value={createQuizForm.description}
+                onChange={(e) => setCreateQuizForm({...createQuizForm, description: e.target.value})}
+                rows={3}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="instructions">Instructions</Label>
+              <Textarea
+                id="instructions"
+                placeholder="Enter quiz instructions..."
+                value={createQuizForm.instructions}
+                onChange={(e) => setCreateQuizForm({...createQuizForm, instructions: e.target.value})}
+                rows={3}
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowCreateQuizModal(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleCreateQuiz}
+              disabled={!createQuizForm.title || !createQuizForm.courseId}
+            >
+              Create Quiz
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
