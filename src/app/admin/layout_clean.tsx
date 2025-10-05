@@ -113,29 +113,71 @@ export default function AdminLayout({
         } ${sidebarOpen ? 'w-64' : 'w-20'} bg-white shadow-lg text-gray-800`}
       >
         <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
-          <button 
-            className={`flex items-center ${sidebarOpen ? 'space-x-2' : 'justify-center'} hover:opacity-80 transition-opacity`}
-          >
-            <div className="bg-gradient-to-r from-[#084fa1] to-[#80b742] p-1.5 rounded">
-              <img 
-                src="/lovable-uploads/32af9e28-6339-45f7-99d6-e869903ed166.png" 
-                alt="Sivan InfoTech Logo" 
-                className="h-6 w-auto"
-              />
+          {sidebarOpen ? (
+            // Full logo layout when expanded
+            <>
+              <div className="flex items-center space-x-3">
+                <div className="relative">
+                  <div className="bg-gradient-to-r from-[#084fa1] to-[#80b742] p-2 rounded-xl shadow-lg">
+                    <img 
+                      src="/lovable-uploads/32af9e28-6339-45f7-99d6-e869903ed166.png" 
+                      alt="SITCLOUD Logo" 
+                      className="h-8 w-auto filter brightness-0 invert"
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold text-lg bg-gradient-to-r from-[#084fa1] to-[#80b742] bg-clip-text text-transparent leading-tight">
+                    SITCLOUD
+                  </span>
+                  <span className="text-xs text-gray-500 font-medium -mt-1">
+                    Admin Portal
+                  </span>
+                </div>
+              </div>
+              
+              <button 
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="p-2 rounded-lg hover:bg-gray-100 transition-all duration-200 hover:scale-105 group"
+                title="Collapse sidebar"
+              >
+                <Menu className="h-5 w-5 transition-transform duration-200 group-hover:text-[#084fa1]" />
+              </button>
+            </>
+          ) : (
+            // Collapsed layout - logo centered with toggle button overlaid
+            <div className="relative w-full flex justify-center">
+              {/* Centered compact logo */}
+              <div className="relative group">
+                <div className="bg-gradient-to-r from-[#084fa1] to-[#80b742] p-2.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                  {/* Option 1: Show actual logo image when collapsed */}
+                  <img 
+                    src="/lovable-uploads/32af9e28-6339-45f7-99d6-e869903ed166.png" 
+                    alt="SITCLOUD Logo" 
+                    className="h-7 w-auto filter brightness-0 invert"
+                  />
+                  {/* Option 2: Show initials (comment out the img above and uncomment below if you prefer initials) */}
+                  {/* <div className="text-white font-black text-lg leading-none">
+                    SC
+                  </div> */}
+                </div>
+                {/* Tooltip on hover */}
+                <div className="absolute left-full ml-3 top-1/2 transform -translate-y-1/2 bg-gray-900 text-white px-3 py-2 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+                  SITCLOUD Admin
+                  <div className="absolute left-0 top-1/2 transform -translate-x-1 -translate-y-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
+                </div>
+              </div>
+              
+              {/* Toggle button positioned at the right */}
+              <button 
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="absolute right-0 top-1/2 transform -translate-y-1/2 p-2 rounded-lg hover:bg-gray-100 transition-all duration-200 hover:scale-105 group"
+                title="Expand sidebar"
+              >
+                <Menu className="h-5 w-5 transition-transform duration-200 group-hover:text-[#084fa1]" />
+              </button>
             </div>
-            {sidebarOpen && (
-              <span className="font-bold text-lg bg-gradient-to-r from-[#084fa1] to-[#80b742] bg-clip-text text-transparent">
-                SivanInfoTech
-              </span>
-            )}
-          </button>
-          
-          <button 
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            <Menu className="h-5 w-5" />
-          </button>
+          )}
         </div>
 
         {/* Navigation */}
@@ -165,25 +207,49 @@ export default function AdminLayout({
         </nav>
 
         {/* User profile section at bottom */}
-        {sidebarOpen && (
-          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-gray-50/50">
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-gray-50/50">
+          {sidebarOpen ? (
+            // Full profile when expanded
             <div className="flex items-center space-x-3">
-              <Avatar className="h-8 w-8">
-                <AvatarFallback className="text-xs bg-gradient-to-r from-[#084fa1] to-[#80b742] text-white">
+              <Avatar className="h-9 w-9 ring-2 ring-[#084fa1]/20">
+                <AvatarFallback className="text-xs bg-gradient-to-r from-[#084fa1] to-[#80b742] text-white font-semibold">
                   {user?.name?.split(' ').map(n => n[0]).join('') || 'A'}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium text-gray-900 truncate">
+                <div className="text-sm font-semibold text-gray-900 truncate">
                   {user?.name || 'Admin User'}
                 </div>
-                <div className="text-xs text-gray-500 truncate">
+                <div className="text-xs text-gray-500 truncate flex items-center">
+                  <Shield className="h-3 w-3 mr-1" />
                   Administrator
                 </div>
               </div>
+              <div className="flex items-center text-xs text-gray-400">
+                <div className="w-2 h-2 bg-green-400 rounded-full mr-2 online-indicator"></div>
+                Online
+              </div>
             </div>
-          </div>
-        )}
+          ) : (
+            // Compact profile when collapsed
+            <div className="flex justify-center">
+              <div className="relative group">
+                <Avatar className="h-10 w-10 ring-2 ring-[#084fa1]/20 hover:ring-[#084fa1]/40 transition-all duration-200 cursor-pointer">
+                  <AvatarFallback className="text-sm bg-gradient-to-r from-[#084fa1] to-[#80b742] text-white font-bold">
+                    {user?.name?.split(' ').map(n => n[0]).join('') || 'A'}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="absolute w-3 h-3 bg-green-400 border-2 border-white rounded-full -bottom-0.5 -right-0.5 online-indicator"></div>
+                {/* Profile tooltip */}
+                <div className="absolute left-full ml-3 bottom-0 bg-gray-900 text-white px-3 py-2 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+                  <div className="font-semibold">{user?.name || 'Admin User'}</div>
+                  <div className="text-xs opacity-80">Administrator</div>
+                  <div className="absolute left-0 bottom-4 transform -translate-x-1 w-2 h-2 bg-gray-900 rotate-45"></div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Main content */}
@@ -411,6 +477,100 @@ export default function AdminLayout({
           </div>
         </main>
       </div>
+
+      {/* Custom styles for enhanced animations */}
+      <style jsx>{`
+        @keyframes pulse-ring {
+          0% {
+            transform: scale(0.33);
+          }
+          40%, 50% {
+            opacity: 0;
+          }
+          100% {
+            opacity: 0;
+            transform: scale(1.2);
+          }
+        }
+        
+        @keyframes pulse-dot {
+          0% {
+            transform: scale(0.8);
+          }
+          50% {
+            transform: scale(1);
+          }
+          100% {
+            transform: scale(0.8);
+          }
+        }
+        
+        .online-indicator {
+          animation: pulse-dot 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+        }
+        
+        .online-indicator::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          border-radius: 50%;
+          background: currentColor;
+          animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+        }
+        
+        .logo-transition {
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .sidebar-transition {
+          transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .fade-slide-in {
+          animation: fadeSlideIn 0.3s ease-out;
+        }
+        
+        .fade-slide-out {
+          animation: fadeSlideOut 0.3s ease-out;
+        }
+        
+        @keyframes fadeSlideIn {
+          from {
+            opacity: 0;
+            transform: translateX(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        
+        @keyframes fadeSlideOut {
+          from {
+            opacity: 1;
+            transform: translateX(0);
+          }
+          to {
+            opacity: 0;
+            transform: translateX(-10px);
+          }
+        }
+        
+        .tooltip-enter {
+          animation: tooltipEnter 0.2s ease-out;
+        }
+        
+        @keyframes tooltipEnter {
+          from {
+            opacity: 0;
+            transform: scale(0.95) translateY(2px);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 }

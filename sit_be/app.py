@@ -731,6 +731,146 @@ def enroll(currentuser):
     return Response(json.dumps({"Message": "Enrolled successfully", 'EnrollmentID': enrollmentID, "status": 200}), status=200)
 
 
+@app.route('/api/enroll-with-payment', methods=['POST'])
+@cross_origin()
+def enroll_with_payment():
+    """
+    Enhanced enrollment endpoint that creates enrollment record and initiates payment
+    """
+    try:
+        data = request.json
+        
+        # Extract enrollment data
+        course_id = data.get('course_id')
+        user_details = data.get('user_details', {})
+        payment_method = data.get('payment_method')
+        amount = data.get('amount')
+        
+        if not all([course_id, user_details, amount]):
+            return Response(json.dumps({
+                "success": False,
+                "message": "Missing required fields: course_id, user_details, amount",
+                "status": 400
+            }), status=400)
+        
+        # Get course details
+        courses = mongo.db.courses
+        course = courses.find_one({'courseid': course_id}, {'_id': False})
+        
+        if not course:
+            return Response(json.dumps({
+                "success": False,
+                "message": "Course not found",
+                "status": 404
+            }), status=404)
+        
+        # Generate enrollment ID
+        uid = ''.join(random.choice('0123456789ABCDEF') for i in range(5))
+        enrollment_id = 'EID' + date.today().strftime('%Y%m%d') + uid
+        
+        # Create enrollment record (pending payment)
+        enrollment_data = {
+            'enrollmentID': enrollment_id,
+            'courseID': course_id,
+            'courseTitle': course.get('coursename', 'Course'),
+            'enrolledDate': str(datetime.utcnow()),
+            'enrollmentStatus': 'Pending Payment',
+            'userDetails': {
+                'name': user_details.get('name'),
+                'email': user_details.get('email'),
+                'phone': user_details.get('phone')
+            },
+            'paymentDetails': {
+                'amount': amount,
+                'method': payment_method,
+                'status': 'pending'
+            },
+            'batchDetails': course.get('nextBatch', {}),
+            'createdAt': datetime.utcnow()
+        }
+        
+        # Store enrollment in database
+        enrollments = mongo.db.enrollments
+        enrollments.insert_one(enrollment_data)
+        
+        # If payment integration is available, initiate payment
+        if phonepe_client and PgPayRequest:
+            try:
+                unique_transaction_id = str(uuid.uuid4())[:-2]
+                ui_redirect_url = f"{frontendURL}/payment-status?transactionId={unique_transaction_id}&enrollmentId={enrollment_id}"
+                s2s_callback_url = f"{frontendURL}/payment-status"
+                
+                # Store transaction mapping
+                payment_transactions = mongo.db.payment_transactions
+                payment_transactions.insert_one({
+                    'transaction_id': unique_transaction_id,
+                    'enrollment_id': enrollment_id,
+                    'amount': amount,
+                    'status': 'initiated',
+                    'created_at': datetime.utcnow()
+                })
+                
+                pay_page_request = PgPayRequest.pay_page_pay_request_builder(
+                    merchant_transaction_id=unique_transaction_id,
+                    amount=amount * 100,  # Convert to paise
+                    merchant_user_id=user_details.get('email', 'guest_user'),
+                    callback_url=s2s_callback_url,
+                    redirect_url=ui_redirect_url
+                )
+                
+                pay_page_response = phonepe_client.pay(pay_page_request)
+                pay_page_url = pay_page_response.data.instrument_response.redirect_info.url
+                
+                return Response(json.dumps({
+                    "success": True,
+                    "message": "Enrollment created and payment initiated",
+                    "data": {
+                        "enrollment_id": enrollment_id,
+                        "payment_url": pay_page_url,
+                        "transaction_id": unique_transaction_id
+                    },
+                    "status": 200
+                }), status=200)
+                
+            except Exception as payment_error:
+                # If payment fails, update enrollment status
+                enrollments.update_one(
+                    {'enrollmentID': enrollment_id},
+                    {'$set': {'enrollmentStatus': 'Payment Failed', 'paymentError': str(payment_error)}}
+                )
+                
+                return Response(json.dumps({
+                    "success": False,
+                    "message": "Enrollment created but payment initiation failed",
+                    "error": str(payment_error),
+                    "enrollment_id": enrollment_id,
+                    "status": 500
+                }), status=500)
+        else:
+            # If no payment integration, mark as manual payment required
+            enrollments.update_one(
+                {'enrollmentID': enrollment_id},
+                {'$set': {'enrollmentStatus': 'Manual Payment Required'}}
+            )
+            
+            return Response(json.dumps({
+                "success": True,
+                "message": "Enrollment created - manual payment required",
+                "data": {
+                    "enrollment_id": enrollment_id,
+                    "payment_required": True
+                },
+                "status": 200
+            }), status=200)
+            
+    except Exception as e:
+        return Response(json.dumps({
+            "success": False,
+            "message": f"Enrollment failed: {str(e)}",
+            "status": 500
+        }), status=500)
+
+
 @app.route('/api/enrollmentsList', methods=['GET'])
 @cross_origin()
 @token_required
@@ -795,6 +935,92 @@ def getCourseContent():
     courses = mongo.db.courses
     courseContent = courses.find_one({'courseid': request.args.get('courseid')}, {'_id': False})
     return Response(json.dumps({"Message": "Fetched content", "details": courseContent, "status": 200}), status=200)
+
+
+@app.route('/api/course-details/<course_id>', methods=['GET'])
+@cross_origin()
+def getDetailedCourseInfo(course_id):
+    """
+    Enhanced endpoint for detailed course information
+    Returns comprehensive course data including curriculum, instructor, pricing, etc.
+    """
+    try:
+        courses = mongo.db.courses
+        # Find course by course_id (which maps to courseid in the database)
+        course = courses.find_one({'courseid': course_id}, {'_id': False})
+        
+        if not course:
+            return Response(json.dumps({
+                "success": False,
+                "message": "Course not found",
+                "status": 404
+            }), status=404)
+        
+        # Enhanced course details structure
+        detailed_course = {
+            "id": course.get('courseid', course_id),
+            "title": course.get('coursename', 'Course Title'),
+            "description": course.get('description', 'Course description'),
+            "longDescription": course.get('longDescription', course.get('description', 'Detailed course description')),
+            "duration": course.get('duration', '8 weeks'),
+            "level": course.get('level', 'Beginner'),
+            "price": course.get('price', 15000),
+            "originalPrice": course.get('originalPrice', course.get('price', 15000) * 1.5),
+            "students": course.get('enrolledStudents', '0') + '+',
+            "instructor": {
+                "name": course.get('instructor', {}).get('name', 'Expert Instructor'),
+                "experience": course.get('instructor', {}).get('experience', '5+ years'),
+                "rating": course.get('instructor', {}).get('rating', 4.5),
+                "bio": course.get('instructor', {}).get('bio', 'Experienced professional instructor'),
+                "image": course.get('instructor', {}).get('image', '/placeholder.svg')
+            },
+            "curriculum": course.get('curriculum', [
+                {
+                    "module": "Introduction",
+                    "topics": ["Basic concepts", "Getting started"],
+                    "duration": "1 week"
+                }
+            ]),
+            "features": course.get('features', [
+                "Hands-on Labs",
+                "Real-world Projects",
+                "Industry Mentorship",
+                "Job Placement Support",
+                "24/7 Support"
+            ]),
+            "prerequisites": course.get('prerequisites', [
+                "Basic Computer Knowledge",
+                "Understanding of Internet Concepts"
+            ]),
+            "certification": course.get('certification', 'Course Completion Certificate'),
+            "nextBatch": {
+                "startDate": course.get('nextBatch', {}).get('startDate', '2024-02-15'),
+                "schedule": course.get('nextBatch', {}).get('schedule', 'Mon, Wed, Fri - 7:00 PM to 9:00 PM'),
+                "mode": course.get('nextBatch', {}).get('mode', 'Online'),
+                "seats": course.get('nextBatch', {}).get('seats', 20)
+            },
+            "highlights": course.get('highlights', [
+                "Industry-recognized certification",
+                "Hands-on practical experience",
+                "Job placement assistance",
+                "Lifetime course access"
+            ]),
+            "image": course.get('image', '/placeholder.svg')
+        }
+        
+        return Response(json.dumps({
+            "success": True,
+            "message": "Course details fetched successfully",
+            "data": detailed_course,
+            "status": 200
+        }), status=200)
+        
+    except Exception as e:
+        return Response(json.dumps({
+            "success": False,
+            "message": f"Error fetching course details: {str(e)}",
+            "status": 500
+        }), status=500)
 
 
 @app.route('/api/courselist', methods=['GET'])

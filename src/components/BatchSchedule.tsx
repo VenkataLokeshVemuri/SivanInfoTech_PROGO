@@ -1,234 +1,162 @@
-
-import React from 'react';
-import { Calendar, Clock, MapPin, Users, Star } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+﻿import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import EnrollModal from './EnrollModal';
+import { Button } from '@/components/ui/button';
+import { Calendar, Clock, Users, Globe, Award } from 'lucide-react';
 
 const BatchSchedule = () => {
-  const upcomingBatches = [
+  const scheduleData = [
     {
-      id: "aws-sa-associate-june",
-      course: "AWS Solutions Architect Associate",
-      startDate: "June 10, 2025",
-      duration: "8 Weeks",
-      location: "Chennai",
-      mode: "Hybrid",
-      seatsLeft: 5,
-      timing: "Weekends 9 AM - 6 PM",
-      instructor: "Rajesh Kumar (AWS Certified)",
-      popular: true,
-      price: 45000
+      course: "AWS Cloud Practitioner",
+      batch: "Weekend Batch",
+      startDate: "15th Jan 2025",
+      duration: "6 weeks",
+      timing: "10:00 AM - 2:00 PM",
+      mode: "Online/Offline",
+      status: "Filling Fast",
+      seats: "5 left"
     },
     {
-      id: "azure-fundamentals-june",
-      course: "Azure Fundamentals (AZ-900)",
-      startDate: "June 12, 2025", 
-      duration: "3 Weeks",
-      location: "Bangalore",
-      mode: "Offline",
-      seatsLeft: 7,
-      timing: "Weekdays 7 PM - 9 PM",
-      instructor: "Priya Sharma (Azure Expert)",
-      price: 20000
-    },
-    {
-      id: "gcp-architect-june",
-      course: "GCP Professional Cloud Architect",
-      startDate: "June 15, 2025",
-      duration: "10 Weeks", 
-      location: "Online",
+      course: "Azure Fundamentals",
+      batch: "Weekday Batch",
+      startDate: "20th Jan 2025",
+      duration: "4 weeks",
+      timing: "7:00 PM - 9:00 PM",
       mode: "Online",
-      seatsLeft: 3,
-      timing: "Weekends 10 AM - 5 PM",
-      instructor: "Arjun Nair (GCP Certified)",
-      price: 55000
+      status: "Available",
+      seats: "12 left"
     },
     {
-      id: "aws-developer-june",
-      course: "AWS Developer Associate",
-      startDate: "June 18, 2025",
-      duration: "8 Weeks",
-      location: "Chennai",
-      mode: "Offline",
-      seatsLeft: 8,
-      timing: "Weekdays 6 PM - 8 PM",
-      instructor: "Kavya Reddy (DevOps Expert)",
-      price: 42000
-    },
-    {
-      id: "azure-admin-june",
-      course: "Azure Administrator (AZ-104)",
-      startDate: "June 20, 2025",
-      duration: "8 Weeks",
-      location: "Bangalore", 
+      course: "Google Cloud Associate",
+      batch: "Fast Track",
+      startDate: "25th Jan 2025",
+      duration: "8 weeks",
+      timing: "6:00 PM - 8:00 PM",
       mode: "Hybrid",
-      seatsLeft: 4,
-      timing: "Weekends 9 AM - 6 PM",
-      instructor: "Amit Singh (Azure Specialist)",
-      popular: true,
-      price: 40000
+      status: "Available",
+      seats: "8 left"
     },
     {
-      id: "devops-bootcamp-june",
-      course: "Multi-Cloud DevOps Bootcamp",
-      startDate: "June 25, 2025",
-      duration: "12 Weeks",
-      location: "Online",
-      mode: "Online",
-      seatsLeft: 6,
-      timing: "Weekdays 7 PM - 10 PM",
-      instructor: "Sneha Patel (DevOps Architect)",
-      price: 65000
+      course: "DevOps Engineer",
+      batch: "Intensive Batch",
+      startDate: "1st Feb 2025",
+      duration: "12 weeks",
+      timing: "10:00 AM - 1:00 PM",
+      mode: "Online/Offline",
+      status: "Available",
+      seats: "15 left"
     }
   ];
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Filling Fast':
+        return 'bg-red-100 text-red-700 border-red-200';
+      case 'New Batch':
+        return 'bg-green-100 text-green-700 border-green-200';
+      default:
+        return 'bg-blue-100 text-blue-700 border-blue-200';
+    }
+  };
+
   return (
-    <section id="batch-schedule" className="py-20 bg-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Section Header */}
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold mb-4">
-              <Calendar className="mr-2 h-4 w-4" />
-              Upcoming Batch Schedule
+    <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center px-6 py-3 bg-white/80 backdrop-blur-xl border border-white/20 rounded-full text-sm font-semibold text-blue-600 mb-6 shadow-lg">
+            <Calendar className="mr-2 h-4 w-4" />
+            Upcoming Batch Schedule
+          </div>
+          <h2 className="text-4xl font-black bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-6">
+            Secure Your Seat in Next Certification Batch
+          </h2>
+          <p className="text-xl text-gray-600">
+            Join our expert-led certification programs with flexible learning modes.
+          </p>
+        </div>
+
+        <Card className="border-0 bg-white/90 backdrop-blur-xl shadow-2xl rounded-3xl overflow-hidden mb-12">
+          <CardHeader className="bg-gradient-to-r from-blue-600 to-green-600 text-white p-8">
+            <CardTitle className="text-2xl font-bold flex items-center">
+              <Calendar className="h-6 w-6 mr-3" />
+              Upcoming Certification Batches - January & February 2025
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50/80">
+                  <tr className="border-b border-gray-200">
+                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Course</th>
+                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Batch Type</th>
+                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Start Date</th>
+                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Duration</th>
+                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Timing</th>
+                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Mode</th>
+                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Status</th>
+                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {scheduleData.map((batch, index) => (
+                    <tr key={index} className="hover:bg-blue-50/50 transition-all duration-200">
+                      <td className="px-6 py-6">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-green-500 rounded-xl flex items-center justify-center shadow-lg">
+                            <Award className="h-5 w-5 text-white" />
+                          </div>
+                          <div>
+                            <div className="font-bold text-gray-900 text-sm">{batch.course}</div>
+                            <div className="text-gray-500 text-xs">Certification Track</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-6">
+                        <Badge variant="outline" className="font-medium">
+                          {batch.batch}
+                        </Badge>
+                      </td>
+                      <td className="px-6 py-6 text-sm font-semibold text-gray-900">{batch.startDate}</td>
+                      <td className="px-6 py-6 text-sm text-gray-700">{batch.duration}</td>
+                      <td className="px-6 py-6">
+                        <div className="flex items-center text-sm text-gray-700">
+                          <Clock className="h-4 w-4 mr-2 text-blue-500" />
+                          {batch.timing}
+                        </div>
+                      </td>
+                      <td className="px-6 py-6">
+                        <Badge className="bg-green-100 text-green-700 border-green-200">
+                          {batch.mode}
+                        </Badge>
+                      </td>
+                      <td className="px-6 py-6">
+                        <div className="space-y-1">
+                          <Badge className={getStatusColor(batch.status)}>
+                            {batch.status}
+                          </Badge>
+                          <div className="text-xs text-gray-500">{batch.seats}</div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-6">
+                        <Button 
+                          size="sm" 
+                          className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white"
+                        >
+                          Register Now
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Secure Your Seat in Next <span className="text-blue-600">Certification Batch</span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Join our expert-led certification bootcamps starting soon. Limited seats available with small batch sizes for personalized attention.
-            </p>
-          </div>
+          </CardContent>
+        </Card>
 
-          {/* Batch Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {upcomingBatches.map((batch, index) => (
-              <div key={index} className={`relative bg-white rounded-xl shadow-lg border p-6 hover:shadow-xl transition-all duration-300 ${batch.popular ? 'border-blue-300 ring-2 ring-blue-100' : 'border-gray-200'}`}>
-                {batch.popular && (
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-bold">
-                    Most Popular
-                  </div>
-                )}
-                
-                <div className="space-y-4">
-                  {/* Course Title */}
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">{batch.course}</h3>
-                    <div className="text-sm text-gray-600">{batch.instructor}</div>
-                  </div>
-
-                  {/* Batch Details */}
-                  <div className="space-y-3 text-sm">
-                    <div className="flex items-center text-gray-600">
-                      <Calendar className="h-4 w-4 mr-3 text-blue-600" />
-                      <span><strong>Start:</strong> {batch.startDate}</span>
-                    </div>
-                    <div className="flex items-center text-gray-600">
-                      <Clock className="h-4 w-4 mr-3 text-blue-600" />
-                      <span><strong>Duration:</strong> {batch.duration}</span>
-                    </div>
-                    <div className="flex items-center text-gray-600">
-                      <MapPin className="h-4 w-4 mr-3 text-blue-600" />
-                      <span><strong>Location:</strong> {batch.location}</span>
-                    </div>
-                    <div className="flex items-center text-gray-600">
-                      <Users className="h-4 w-4 mr-3 text-blue-600" />
-                      <span><strong>Timing:</strong> {batch.timing}</span>
-                    </div>
-                  </div>
-
-                  {/* Mode and Seats */}
-                  <div className="flex items-center justify-between">
-                    <Badge className={`${
-                      batch.mode === 'Online' ? 'bg-green-100 text-green-800' :
-                      batch.mode === 'Offline' ? 'bg-blue-100 text-blue-800' :
-                      'bg-purple-100 text-purple-800'
-                    }`}>
-                      {batch.mode}
-                    </Badge>
-                    <span className={`text-sm font-semibold ${
-                      batch.seatsLeft <= 3 ? 'text-red-600' : 'text-green-600'
-                    }`}>
-                      {batch.seatsLeft} seats left
-                    </span>
-                  </div>
-
-                  {/* CTA Button */}
-                  <EnrollModal 
-                    courseId={batch.id} 
-                    courseName={batch.course} 
-                    coursePrice={batch.price}
-                  >
-                    <Button 
-                      className={`w-full ${
-                        batch.popular 
-                          ? 'bg-blue-600 hover:bg-blue-700' 
-                          : 'bg-green-600 hover:bg-green-700'
-                      } text-white py-3 font-semibold`}
-                    >
-                      {batch.seatsLeft <= 3 ? 'Hurry! Enroll Now' : 'Enroll Now'}
-                    </Button>
-                  </EnrollModal>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Features */}
-          <div className="bg-gray-50 rounded-2xl p-8 mb-12">
-            <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
-              What You Get in Every Batch
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="text-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Star className="h-6 w-6 text-blue-600" />
-                </div>
-                <h4 className="font-semibold text-gray-900 mb-2">Expert Trainers</h4>
-                <p className="text-sm text-gray-600">Industry certified professionals</p>
-              </div>
-              <div className="text-center">
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Users className="h-6 w-6 text-green-600" />
-                </div>
-                <h4 className="font-semibold text-gray-900 mb-2">Small Batches</h4>
-                <p className="text-sm text-gray-600">Max 15 students per batch</p>
-              </div>
-              <div className="text-center">
-                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Clock className="h-6 w-6 text-purple-600" />
-                </div>
-                <h4 className="font-semibold text-gray-900 mb-2">Flexible Timing</h4>
-                <p className="text-sm text-gray-600">Weekday & weekend options</p>
-              </div>
-              <div className="text-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <MapPin className="h-6 w-6 text-blue-600" />
-                </div>
-                <h4 className="font-semibold text-gray-900 mb-2">Multiple Modes</h4>
-                <p className="text-sm text-gray-600">Online, offline, hybrid</p>
-              </div>
-            </div>
-          </div>
-
-          {/* CTA Section */}
-          <div className="text-center">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Don&apos;t See Your Preferred Schedule?
-            </h3>
-            <p className="text-gray-600 mb-6">
-              We offer flexible batch timings. Talk to our counselor to find the perfect schedule for you.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3">
-                📞 Talk to Counselor
-              </Button>
-              <Button variant="outline" className="border-green-600 text-green-600 hover:bg-green-50 px-8 py-3">
-                📅 Request Custom Schedule
-              </Button>
-            </div>
-          </div>
+        <div className="text-center">
+          <Button className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white px-10 py-4 text-lg font-bold rounded-2xl">
+            Talk to Expert Counselor
+          </Button>
         </div>
       </div>
     </section>

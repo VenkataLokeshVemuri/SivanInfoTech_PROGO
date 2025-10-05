@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Cloud, LogOut, User, Sparkles, ArrowRight, Settings, BookOpen, BarChart3, Award } from 'lucide-react';
+import { Menu, X, Cloud, LogOut, User, Sparkles, ArrowRight, Settings, BookOpen, BarChart3, Award, Globe, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -20,14 +20,32 @@ const Header = () => {
   const { user, logout } = useBackendAuth();
   const pathname = usePathname();
 
-  const navItems = [
-    { name: 'Home', href: '/' },
-    { name: 'Courses', href: '/courses' },
-    { name: 'Why SitCloud', href: '/why-us' },
-    { name: 'View Schedule', href: '/view-schedule' },
-    { name: 'Verify Certificate', href: '/verify' },
-    { name: 'Contact', href: '/contact' },
-  ];
+  // Dynamic navigation items based on user role
+  const getNavItems = () => {
+    const baseItems = [
+      { name: 'Home', href: '/', type: 'link' },
+      { name: 'Courses', href: '/courses', type: 'link' },
+      { name: 'Why SitCloud', href: '/why-us', type: 'link' },
+    ];
+
+    // Add schedule item based on user role
+    if (user?.email === 'student@test.com') {
+      baseItems.push({ name: 'View Schedule', href: '/view-schedule', type: 'link' });
+    } else if (!user || user?.email !== 'admin@sitcloud.in') {
+      // Show Batch Schedule for non-logged in users and non-admin users
+      baseItems.push({ name: 'Batch Schedule', href: '/batch-schedule', type: 'link' });
+    }
+
+    // Add remaining items
+    baseItems.push(
+      { name: 'Verify Certificate', href: '/verify', type: 'link' },
+      { name: 'Contact', href: '/contact', type: 'link' }
+    );
+
+    return baseItems;
+  };
+
+  const navItems = getNavItems();
 
   const profileItems = [
     { name: 'My Courses', href: '/my-courses', icon: BookOpen, description: 'Access your enrolled courses', badge: '3 Active' },

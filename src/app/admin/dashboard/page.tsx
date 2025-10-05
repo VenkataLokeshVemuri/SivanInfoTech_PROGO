@@ -14,7 +14,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { backendAPI } from '@/lib/backend-api';
 import { useBackendAuth } from '@/hooks/useBackendAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -813,12 +812,9 @@ export default function AdminDashboardPage() {
                         )}
                       </div>
                       
-                      <Avatar className="h-12 w-12 border-2 border-white shadow-lg group-hover/student:scale-110 transition-all duration-300">
-                        <AvatarImage src={student.avatar} />
-                        <AvatarFallback className="text-sm font-bold bg-gradient-to-br from-[#80b742] to-emerald-600 text-white">
-                          {student.name.split(' ').map(n => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
+                      <div className="h-12 w-12 rounded-full bg-gradient-to-br from-[#80b742] to-emerald-600 flex items-center justify-center text-white font-bold text-sm border-2 border-white shadow-lg group-hover/student:scale-110 transition-all duration-300">
+                        {student.name.split(' ').map(n => n[0]).join('')}
+                      </div>
                       
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-bold text-gray-900 truncate group-hover/student:text-[#80b742] transition-colors duration-300">

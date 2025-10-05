@@ -208,9 +208,9 @@ class BackendAPI {
     });
   }
 
-  // Course APIs
-  async getCourseDetails(courseid: string): Promise<ApiResponse<{ details: any }>> {
-    return this.makeRequest(`/courseDetails?courseid=${courseid}`);
+  // Enhanced Course APIs
+  async getCourseDetails(courseId: string): Promise<ApiResponse<any>> {
+    return this.makeRequest(`/course-details/${courseId}`);
   }
 
   async getCourseList(): Promise<ApiResponse<{ courses: any[] }>> {
@@ -263,6 +263,22 @@ class BackendAPI {
 
   async checkPaymentStatus(transactionId: string): Promise<ApiResponse> {
     return this.makeRequest(`/callback/${transactionId}`);
+  }
+
+  async enrollWithPayment(enrollmentData: {
+    course_id: string;
+    user_details: {
+      name: string;
+      email: string;
+      phone: string;
+    };
+    payment_method: string;
+    amount: number;
+  }): Promise<ApiResponse<{ enrollment_id: string; payment_url: string; transaction_id: string }>> {
+    return this.makeRequest('/enroll-with-payment', {
+      method: 'POST',
+      body: JSON.stringify(enrollmentData),
+    });
   }
 
   // Contact/Inquiry APIs

@@ -186,3 +186,37 @@ body {
 .animate-scale-in {
   animation: scale-in 0.2s ease-out forwards;
 }
+
+/* Custom scrollbar styling */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom scrollbar for counselor modal */
+.counselor-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f8fafc;
+}
+
+.counselor-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.counselor-scrollbar::-webkit-scrollbar-track {
+  background: #f8fafc;
+  border-radius: 10px;
+}
+
+.counselor-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #3b82f6, #10b981);
+  border-radius: 10px;
+}
+
+.counselor-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #2563eb, #059669);
+}
