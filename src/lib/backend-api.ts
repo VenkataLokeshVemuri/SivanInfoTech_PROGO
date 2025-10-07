@@ -1,7 +1,9 @@
 // Backend API integration for existing Flask backend
 // Based on the existing Flask app.py structure
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_API_BASE_URL)
+  ? process.env.NEXT_PUBLIC_API_BASE_URL
+  : 'http://localhost:5000/api';
 
 interface ApiResponse<T = any> {
   success: boolean;
@@ -41,44 +43,114 @@ class BackendAPI {
     endpoint: string, 
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
-    const url = `${API_BASE_URL}${endpoint}`;
-    
+    // Ensure we have the latest token from localStorage (useful when token is set elsewhere)
+    if (typeof window !== 'undefined') {
+      this.token = localStorage.getItem('authToken') || this.token;
+    }
+    // Allow passing absolute URLs as endpoints
+    const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint}`;
+
+    // Clone headers from options (if any) so callers can override
+    const optionHeaders = (options.headers || {}) as Record<string, string>;
+
+    // If body is FormData, don't set Content-Type so the browser can add the boundary
+    const isFormData = typeof (options as any).body !== 'undefined' && (options as any).body instanceof FormData;
+
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      ...(options.headers as Record<string, string>),
+      ...optionHeaders,
     };
+
+    if (!isFormData && !headers['Content-Type'] && !headers['content-type']) {
+      headers['Content-Type'] = 'application/json';
+    }
 
     if (this.token) {
       headers['Authorization'] = `Bearer ${this.token}`;
     }
 
+    // Quick pre-check: if this looks like a protected endpoint and we don't have a token,
+    // return a consistent error immediately. The Flask backend's token_required decorator
+    // returns 400 for missing token, which can be confusing when debugging from the client.
+    const protectedPathPattern = /^\/(admin|student|profile|getToken|logOut|enrollmentsList|studentsList|courselist|uploadcourseDoc|getcourseDoc|enroll|updateEnrollment|enroll-with-payment)/;
+    const endpointPath = endpoint.startsWith('http') ? endpoint.replace(url, '') || endpoint : endpoint;
+    if (!this.token && protectedPathPattern.test(endpoint)) {
+      console.warn('Attempted protected API call without auth token:', endpoint);
+      return {
+        success: false,
+        error: 'Missing token',
+        status: 400,
+      };
+    }
+
     try {
+      // Debug: log request metadata (don't print token value)
+      console.debug('API request', { url, method: options.method || 'GET', hasAuth: !!headers['Authorization'] });
       const response = await fetch(url, {
         ...options,
         headers,
       });
 
-      const data: FlaskResponse = await response.json();
+      // Try to parse JSON. Some Flask responses are JSON but omit the content-type header,
+      // so attempt to parse JSON even when content-type is missing.
+      const contentType = response.headers.get('content-type') || '';
+      let data: any = undefined;
+      if (contentType.includes('application/json')) {
+        try {
+          data = await response.json();
+        } catch (parseErr) {
+          console.warn('Failed to parse JSON response from', url, parseErr);
+        }
+      } else {
+        // No content-type or non-json content-type: try to parse text as JSON as a best-effort.
+        try {
+          const text = await response.text();
+          if (text) {
+            try {
+              data = JSON.parse(text);
+            } catch (e) {
+              // Not JSON — leave data undefined but keep the raw text on a debug field
+              (response as any)._rawText = text;
+            }
+          }
+        } catch (err) {
+          console.warn('Failed to read response text from', url, err);
+        }
+      }
 
-      if (!response.ok || data.status >= 400) {
+      // If response wasn't ok, or the parsed data indicates an error, return failure
+      const statusCode = response.status || (data && data.status) || 0;
+      const message = (data && (data.Message || data.message)) || response.statusText;
+
+      if (!response.ok || statusCode >= 400) {
         return {
           success: false,
-          error: data.Message || 'Request failed',
-          status: data.status,
+          error: message || 'Request failed',
+          status: statusCode,
         };
+      }
+
+      // Normalize backend wrappers: many Flask endpoints use { Message, data: { ... }, status }
+      let payload: any = data as any;
+      if (payload && typeof payload === 'object' && payload.data !== undefined) {
+        payload = payload.data;
       }
 
       return {
         success: true,
-        data: data as T,
-        message: data.Message,
-        status: data.status,
+        data: (payload as T) ?? undefined,
+        message: message,
+        status: statusCode,
       };
-    } catch (error) {
-      console.error('API request failed:', error);
+    } catch (error: any) {
+      // Better debug logging for network errors
+      console.error('API request failed:', {
+        url,
+        method: options.method || 'GET',
+        error,
+      });
       return {
         success: false,
-        error: 'Network error occurred',
+        error: error?.message || String(error) || 'Network error occurred',
       };
     }
   }
@@ -112,28 +184,34 @@ class BackendAPI {
       }
       
       // Decode user data from JWT token
+      let user = null;
       const decodedToken = this.decodeJWT(response.data.token);
-      if (decodedToken) {
-        const user = {
+      if (decodedToken && decodedToken.email) {
+        user = {
           id: decodedToken.email,
-          name: `${decodedToken.firstName} ${decodedToken.lastName}`,
+          name: `${decodedToken.firstName || ''} ${decodedToken.lastName || ''}`.trim(),
           email: decodedToken.email,
-          role: decodedToken.role.toLowerCase(),
+          role: (decodedToken.role || 'student').toLowerCase(),
           firstName: decodedToken.firstName,
           lastName: decodedToken.lastName,
           verified: decodedToken.verified
         };
-        
-        // Return enhanced response with user data
-        return {
-          success: true,
-          data: {
-            ...response.data,
-            user
-          },
-          error: undefined
-        };
       }
+
+      // If decoded token couldn't provide user details, try fetching /profile using the token
+      if (!user) {
+        try {
+          const profileResp = await this.makeRequest<User>('/profile');
+          if (profileResp.success && profileResp.data) {
+            user = profileResp.data as any;
+          }
+        } catch (err) {
+          console.warn('Failed to fetch profile after login fallback:', err);
+        }
+      }
+
+      const enhancedData = { ...response.data, user };
+      return { success: true, data: enhancedData, error: undefined };
     }
 
     return { success: false, data: undefined, error: response.error };

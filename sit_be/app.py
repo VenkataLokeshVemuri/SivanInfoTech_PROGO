@@ -44,6 +44,49 @@ backendURL = "https://sitcloud.in/api/"
 
 tz_NY = pytz.timezone('Asia/Kolkata')
 
+
+def normalize_password_bytes(stored_pw):
+    """Normalize various stored password representations to raw bytes for bcrypt.checkpw.
+
+    Handles:
+    - bytes / bytearray
+    - bson.binary.Binary (bytes() works)
+    - stringified bytes like "b'...'")
+    - base64-encoded strings
+    - plain UTF-8 strings
+    """
+    if stored_pw is None:
+        return stored_pw
+    # If already bytes-like
+    if isinstance(stored_pw, (bytes, bytearray)):
+        return bytes(stored_pw)
+    # If it's a Python string
+    if isinstance(stored_pw, str):
+        s = stored_pw
+        # stringified bytes literal: "b'...'(utf-8)"
+        if (s.startswith("b'") and s.endswith("'")) or (s.startswith('b"') and s.endswith('"')):
+            inner = s[2:-1]
+            try:
+                # latin1 preserves byte values
+                return inner.encode('latin1')
+            except Exception:
+                return inner.encode('utf8')
+        # try base64 decode
+        try:
+            import base64
+            return base64.b64decode(s)
+        except Exception:
+            try:
+                return s.encode('utf8')
+            except Exception:
+                return s
+    # Fallback: try to construct bytes from the object (works for bson.binary.Binary)
+    try:
+        return bytes(stored_pw)
+    except Exception:
+        return stored_pw
+
+
 # Phonepe SDK Keys
 merchant_id = "M22UNOC34DDKV"  
 salt_key = "9517e9ee-c009-4aad-9400-dd693ccd0ac1"  
@@ -75,18 +118,23 @@ app = Flask(__name__)
 app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = "SIT_Secret_key"
 app.config['VERIFICATION_SECRET_KEY'] = "VERIFICATION_Secret_KEY"
-app.config["MONGO_URI"] = "mongodb://localhost:27017/sivaninfo_db"
+
+# Toggle to skip email verification during development/testing.
+# Set environment variable SKIP_EMAIL_VERIFICATION=1 to allow sign-in without email verification.
+SKIP_EMAIL_VERIFICATION = os.environ.get('SKIP_EMAIL_VERIFICATION', '0') == '1'
+# app.config["MONGO_URI"] = "mongodb://localhost:27017/sivaninfo_db"
 # app.config["MONGO_URI"] = "mongodb://situser:sitadmin@localhost:27017/admin"
 # app.config["MONGO_URI"] = "mongodb://situser:sitadmin@mongo:27017/admin"
 
-# Try to connect to MongoDB, fall back to mock database if not available
-MONGODB_AVAILABLE = False
+# Connect to MongoDB Atlas
+import ssl
 try:
-    mongo = PyMongo(app)
+    # Configure PyMongo with SSL options using tlsAllowInvalidCertificates
+    app.config["MONGO_URI"] = "mongodb+srv://cyber:cyber@cluster0.lum1oou.mongodb.net/sivaninfo_db?retryWrites=true&w=majority&appName=Cluster0"
+    mongo = PyMongo(app, tlsAllowInvalidCertificates=True)
     # Test the connection
     mongo.db.list_collection_names()
-    MONGODB_AVAILABLE = True
-    print("MongoDB connected successfully")
+    print("MongoDB Atlas connected successfully")
     
     # Create an admin user for testing if it doesn't exist
     users = mongo.db.users
@@ -256,82 +304,111 @@ try:
         }
     ]
     
-    for quiz in sample_quizzes:
-        existing_quiz = quizzes.find_one({'quizId': quiz['quizId']})
-        if not existing_quiz:
-            quizzes.insert_one(quiz)
-            print(f"Sample quiz created: {quiz['title']}")
-        else:
-            print(f"Quiz already exists: {quiz['title']}")
+    # for quiz in sample_quizzes:
+    #     existing_quiz = quizzes.find_one({'quizId': quiz['quizId']})
+    #     if not existing_quiz:
+    #         quizzes.insert_one(quiz)
+    #         print(f"Sample quiz created: {quiz['title']}")
+    #     else:
+    #         print(f"Quiz already exists: {quiz['title']}")
     
     # Create sample quiz attempts for realistic analytics
-    quiz_attempts = mongo.db.quiz_attempts
-    sample_attempts = [
-        {
-            'attemptId': 'attempt_001',
-            'quizId': 'quiz_aws_001',
-            'studentEmail': 'admin@sitcloud.in',
-            'status': 'completed',
-            'startedAt': (datetime.now(tz_NY) - timedelta(days=5)).isoformat(),
-            'submittedAt': (datetime.now(tz_NY) - timedelta(days=5, hours=-2)).isoformat(),
-            'finalScore': 85,
-            'percentage': 85.0,
-            'timeSpent': 118,
-            'responses': []
-        },
-        {
-            'attemptId': 'attempt_002',
-            'quizId': 'quiz_aws_001',
-            'studentEmail': 'student1@example.com',
-            'status': 'completed',
-            'startedAt': (datetime.now(tz_NY) - timedelta(days=3)).isoformat(),
-            'submittedAt': (datetime.now(tz_NY) - timedelta(days=3, hours=-1.5)).isoformat(),
-            'finalScore': 78,
-            'percentage': 78.0,
-            'timeSpent': 95,
-            'responses': []
-        },
-        {
-            'attemptId': 'attempt_003',
-            'quizId': 'quiz_azure_001',
-            'studentEmail': 'admin@sitcloud.in',
-            'status': 'completed',
-            'startedAt': (datetime.now(tz_NY) - timedelta(days=2)).isoformat(),
-            'submittedAt': (datetime.now(tz_NY) - timedelta(days=2, minutes=-25)).isoformat(),
-            'finalScore': 42,
-            'percentage': 84.0,
-            'timeSpent': 25,
-            'responses': []
-        },
-        {
-            'attemptId': 'attempt_004',
-            'quizId': 'quiz_gcp_001',
-            'studentEmail': 'student2@example.com',
-            'status': 'completed',
-            'startedAt': (datetime.now(tz_NY) - timedelta(days=1)).isoformat(),
-            'submittedAt': (datetime.now(tz_NY) - timedelta(days=1, minutes=-75)).isoformat(),
-            'finalScore': 68,
-            'percentage': 90.7,
-            'timeSpent': 75,
-            'responses': []
-        }
-    ]
+    # quiz_attempts = mongo.db.quiz_attempts
+    # sample_attempts = [
+    #     {
+    #         'attemptId': 'attempt_001',
+    #         'quizId': 'quiz_aws_001',
+    #         'studentEmail': 'admin@sitcloud.in',
+    #         'status': 'completed',
+    #         'startedAt': (datetime.now(tz_NY) - timedelta(days=5)).isoformat(),
+    #         'submittedAt': (datetime.now(tz_NY) - timedelta(days=5, hours=-2)).isoformat(),
+    #         'finalScore': 85,
+    #         'percentage': 85.0,
+    #         'timeSpent': 118,
+    #         'responses': []
+    #     },
+    #     {
+    #         'attemptId': 'attempt_002',
+    #         'quizId': 'quiz_aws_001',
+    #         'studentEmail': 'student1@example.com',
+    #         'status': 'completed',
+    #         'startedAt': (datetime.now(tz_NY) - timedelta(days=3)).isoformat(),
+    #         'submittedAt': (datetime.now(tz_NY) - timedelta(days=3, hours=-1.5)).isoformat(),
+    #         'finalScore': 78,
+    #         'percentage': 78.0,
+    #         'timeSpent': 95,
+    #         'responses': []
+    #     },
+    #     {
+    #         'attemptId': 'attempt_003',
+    #         'quizId': 'quiz_azure_001',
+    #         'studentEmail': 'admin@sitcloud.in',
+    #         'status': 'completed',
+    #         'startedAt': (datetime.now(tz_NY) - timedelta(days=2)).isoformat(),
+    #         'submittedAt': (datetime.now(tz_NY) - timedelta(days=2, minutes=-25)).isoformat(),
+    #         'finalScore': 42,
+    #         'percentage': 84.0,
+    #         'timeSpent': 25,
+    #         'responses': []
+    #     },
+    #     {
+    #         'attemptId': 'attempt_004',
+    #         'quizId': 'quiz_gcp_001',
+    #         'studentEmail': 'student2@example.com',
+    #         'status': 'completed',
+    #         'startedAt': (datetime.now(tz_NY) - timedelta(days=1)).isoformat(),
+    #         'submittedAt': (datetime.now(tz_NY) - timedelta(days=1, minutes=-75)).isoformat(),
+    #         'finalScore': 68,
+    #         'percentage': 90.7,
+    #         'timeSpent': 75,
+    #         'responses': []
+    #     }
+    # ]
     
-    for attempt in sample_attempts:
-        existing_attempt = quiz_attempts.find_one({'attemptId': attempt['attemptId']})
-        if not existing_attempt:
-            quiz_attempts.insert_one(attempt)
-            print(f"Sample quiz attempt created: {attempt['attemptId']}")
-        else:
-            print(f"Quiz attempt already exists: {attempt['attemptId']}")
+    # for attempt in sample_attempts:
+    #     existing_attempt = quiz_attempts.find_one({'attemptId': attempt['attemptId']})
+    #     if not existing_attempt:
+    #         quiz_attempts.insert_one(attempt)
+    #         print(f"Sample quiz attempt created: {attempt['attemptId']}")
+    #     else:
+    #         print(f"Quiz attempt already exists: {attempt['attemptId']}")
             
 except Exception as e:
-    print(f"MongoDB connection failed: {e}")
-    print("Falling back to mock database for testing")
-    from mock_db import mock_mongo
-    mongo = mock_mongo
+    print(f"MongoDB Atlas connection failed: {e}")
+    print("Please check your MongoDB Atlas connection string and network connectivity")
+    raise e
 
-cors = CORS(app)
+# Configure CORS to allow the frontend dev servers and API preflight requests.
+# Allow specific local origins used by the Next dev server (3000/3001) and localhost/ip variants.
+# Enable credentials support if frontend sends cookies or Authorization headers.
+cors = CORS(app, resources={r"/api/*": {"origins": [
+    "http://localhost:3001",
+    "http://127.0.0.1:3001",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000"
+]}}, supports_credentials=True)
+
+
+# Ensure CORS headers are added to every response (including error responses and OPTIONS preflight)
+@app.after_request
+def add_cors_headers(response):
+    allowed_origins = {
+        "http://localhost:3001",
+        "http://127.0.0.1:3001",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    }
+    origin = request.headers.get('Origin')
+    if origin in allowed_origins:
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Access-Control-Allow-Headers'] = 'Origin, Content-Type, Accept, Authorization'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+
+    # If this is an OPTIONS preflight, return OK immediately
+    if request.method == 'OPTIONS':
+        response.status_code = 200
+    return response
 
 
 def token_required(f):
@@ -376,13 +453,16 @@ def signup():
 
     hashed = bcrypt.hashpw(request.json['password'].encode('utf8'), bcrypt.gensalt())
     
-    # Disable email verification for testing with mock database
-    if not MONGODB_AVAILABLE:
+    # Determine verification state. In testing mode we may skip email verification.
+    if SKIP_EMAIL_VERIFICATION:
         verified = True
-        print("Mock database mode: Email verification disabled for testing")
     else:
+        # Send email verification (best-effort). If email fails, continue signup but log the error.
         verified = False
-        sendverificationmail(request, app.config['VERIFICATION_SECRET_KEY'])
+        try:
+            sendverificationmail(request, app.config['VERIFICATION_SECRET_KEY'])
+        except Exception as e:
+            print('Warning: sendverificationmail failed during signup:', e)
     
     # Handle both frontend formats - new format (name) and old format (firstName/lastName)
     if 'name' in request.json:
@@ -420,20 +500,37 @@ def signin():
     users = mongo.db.users
     signin_user = users.find_one({'email': request.json['email'].lower()}, {'_id': False})
     if not signin_user:
-        return Response(json.dumps(
-            {"Message": "Please Signup to login", "status": 401}),
-                        status=401)
+        return Response(json.dumps({"Message": "Please Signup to login", "status": 401}), status=401)
     if signin_user:
-        if not signin_user['verified']:
+        # Allow login for unverified users when SKIP_EMAIL_VERIFICATION is enabled (testing/dev).
+        if not signin_user.get('verified', False) and not SKIP_EMAIL_VERIFICATION:
             return Response(json.dumps({"Message": "User not yet verified, Please check your mail for verification link", "status": 401}), status=401)
-        if bcrypt.checkpw(request.json['password'].encode('utf8'), signin_user["password"]):
+        stored_pw = signin_user.get("password")
+        stored_pw_bytes = normalize_password_bytes(stored_pw)
+
+        # Now perform bcrypt check (ensure we have bytes for stored password)
+        try:
+            password_ok = False
+            if isinstance(stored_pw_bytes, (bytes, bytearray)):
+                password_ok = bcrypt.checkpw(request.json['password'].encode('utf8'), stored_pw_bytes)
+            else:
+                # stored_pw couldn't be normalized to bytes; fail gracefully
+                print(f"signin: stored password could not be normalized to bytes (type={type(stored_pw)})")
+                password_ok = False
+        except Exception as e:
+            print(f"Error during bcrypt.checkpw: {e}")
+            password_ok = False
+
+        if password_ok:
+            # If skipping verification in dev, reflect that in the token so frontend behaves as expected
+            token_verified_flag = True if SKIP_EMAIL_VERIFICATION else signin_user.get('verified', False)
             token = jwt.encode({
                 'email': signin_user["email"],
                 'firstName': signin_user["firstName"],
                 'lastName': signin_user["lastName"],
                 'exp': datetime.utcnow() + timedelta(minutes=30),
                 'role': signin_user["role"],
-                'verified': signin_user['verified']
+                'verified': token_verified_flag
             }, app.config['SECRET_KEY'])
 
             users.update_one({'email': signin_user['email']},  {"$set": {'loginToken': token}})
@@ -677,13 +774,14 @@ def getToken(currentuser):
     print(signin_user)
     if signin_user:
         if currentuser['currenttoken'] == signin_user["loginToken"]:
+            token_verified_flag = True if SKIP_EMAIL_VERIFICATION else signin_user.get('verified', False)
             newtoken = jwt.encode({
                 'email': signin_user["email"],
                 'firstName': signin_user["firstName"],
                 'lastName': signin_user["lastName"],
                 'exp': datetime.utcnow() + timedelta(minutes=30),
                 'role': signin_user["role"],
-                'verified': signin_user['verified']
+                'verified': token_verified_flag
             }, app.config['SECRET_KEY'])
             users.update_one({'email': signin_user['email']},  {"$set": {'loginToken': newtoken}})
             res = {"Message": "token generated in successfully", "token": newtoken,  "status": 200}
@@ -920,11 +1018,8 @@ def updateEnrollment(currentuser):
 def submitEnquiry():
     print(request.json)
     
-    # Disable email sending for testing with mock database
-    if not MONGODB_AVAILABLE:
-        print("Mock database mode: Email sending disabled for testing")
-    else:
-        sendenquirymail(request)
+    # Send enquiry email
+    sendenquirymail(request)
     
     return Response(json.dumps({"Message": "Enquiry submitted, Team will contact you soon", "status": 200}), status=200)
 
@@ -1910,6 +2005,7 @@ def get_quiz(currentuser, quiz_id):
         if not quiz:
             return Response(json.dumps({"Message": "Quiz not found", "status": 404}), status=404)
         
+        # MongoDB with our model stores dates as ISO strings, so no conversion needed
         return Response(json.dumps({
             "Message": "Quiz retrieved", 
             "quiz": quiz,
