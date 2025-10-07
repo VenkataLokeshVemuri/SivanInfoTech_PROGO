@@ -58,7 +58,7 @@ const WhySivanInfoTech = () => {
       suffix: "+",
       title: "Success Stories",
       description: "Career transformations achieved",
-      color: "text-orange-600"
+      color: "text-green-600"
     },
     {
       icon: Target,
@@ -87,7 +87,7 @@ const WhySivanInfoTech = () => {
       icon: Shield,
       title: "Certification",
       description: "We ensure you get placed or provide continuous support",
-      color: "bg-orange-600"
+      color: "bg-blue-600"
     },
     {
       icon: Briefcase,
@@ -114,7 +114,7 @@ const WhySivanInfoTech = () => {
               Why Choose Sivan InfoTech
             </div>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto animate-fade-in">
-              A Training and Placement company by IT veterans with over two decades of experience in top notch MNC companies. Tailor made curriculam for each student's need delivered by our expert trainers from diverse streams. You get a lifetime certification of merit, guidance to grab certification from Amazon, Microsoft and more.
+              A Training and Placement company by IT veterans with over two decades of experience in top notch MNC companies. Tailor made curriculam for each student&apos;s need delivered by our expert trainers from diverse streams. You get a lifetime certification of merit, guidance to grab certification from Amazon, Microsoft and more.
             </p>
           </div>
 
@@ -123,7 +123,7 @@ const WhySivanInfoTech = () => {
             {stats.map((stat, index) => (
               <Card key={index} className="text-center hover:shadow-xl transition-all duration-300 border-0 shadow-lg hover:scale-105 animate-counter-up">
                 <CardContent className="p-8">
-                  <div className={`w-16 h-16 ${stat.color === 'text-primary' ? 'bg-primary/10' : stat.color === 'text-secondary' ? 'bg-secondary/10' : stat.color === 'text-orange-600' ? 'bg-orange-100' : 'bg-purple-100'} rounded-full flex items-center justify-center mx-auto mb-4`}>
+                  <div className={`w-16 h-16 ${stat.color === 'text-primary' ? 'bg-primary/10' : stat.color === 'text-secondary' ? 'bg-secondary/10' : stat.color === 'text-green-600' ? 'bg-green-100' : 'bg-purple-100'} rounded-full flex items-center justify-center mx-auto mb-4`}>
                     <stat.icon className={`h-8 w-8 ${stat.color}`} />
                   </div>
                   <div className={`text-4xl font-bold ${stat.color} mb-2`}>

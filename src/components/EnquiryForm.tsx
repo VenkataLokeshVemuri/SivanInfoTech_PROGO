@@ -66,7 +66,7 @@ const EnquiryForm = () => {
               Get in Touch
             </h2>
             <p className="text-xl text-gray-600">
-              Have questions? We're here to help you start your cloud journey
+              Have questions? We&apos;re here to help you start your cloud journey
             </p>
           </div>
 
@@ -76,7 +76,7 @@ const EnquiryForm = () => {
                 <CardHeader>
                   <CardTitle>Send us an Enquiry</CardTitle>
                   <CardDescription>
-                    Fill out the form below and we'll get back to you within 24 hours
+                    Fill out the form below and we&apos;ll get back to you within 24 hours
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -143,7 +143,11 @@ const EnquiryForm = () => {
                       />
                     </div>
 
-                    <Button type="submit" disabled={submitting} className="w-full">
+                    <Button 
+                      type="submit" 
+                      disabled={submitting} 
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-300"
+                    >
                       <Send className="h-4 w-4 mr-2" />
                       {submitting ? 'Sending...' : 'Send Enquiry'}
                     </Button>

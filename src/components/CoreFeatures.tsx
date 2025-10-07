@@ -1,5 +1,6 @@
-import { CheckCircle, Code, Shield, Users, Briefcase, Settings, Award } from 'lucide-react';
+import { CheckCircle, Code, Shield, Users, Briefcase, Settings, Award, Rocket, Download, Target, ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 const CoreFeatures = () => {
   const featureCategories = [
@@ -48,8 +49,8 @@ const CoreFeatures = () => {
     {
       icon: Briefcase,
       title: "Business & Pre-Sales Skills",
-      color: "from-orange-600 to-red-600",
-      bgColor: "bg-orange-50",
+      color: "from-blue-600 to-green-600",
+      bgColor: "bg-blue-50",
       features: [
         "Guidelines to Understand Business Requirements",
         "Guidelines for RFP / Pre-Sales Work",
@@ -96,18 +97,18 @@ const CoreFeatures = () => {
         <div className="max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="text-center mb-20">
-            <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-full text-sm font-bold mb-6 shadow-lg">
+            <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r Our Premium Training Features text-black rounded-full text-sm font-bold mb-6 shadow-lg">
               <Award className="mr-2 h-5 w-5" />
               Our Premium Training Features
             </div>
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight">
               What Makes Our Training 
-              <span className="block bg-gradient-to-r from-primary via-secondary to-orange-500 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-primary via-secondary to-green-500 bg-clip-text text-transparent">
                 Absolutely Unique
               </span>
             </h2>
             <p className="text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-              Industry's most comprehensive hands-on cloud training with real-world projects, expert mentorship, and guaranteed career transformation
+              Industry&apos;s most comprehensive hands-on cloud training with real-world projects, expert mentorship, and guaranteed career transformation
             </p>
           </div>
 
@@ -144,39 +145,80 @@ const CoreFeatures = () => {
 
           {/* Premium CTA Section */}
           <div className="relative">
-            <div className="bg-gradient-to-r from-primary via-secondary to-primary rounded-3xl p-12 text-white shadow-2xl relative overflow-hidden">
+            <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 rounded-3xl p-12 text-white shadow-2xl relative overflow-hidden">
               {/* Background decoration */}
               <div className="absolute inset-0 bg-white/5 rounded-3xl"></div>
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 opacity-50"></div>
+              <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-500 rounded-full opacity-20 blur-3xl"></div>
+              <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-indigo-500 rounded-full opacity-20 blur-3xl"></div>
               
               <div className="relative z-10 text-center">
-                <h3 className="text-4xl md:text-5xl font-bold mb-6">
-                  🚀 Transform Your Career Today!
-                </h3>
-                <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto leading-relaxed">
-                  Experience the most comprehensive cloud training program with hands-on projects, expert mentorship, and guaranteed placement support
+                <div className="flex items-center justify-center gap-4 mb-6">
+                  <div className="p-3 bg-white/10 rounded-full shadow-lg">
+                    <Rocket className="h-10 w-10 text-white" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-4xl md:text-5xl font-bold">
+                    Transform Your Career Today!
+                  </h3>
+                </div>
+                
+                <p className="text-xl text-blue-50 mb-10 max-w-3xl mx-auto leading-relaxed">
+                  Experience the most comprehensive cloud training program with hands-on projects, 
+                  expert mentorship, and guaranteed placement support
                 </p>
+                
                 <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                  <button className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl">
-                    🎯 Start Your Journey Now
-                  </button>
-                  <button className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white border-2 border-white/50 px-10 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105">
-                    📋 Download Full Curriculum
-                  </button>
+                  <Button 
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-10 py-7 rounded-xl font-bold text-lg 
+                             transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl 
+                             border-0 flex items-center"
+                  >
+                    <Target className="h-5 w-5 mr-3" strokeWidth={2} />
+                    Start Your Journey Now
+                    <ArrowRight className="h-5 w-5 ml-2 opacity-80 group-hover:translate-x-1 transition-all" />
+                  </Button>
+                  
+                  <Button 
+                    variant="outline"
+                    className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-2 
+                             border-white/50 px-10 py-7 rounded-xl font-bold text-lg 
+                             transition-all duration-300 transform hover:scale-105 flex items-center"
+                  >
+                    <Download className="h-5 w-5 mr-3" strokeWidth={2} />
+                    Download Full Curriculum
+                  </Button>
                 </div>
                 
                 {/* Trust indicators */}
-                <div className="mt-12 flex flex-wrap justify-center items-center gap-8 text-blue-100">
-                  <div className="flex items-center space-x-2">
-                    <Award className="h-6 w-6" />
-                    <span className="font-semibold">500+ Students Placed</span>
+                <div className="mt-14 flex flex-wrap justify-center items-center gap-10 text-white">
+                  <div className="flex flex-col items-center space-y-3 bg-white/10 px-6 py-4 rounded-xl backdrop-blur-sm">
+                    <div className="p-2 bg-white/20 rounded-full">
+                      <Users className="h-8 w-8 text-white" strokeWidth={1.5} />
+                    </div>
+                    <div className="text-center">
+                      <div className="font-bold text-2xl">500+</div>
+                      <span className="font-medium text-blue-50">Students Placed</span>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Users className="h-6 w-6" />
-                    <span className="font-semibold">98% Success Rate</span>
+                  
+                  <div className="flex flex-col items-center space-y-3 bg-white/10 px-6 py-4 rounded-xl backdrop-blur-sm">
+                    <div className="p-2 bg-white/20 rounded-full">
+                      <CheckCircle className="h-8 w-8 text-white" strokeWidth={1.5} />
+                    </div>
+                    <div className="text-center">
+                      <div className="font-bold text-2xl">98%</div>
+                      <span className="font-medium text-blue-50">Success Rate</span>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-6 w-6" />
-                    <span className="font-semibold">Industry Certified</span>
+                  
+                  <div className="flex flex-col items-center space-y-3 bg-white/10 px-6 py-4 rounded-xl backdrop-blur-sm">
+                    <div className="p-2 bg-white/20 rounded-full">
+                      <Award className="h-8 w-8 text-white" strokeWidth={1.5} />
+                    </div>
+                    <div className="text-center">
+                      <div className="font-bold text-2xl">100%</div>
+                      <span className="font-medium text-blue-50">Industry Certified</span>
+                    </div>
                   </div>
                 </div>
               </div>

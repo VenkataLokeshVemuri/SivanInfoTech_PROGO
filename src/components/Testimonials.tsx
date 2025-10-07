@@ -109,7 +109,7 @@ const Testimonials = () => {
                 <div className="text-center">
                   <Quote className="h-12 w-12 text-primary mx-auto mb-6" />
                   <p className="text-lg text-gray-700 mb-6">
-                    "{testimonials[currentTestimonial]?.comments}"
+                    &quot;{testimonials[currentTestimonial]?.comments}&quot;
                   </p>
                   
                   <div className="flex items-center justify-center mb-4">

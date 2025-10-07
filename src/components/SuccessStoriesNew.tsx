@@ -133,7 +133,7 @@ const SuccessStoriesNew = () => {
                   <div className="mb-6">
                     <Quote className="h-12 w-12 text-primary/20 mb-4" />
                     <p className="text-lg text-foreground leading-relaxed mb-6">
-                      "{stories[currentStory].testimonial}"
+                      &quot;{stories[currentStory].testimonial}&quot;
                     </p>
                     
                     <div className="flex items-center space-x-1 mb-4">
@@ -196,10 +196,10 @@ const SuccessStoriesNew = () => {
               <h3 className="text-2xl font-bold text-foreground mb-4">Ready to Join Our Success Stories?</h3>
               <p className="text-muted-foreground mb-6">Start your cloud career transformation today with our proven training methodology</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button className="btn-gradient-primary px-8 py-3 rounded-xl font-semibold">
+                <Button className="border-2 border-primary text-primary btn-gradient-primary px-8 py-3 rounded-xl font-semibold">
                   Start Your Journey
                 </Button>
-                <Button variant="outline" className="border-2 border-primary text-primary hover:bg-primary hover:text-white px-8 py-3 rounded-xl font-semibold">
+                <Button variant="outline" className="border-2 border-primary text-primary hover:bg-primary  px-8 py-3 rounded-xl font-semibold">
                   View All Success Stories
                 </Button>
               </div>

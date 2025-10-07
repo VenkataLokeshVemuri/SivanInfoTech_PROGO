@@ -7,7 +7,6 @@ import CoreFeatures from '@/components/CoreFeatures';
 import HowItWorks from '@/components/HowItWorks';
 import CourseTracksNew from '@/components/CourseTracksNew';
 import SuccessStoriesNew from '@/components/SuccessStoriesNew';
-import BatchSchedule from '@/components/BatchSchedule';
 import PlacementPartners from '@/components/PlacementPartners';
 import Gallery from '@/components/Gallery';
 import Testimonials from '@/components/Testimonials';

@@ -1,21 +1,26 @@
 "use client";
-import { createContext, useContext, useEffect, useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { backendAPI } from '@/lib/backend-api';
+import { createContext, useContext, useEffect, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { backendAPI } from "@/lib/backend-api";
 
-interface User {
+export interface User {
   id: string;
   name: string;
   email: string;
   phone?: string;
-  role: 'student' | 'admin' | 'counselor';
+  role: "student" | "admin" | "counselor";
 }
 
 interface BackendAuthContextType {
   user: User | null;
   loading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  isAdmin: boolean;
+  isStudent: boolean;
+  login: (
+    email: string,
+    password: string
+  ) => Promise<{ success: boolean; error?: string; user?: User }>;
   register: (userData: {
     name: string;
     email: string;
@@ -23,13 +28,22 @@ interface BackendAuthContextType {
     phone?: string;
   }) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
-  verifyEmail: (email: string, otp: string) => Promise<{ success: boolean; error?: string }>;
+  verifyEmail: (
+    email: string,
+    otp: string
+  ) => Promise<{ success: boolean; error?: string }>;
   refreshProfile: () => Promise<void>;
 }
 
-const BackendAuthContext = createContext<BackendAuthContextType | undefined>(undefined);
+const BackendAuthContext = createContext<BackendAuthContextType | undefined>(
+  undefined
+);
 
-export function BackendAuthProvider({ children }: { children: React.ReactNode }) {
+export function BackendAuthProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -49,7 +63,7 @@ export function BackendAuthProvider({ children }: { children: React.ReactNode })
           backendAPI.logout();
         }
       } catch (error) {
-        console.error('Auth check failed:', error);
+        console.error("Auth check failed:", error);
         backendAPI.logout();
       }
     }
@@ -57,18 +71,20 @@ export function BackendAuthProvider({ children }: { children: React.ReactNode })
   };
 
   const login = async (email: string, password: string) => {
-    console.log('Backend login attempt:', { email });
-    
+    console.log("Backend login attempt:", { email });
+
     try {
       const response = await backendAPI.login(email, password);
-      
+      console.log("backendAPI.login raw response:", response);
+
       if (response.success && response.data) {
-        setUser(response.data.user);
+        const userData = response.data.user;
+        setUser(userData);
         toast({
           title: "Welcome Back!",
           description: "You have successfully signed in.",
         });
-        return { success: true };
+        return { success: true, user: userData };
       } else {
         toast({
           title: "Login Failed",
@@ -94,11 +110,14 @@ export function BackendAuthProvider({ children }: { children: React.ReactNode })
     password: string;
     phone?: string;
   }) => {
-    console.log('Backend registration attempt:', { email: userData.email, name: userData.name });
-    
+    console.log("Backend registration attempt:", {
+      email: userData.email,
+      name: userData.name,
+    });
+
     try {
       const response = await backendAPI.register(userData);
-      
+
       if (response.success) {
         toast({
           title: "Registration Successful!",
@@ -126,8 +145,8 @@ export function BackendAuthProvider({ children }: { children: React.ReactNode })
 
   const verifyEmail = async (email: string, otp: string) => {
     try {
-      const response = await backendAPI.verifyEmail(email, otp);
-      
+      const response = await backendAPI.verifyEmail({ email, otp });
+
       if (response.success) {
         toast({
           title: "Email Verified!",
@@ -170,24 +189,30 @@ export function BackendAuthProvider({ children }: { children: React.ReactNode })
           setUser(response.data);
         }
       } catch (error) {
-        console.error('Profile refresh failed:', error);
+        console.error("Profile refresh failed:", error);
       }
     }
   };
 
   const isAuthenticated = !!user && backendAPI.isAuthenticated();
+  const isAdmin = user?.role === "admin";
+  const isStudent = user?.role === "student";
 
   return (
-    <BackendAuthContext.Provider value={{
-      user,
-      loading,
-      isAuthenticated,
-      login,
-      register,
-      logout,
-      verifyEmail,
-      refreshProfile
-    }}>
+    <BackendAuthContext.Provider
+      value={{
+        user,
+        loading,
+        isAuthenticated,
+        isAdmin,
+        isStudent,
+        login,
+        register,
+        logout,
+        verifyEmail,
+        refreshProfile,
+      }}
+    >
       {children}
     </BackendAuthContext.Provider>
   );
@@ -196,7 +221,7 @@ export function BackendAuthProvider({ children }: { children: React.ReactNode })
 export function useBackendAuth() {
   const context = useContext(BackendAuthContext);
   if (context === undefined) {
-    throw new Error('useBackendAuth must be used within a BackendAuthProvider');
+    throw new Error("useBackendAuth must be used within a BackendAuthProvider");
   }
   return context;
 }
