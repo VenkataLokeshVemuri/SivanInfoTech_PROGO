@@ -1,37 +1,44 @@
 "use client";
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Cloud, Eye, EyeOff, Loader2 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { useBackendAuth } from '@/hooks/useBackendAuth';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Cloud, Eye, EyeOff, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useBackendAuth } from "@/hooks/useBackendAuth";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    phone: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    phone: "",
     isfromcollege: false,
-    collagename: ''
+    collagename: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
-  const { register, isLoading, isAuthenticated, error, clearError } = useBackendAuth();
+  const { register, isLoading, isAuthenticated, error, clearError } =
+    useBackendAuth();
 
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      router.push('/dashboard');
+      router.push("/dashboard");
     }
   }, [isAuthenticated, router]);
 
@@ -43,17 +50,17 @@ const Signup = () => {
   }, [formData, error, clearError]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
 
   const handleCollegeChange = (checked: boolean) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       isfromcollege: checked,
-      collagename: checked ? prev.collagename : ''
+      collagename: checked ? prev.collagename : "",
     }));
   };
 
@@ -69,7 +76,7 @@ const Signup = () => {
 
     if (!formData.lastName.trim()) {
       toast({
-        title: "Validation Error", 
+        title: "Validation Error",
         description: "Last name is required.",
         variant: "destructive",
       });
@@ -126,55 +133,58 @@ const Signup = () => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
     try {
       const registrationData = {
-        firstName: formData.firstName.trim(),
-        lastName: formData.lastName.trim(),
+        name: `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim(),
         email: formData.email.toLowerCase().trim(),
         password: formData.password,
         phone: formData.phone.trim(),
+        // extra meta (not required by register signature) kept for future usage
         isfromcollege: formData.isfromcollege,
-        collagename: formData.isfromcollege ? formData.collagename.trim() : undefined,
+        collagename: formData.isfromcollege
+          ? formData.collagename.trim()
+          : undefined,
       };
 
       const result = await register(registrationData);
-      
+
       if (result.success) {
         toast({
           title: "Account Created Successfully!",
-          description: result.message || "Please check your email for verification.",
+          description: "Please check your email for verification.",
         });
-        
+
         // Clear form
         setFormData({
-          firstName: '',
-          lastName: '',
-          email: '',
-          password: '',
-          confirmPassword: '',
-          phone: '',
+          firstName: "",
+          lastName: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+          phone: "",
           isfromcollege: false,
-          collagename: ''
+          collagename: "",
         });
-        
+
         // Redirect to login after a short delay
         setTimeout(() => {
-          router.push('/login');
+          router.push("/login");
         }, 2000);
       } else {
         toast({
           title: "Registration Failed",
-          description: result.error || "Something went wrong. Please try again.",
+          description:
+            result.error || "Something went wrong. Please try again.",
           variant: "destructive",
         });
       }
     } catch (error) {
-      console.error('Registration error:', error);
+      console.error("Registration error:", error);
       toast({
         title: "Registration Failed",
         description: "An unexpected error occurred. Please try again.",
@@ -230,7 +240,12 @@ const Signup = () => {
                 type="email"
                 placeholder="john.doe@example.com"
                 value={formData.email}
-                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value.toLowerCase() }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    email: e.target.value.toLowerCase(),
+                  }))
+                }
                 required
                 disabled={isLoading}
               />
@@ -269,7 +284,11 @@ const Signup = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   disabled={isLoading}
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </Button>
               </div>
             </div>
@@ -294,13 +313,17 @@ const Signup = () => {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   disabled={isLoading}
                 >
-                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </Button>
               </div>
             </div>
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
-                <Checkbox 
+                <Checkbox
                   id="isfromcollege"
                   checked={formData.isfromcollege}
                   onCheckedChange={handleCollegeChange}
@@ -345,8 +368,11 @@ const Signup = () => {
           </form>
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Already have an account?{' '}
-              <Link href="/login" className="text-blue-600 hover:underline font-medium">
+              Already have an account?{" "}
+              <Link
+                href="/login"
+                className="text-blue-600 hover:underline font-medium"
+              >
                 Sign in
               </Link>
             </p>

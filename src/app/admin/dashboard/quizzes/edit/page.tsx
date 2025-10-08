@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { backendAPI } from "@/lib/backend-api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,11 +24,10 @@ type Quiz = { id?: string; title?: string; description?: string };
 
 export default function QuizEditorPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { toast } = useToast();
 
-  // derive quizId directly from search params to avoid stale state
-  const quizId = searchParams.get("quizId") || "";
+  // derive quizId directly from URL search params to avoid Suspense requirement
+  let quizId = "";
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
 
@@ -43,7 +42,9 @@ export default function QuizEditorPage() {
   const [adding, setAdding] = useState(false);
 
   useEffect(() => {
-    // Wait until quizId is available from the URL
+    // Read quizId from URL each time effect runs
+    const params = new URLSearchParams(window.location.search);
+    quizId = params.get("quizId") || "";
     if (!quizId) return;
 
     loadQuiz();

@@ -1,12 +1,18 @@
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { CheckCircle, XCircle, Search, Loader2 } from 'lucide-react';
-import { backendAPI } from '@/lib/backend-api';
-import { useToast } from '@/hooks/use-toast';
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle, XCircle, Search, Loader2 } from "lucide-react";
+import { backendAPI } from "@/lib/backend-api";
+import { useToast } from "@/hooks/use-toast";
 
 interface VerificationResult {
   userName: string;
@@ -20,11 +26,11 @@ interface VerificationResult {
 }
 
 const CertificateVerification = () => {
-  const [enrollmentID, setEnrollmentID] = useState('');
-  const [certificateID, setCertificateID] = useState('');
+  const [enrollmentID, setEnrollmentID] = useState("");
+  const [certificateID, setCertificateID] = useState("");
   const [verifying, setVerifying] = useState(false);
   const [result, setResult] = useState<VerificationResult | null>(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const { toast } = useToast();
 
   const handleVerify = async () => {
@@ -58,20 +64,23 @@ const CertificateVerification = () => {
     }
 
     setVerifying(true);
-    setError('');
+    setError("");
     setResult(null);
 
     try {
-      const response = await backendAPI.verifyCertificate(enrollmentID.trim(), certificateID.trim());
-      
-      if (response.success) {
-        setResult(response.data);
+      const response = await backendAPI.verifyCertificate({
+        enrollmentID: enrollmentID.trim(),
+        certificateID: certificateID.trim(),
+      });
+
+      if (response.success && response.data) {
+        setResult(response.data as VerificationResult);
         toast({
           title: "Verification Successful",
           description: "Certificate is valid and verified",
         });
       } else {
-        const errorMsg = response.error || 'Certificate verification failed';
+        const errorMsg = response.error || "Certificate verification failed";
         setError(errorMsg);
         toast({
           title: "Verification Failed",
@@ -80,8 +89,11 @@ const CertificateVerification = () => {
         });
       }
     } catch (error) {
-      console.error('Certificate verification error:', error);
-      const errorMsg = error instanceof Error ? error.message : 'Unable to verify certificate. Please try again.';
+      console.error("Certificate verification error:", error);
+      const errorMsg =
+        error instanceof Error
+          ? error.message
+          : "Unable to verify certificate. Please try again.";
       setError(errorMsg);
       toast({
         title: "Error",
@@ -94,18 +106,18 @@ const CertificateVerification = () => {
   };
 
   const handleReset = () => {
-    setEnrollmentID('');
-    setCertificateID('');
+    setEnrollmentID("");
+    setCertificateID("");
     setResult(null);
-    setError('');
+    setError("");
   };
 
   const formatDate = (dateString: string) => {
     try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
+      return new Date(dateString).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
       });
     } catch {
       return dateString;
@@ -113,7 +125,12 @@ const CertificateVerification = () => {
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !verifying && enrollmentID.trim() && certificateID.trim()) {
+    if (
+      e.key === "Enter" &&
+      !verifying &&
+      enrollmentID.trim() &&
+      certificateID.trim()
+    ) {
       handleVerify();
     }
   };
@@ -134,7 +151,10 @@ const CertificateVerification = () => {
 
         <CardContent className="space-y-5 p-6">
           <div className="space-y-4">
-            <Label htmlFor="enrollmentID" className="font-semibold text-gray-700">
+            <Label
+              htmlFor="enrollmentID"
+              className="font-semibold text-gray-700"
+            >
               Enrollment ID *
             </Label>
             <Input
@@ -150,7 +170,10 @@ const CertificateVerification = () => {
           </div>
 
           <div className="space-y-4">
-            <Label htmlFor="certificateID" className="font-semibold text-gray-700">
+            <Label
+              htmlFor="certificateID"
+              className="font-semibold text-gray-700"
+            >
               Certificate ID *
             </Label>
             <Input
@@ -168,7 +191,9 @@ const CertificateVerification = () => {
           <div className="flex gap-3 justify-center pt-2">
             <Button
               onClick={handleVerify}
-              disabled={verifying || !enrollmentID.trim() || !certificateID.trim()}
+              disabled={
+                verifying || !enrollmentID.trim() || !certificateID.trim()
+              }
               className="px-6 py-2 text-base font-semibold bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-500 transition-all duration-300 rounded-lg shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {verifying ? (
@@ -177,7 +202,7 @@ const CertificateVerification = () => {
                   Verifying...
                 </>
               ) : (
-                'Verify Certificate'
+                "Verify Certificate"
               )}
             </Button>
 
@@ -230,31 +255,49 @@ const CertificateVerification = () => {
           <CardContent className="space-y-6 p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <Label className="text-sm font-medium text-gray-600">Student Name</Label>
-                <p className="text-lg font-semibold text-gray-900">{result.userName}</p>
+                <Label className="text-sm font-medium text-gray-600">
+                  Student Name
+                </Label>
+                <p className="text-lg font-semibold text-gray-900">
+                  {result.userName}
+                </p>
               </div>
               <div>
-                <Label className="text-sm font-medium text-gray-600">Course Title</Label>
-                <p className="text-lg font-semibold text-gray-900">{result.enrollmentDetails.courseTitle}</p>
+                <Label className="text-sm font-medium text-gray-600">
+                  Course Title
+                </Label>
+                <p className="text-lg font-semibold text-gray-900">
+                  {result.enrollmentDetails.courseTitle}
+                </p>
               </div>
               <div>
-                <Label className="text-sm font-medium text-gray-600">Enrollment ID</Label>
+                <Label className="text-sm font-medium text-gray-600">
+                  Enrollment ID
+                </Label>
                 <p className="text-sm text-gray-900 font-mono bg-gray-100 p-2 rounded border">
                   {result.enrollmentDetails.enrollmentID}
                 </p>
               </div>
               <div>
-                <Label className="text-sm font-medium text-gray-600">Certificate ID</Label>
+                <Label className="text-sm font-medium text-gray-600">
+                  Certificate ID
+                </Label>
                 <p className="text-sm text-gray-900 font-mono bg-gray-100 p-2 rounded border">
                   {result.enrollmentDetails.certificationID}
                 </p>
               </div>
               <div>
-                <Label className="text-sm font-medium text-gray-600">Certification Date</Label>
-                <p className="text-sm text-gray-900">{formatDate(result.enrollmentDetails.certifiedOn)}</p>
+                <Label className="text-sm font-medium text-gray-600">
+                  Certification Date
+                </Label>
+                <p className="text-sm text-gray-900">
+                  {formatDate(result.enrollmentDetails.certifiedOn)}
+                </p>
               </div>
               <div>
-                <Label className="text-sm font-medium text-gray-600">Status</Label>
+                <Label className="text-sm font-medium text-gray-600">
+                  Status
+                </Label>
                 <Badge className="bg-green-100 text-green-800 px-3 py-1 rounded-full font-semibold shadow-sm">
                   {result.enrollmentDetails.enrollmentStatus}
                 </Badge>
@@ -267,7 +310,8 @@ const CertificateVerification = () => {
                 <span className="font-semibold">Certificate Authentic</span>
               </div>
               <p className="text-sm text-green-700 mt-1">
-                This certificate has been verified as authentic and was issued by SitCloud Training Institute.
+                This certificate has been verified as authentic and was issued
+                by SitCloud Training Institute.
               </p>
             </div>
           </CardContent>
@@ -277,11 +321,21 @@ const CertificateVerification = () => {
       {/* Info Section */}
       <Card className="bg-gray-50 border-gray-200">
         <CardContent className="p-6">
-          <h3 className="font-semibold text-gray-800 mb-3">How to find your IDs:</h3>
+          <h3 className="font-semibold text-gray-800 mb-3">
+            How to find your IDs:
+          </h3>
           <div className="space-y-2 text-sm text-gray-600">
-            <p>• <strong>Enrollment ID:</strong> Found in your enrollment confirmation email or dashboard</p>
-            <p>• <strong>Certificate ID:</strong> Located on your certificate document (usually at the bottom)</p>
-            <p>• Both IDs are case-sensitive and must be entered exactly as shown</p>
+            <p>
+              • <strong>Enrollment ID:</strong> Found in your enrollment
+              confirmation email or dashboard
+            </p>
+            <p>
+              • <strong>Certificate ID:</strong> Located on your certificate
+              document (usually at the bottom)
+            </p>
+            <p>
+              • Both IDs are case-sensitive and must be entered exactly as shown
+            </p>
           </div>
         </CardContent>
       </Card>

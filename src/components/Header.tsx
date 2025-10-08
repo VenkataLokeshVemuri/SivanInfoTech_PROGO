@@ -100,7 +100,7 @@ const Header = () => {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-green-500 rounded-xl blur opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-green-500 rounded-xl blur opacity-75 group-hover:opacity-100 transition-opacity duration-300 md:hidden"></div>
               <img
                 src="/lovable-uploads/32af9e28-6339-45f7-99d6-e869903ed166.png"
                 alt="Sivan InfoTech Logo"
