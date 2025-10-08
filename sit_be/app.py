@@ -128,9 +128,13 @@ SKIP_EMAIL_VERIFICATION = os.environ.get('SKIP_EMAIL_VERIFICATION', '0') == '1'
 
 # Connect to MongoDB Atlas
 import ssl
+mongo = None
 try:
     # Configure PyMongo with SSL options using tlsAllowInvalidCertificates
-    app.config["MONGO_URI"] = "mongodb+srv://cyber:cyber@cluster0.lum1oou.mongodb.net/sivaninfo_db?retryWrites=true&w=majority&appName=Cluster0"
+    app.config["MONGO_URI"] = os.environ.get(
+        "MONGO_URI",
+        "mongodb+srv://sit:cyber@cluster0.1kylgvy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+    )
     mongo = PyMongo(app, tlsAllowInvalidCertificates=True)
     # Test the connection
     mongo.db.list_collection_names()
@@ -375,8 +379,20 @@ try:
             
 except Exception as e:
     print(f"MongoDB Atlas connection failed: {e}")
-    print("Please check your MongoDB Atlas connection string and network connectivity")
-    raise e
+    print("Attempting fallback to local MongoDB at mongodb://localhost:27017/sivaninfo_db")
+    try:
+        # Try a local MongoDB instance as a developer fallback
+        app.config["MONGO_URI"] = os.environ.get(
+            "LOCAL_MONGO_URI", "mongodb://localhost:27017/sivaninfo_db"
+        )
+        mongo = PyMongo(app)
+        mongo.db.list_collection_names()
+        print("Connected to local MongoDB fallback")
+    except Exception as e2:
+        print(f"Local MongoDB fallback failed: {e2}")
+        print("Please check your MongoDB server (local or Atlas) and ensure MONGO_URI is correct.")
+        # re-raise original Atlas error for visibility (preserve stack)
+        raise e
 
 # Configure CORS to allow the frontend dev servers and API preflight requests.
 # Allow specific local origins used by the Next dev server (3000/3001) and localhost/ip variants.

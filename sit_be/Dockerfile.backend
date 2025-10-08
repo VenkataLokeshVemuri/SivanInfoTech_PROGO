@@ -1,13 +1,55 @@
-FROM python:3.10-slim as python-base
+# Ubuntu-based Dockerfile for running the sit_be Flask application
+# Builds Python 3.11 (via deadsnakes), installs dependencies, creates a venv
+# and runs the app using gunicorn. Exposes port 8000.
+
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+
+# Install system dependencies and Python 3.11 from deadsnakes
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       software-properties-common build-essential ca-certificates wget git curl \
+    && add-apt-repository ppa:deadsnakes/ppa -y \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+       python3.11 python3.11-venv python3.11-dev python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create application user
+RUN useradd --create-home --shell /bin/bash appuser
 
 WORKDIR /app
 
-COPY . .
+# Copy application code
+COPY . /app
 
-RUN pip install -r requirements.txt
+# Create a virtual environment and install Python requirements
+RUN python3.11 -m venv /opt/venv \
+    && /opt/venv/bin/pip install --upgrade pip setuptools wheel \
+    && if [ -f ./sit_be/requirements.txt ]; then /opt/venv/bin/pip install -r ./sit_be/requirements.txt; fi \
+    && /opt/venv/bin/pip install gunicorn
 
-RUN pip install --index-url https://phonepe.mycloudrepo.io/public/repositories/phonepe-pg-sdk-python --extra-index-url https://pypi.org/simple phonepe_sdk==1.1.0
+# Ensure files are owned by non-root user
+RUN chown -R appuser:appuser /app /opt/venv
 
-EXPOSE 8080
+USER appuser
 
-CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:8080"]
+ENV PATH="/opt/venv/bin:$PATH"
+ENV PYTHONUNBUFFERED=1
+
+# Expose the port the app will run on
+EXPOSE 5000
+
+# Default environment variables (override at runtime)
+ENV FLASK_ENV=production
+ENV MONGO_URI="mongodb+srv://sit:cyber@cluster0.1kylgvy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+ENV SKIP_EMAIL_VERIFICATION=0
+
+# Healthcheck (optional) - checks root URL
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD curl -f http://127.0.0.1:5000/ || exit 1
+
+# Run the app with Gunicorn
+CMD ["gunicorn", "--workers", "3", "--bind", "0.0.0.0:8000", "sit_be.app:app"]
