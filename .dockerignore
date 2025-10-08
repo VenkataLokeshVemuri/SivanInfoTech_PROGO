@@ -1,0 +1,16 @@
+node_modules
+.next
+.env
+.ve
+.ve/
+sit_be/ve
+.svn
+.git
+.gitignore
+*.log
+lovable-uploads
+build.log
+.DS_Store
+npm-debug.log
+yarn-error.log
+public/lovable-uploads
