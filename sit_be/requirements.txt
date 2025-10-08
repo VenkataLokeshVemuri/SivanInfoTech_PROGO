@@ -52,3 +52,4 @@ urllib3==2.0.4
 webencodings==0.5.1
 Werkzeug==2.3.3
 xhtml2pdf==0.2.11
+gunicorn
