@@ -38,8 +38,9 @@ from models import (
 )
 from scoring import ScoringEngine, ManualGradingHelper, TimerEnforcement
 
-frontendURL = "https://sitcloud.in"
-backendURL = "https://sitcloud.in/api/"
+# URLs can be overridden via environment variables for different deployments
+frontendURL = os.environ.get('FRONTEND_URL', 'https://sitcloud.in')
+backendURL = os.environ.get('BACKEND_URL', os.environ.get('API_BASE_URL', 'https://sitcloud.in/api/'))
 # import ironpdf
 
 tz_NY = pytz.timezone('Asia/Kolkata')
@@ -87,10 +88,14 @@ def normalize_password_bytes(stored_pw):
         return stored_pw
 
 
-# Phonepe SDK Keys
-merchant_id = "M22UNOC34DDKV"  
-salt_key = "9517e9ee-c009-4aad-9400-dd693ccd0ac1"  
-salt_index = 1 
+# Phonepe SDK Keys (read from environment for security)
+merchant_id = os.environ.get('PHONEPE_MERCHANT_ID')
+salt_key = os.environ.get('PHONEPE_SALT_KEY')
+# salt_index should be an integer; default to 1 if not set
+try:
+    salt_index = int(os.environ.get('PHONEPE_SALT_INDEX', '1'))
+except Exception:
+    salt_index = 1
 
 # PhonePe Environment setup
 phonepe_client = None
@@ -115,9 +120,13 @@ except ImportError:
     pdfkit = None
     PDFKIT_AVAILABLE = False
 app = Flask(__name__)
-app.config['DEBUG'] = True
-app.config['SECRET_KEY'] = "SIT_Secret_key"
-app.config['VERIFICATION_SECRET_KEY'] = "VERIFICATION_Secret_KEY"
+# DEBUG controlled by FLASK_ENV
+app.config['DEBUG'] = os.environ.get('FLASK_ENV', 'development') != 'production'
+# Secret keys should be provided via environment variables in production
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'SIT_Secret_key')
+app.config['VERIFICATION_SECRET_KEY'] = os.environ.get('VERIFICATION_SECRET_KEY', 'VERIFICATION_Secret_KEY')
+if app.config['SECRET_KEY'] == 'SIT_Secret_key' or app.config['VERIFICATION_SECRET_KEY'] == 'VERIFICATION_Secret_KEY':
+    print('Warning: using default SECRET_KEY or VERIFICATION_SECRET_KEY. Set environment variables in production.')
 
 # Toggle to skip email verification during development/testing.
 # Set environment variable SKIP_EMAIL_VERIFICATION=1 to allow sign-in without email verification.
@@ -126,20 +135,50 @@ SKIP_EMAIL_VERIFICATION = os.environ.get('SKIP_EMAIL_VERIFICATION', '0') == '1'
 # app.config["MONGO_URI"] = "mongodb://situser:sitadmin@localhost:27017/admin"
 # app.config["MONGO_URI"] = "mongodb://situser:sitadmin@mongo:27017/admin"
 
-# Connect to MongoDB Atlas
+# Connect to MongoDB Atlas (robust): prefer Flask-PyMongo, fallback to pymongo.MongoClient
 import ssl
 mongo = None
+mongo_uri = os.environ.get(
+    "MONGO_URI",
+    "mongodb+srv://sit:cyber@cluster0.1kylgvy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+)
+# Name of the database to use (if not embedded in the URI)
+mongo_dbname = os.environ.get('MONGO_DBNAME', 'sivaninfo_db')
 try:
-    # Configure PyMongo with SSL options using tlsAllowInvalidCertificates
-    app.config["MONGO_URI"] = os.environ.get(
-        "MONGO_URI",
-        "mongodb+srv://sit:cyber@cluster0.1kylgvy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
-    )
-    mongo = PyMongo(app, tlsAllowInvalidCertificates=True)
-    # Test the connection
-    mongo.db.list_collection_names()
-    print("MongoDB Atlas connected successfully")
-    
+    # Configure Flask-PyMongo first
+    app.config["MONGO_URI"] = mongo_uri
+    app.config["MONGO_DBNAME"] = mongo_dbname
+    try:
+        mongo = PyMongo(app)
+        # Ensure mongo.db is a Database object
+        if getattr(mongo, 'db', None) is None:
+            # Flask-PyMongo may not have picked up a default DB; use client
+            client = mongo.cx if hasattr(mongo, 'cx') else None
+            if client:
+                mongo.db = client[mongo_dbname]
+        # Test the connection
+        mongo.db.list_collection_names()
+        print("MongoDB connected successfully via Flask-PyMongo")
+    except Exception as e_py:
+        print(f"Flask-PyMongo failed to initialize: {e_py}")
+        print("Attempting direct pymongo.MongoClient fallback (ensure 'pymongo[srv]' and 'dnspython' are installed)")
+        try:
+            from pymongo import MongoClient
+            client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000)
+            # Force server selection / connection
+            client.admin.command('ping')
+            db = client.get_database(mongo_dbname) if client.get_default_database() is None else client.get_default_database()
+            # Wrap into a minimal object with .db to keep the rest of the code working
+            class SimpleMongo:
+                def __init__(self, client, db):
+                    self.cx = client
+                    self.db = db
+            mongo = SimpleMongo(client, db)
+            print("MongoDB connected successfully via pymongo.MongoClient")
+        except Exception as e_client:
+            print(f"Direct pymongo fallback failed: {e_client}")
+            raise
+
     # Create an admin user for testing if it doesn't exist
     users = mongo.db.users
     admin_user = users.find_one({'email': 'admin@sitcloud.in'})
@@ -378,21 +417,26 @@ try:
     #         print(f"Quiz attempt already exists: {attempt['attemptId']}")
             
 except Exception as e:
-    print(f"MongoDB Atlas connection failed: {e}")
+    print(f"MongoDB connection failed: {e}")
     print("Attempting fallback to local MongoDB at mongodb://localhost:27017/sivaninfo_db")
     try:
         # Try a local MongoDB instance as a developer fallback
-        app.config["MONGO_URI"] = os.environ.get(
-            "LOCAL_MONGO_URI", "mongodb://localhost:27017/sivaninfo_db"
-        )
-        mongo = PyMongo(app)
-        mongo.db.list_collection_names()
+        local_uri = os.environ.get("LOCAL_MONGO_URI", "mongodb://localhost:27017/sivaninfo_db")
+        from pymongo import MongoClient
+        client = MongoClient(local_uri, serverSelectionTimeoutMS=5000)
+        client.admin.command('ping')
+        db = client.get_database() if client.get_default_database() else client['sivaninfo_db']
+        class SimpleMongo:
+            def __init__(self, client, db):
+                self.cx = client
+                self.db = db
+        mongo = SimpleMongo(client, db)
         print("Connected to local MongoDB fallback")
     except Exception as e2:
         print(f"Local MongoDB fallback failed: {e2}")
         print("Please check your MongoDB server (local or Atlas) and ensure MONGO_URI is correct.")
-        # re-raise original Atlas error for visibility (preserve stack)
-        raise e
+        # re-raise original error for visibility
+        raise
 
 # Configure CORS to allow the frontend dev servers and API preflight requests.
 # Allow specific local origins used by the Next dev server (3000/3001) and localhost/ip variants.

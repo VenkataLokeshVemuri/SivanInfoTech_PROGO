@@ -16,8 +16,9 @@ services:
     container_name: sit-backend
     depends_on:
       - mongo
+    env_file:
+      - ./sit_be/.env
     environment:
-      - MONGO_URI=mongodb+srv://sit:cybercluster0.1kylgvy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
       - SKIP_EMAIL_VERIFICATION=1
       - FLASK_ENV=production
     ports:
