@@ -94,3 +94,6 @@ instance/
 
 # MongoDB
 *.log
+
+/sit_be/ve
+/sit_be/__pycache__

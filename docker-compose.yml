@@ -1,0 +1,42 @@
+version: "3.8"
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: sit-mongo
+    volumes:
+      - sit_mongo_data:/data/db
+    ports:
+      - "27017:27017"
+
+  backend:
+    build:
+      context: ./sit_be
+      dockerfile: Dockerfile.backend
+    image: sit-be:local
+    container_name: sit-backend
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb+srv://sit:cybercluster0.1kylgvy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      - SKIP_EMAIL_VERIFICATION=1
+      - FLASK_ENV=production
+    ports:
+      - "8000:8000"
+    restart: on-failure
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    image: sit-frontend:local
+    container_name: sit-frontend
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  sit_mongo_data:
