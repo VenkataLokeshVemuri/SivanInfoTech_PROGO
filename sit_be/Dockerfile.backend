@@ -2,34 +2,30 @@
 # Builds Python 3.11 (via deadsnakes), installs dependencies, creates a venv
 # and runs the app using gunicorn. Exposes port 8000.
 
-FROM ubuntu:22.04
+FROM python:3.11-slim
 
-ENV DEBIAN_FRONTEND=noninteractive
-ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+# Prevent python from writing .pyc files and enable buffered stdout/stderr
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-# Install system dependencies and Python 3.11 from deadsnakes
+# Install system dependencies (build tools + curl/git) then clean up
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-       software-properties-common build-essential ca-certificates wget git curl \
-    && add-apt-repository ppa:deadsnakes/ppa -y \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-       python3.11 python3.11-venv python3.11-dev python3-pip \
-    && rm -rf /var/lib/apt/lists/*
+   && apt-get install -y --no-install-recommends \
+     build-essential ca-certificates curl git \
+   && rm -rf /var/lib/apt/lists/*
 
 # Create application user
 RUN useradd --create-home --shell /bin/bash appuser
 
+# Set working directory and copy app
 WORKDIR /app
-
-# Copy application code
 COPY . /app
 
 # Create a virtual environment and install Python requirements
-RUN python3.11 -m venv /opt/venv \
-    && /opt/venv/bin/pip install --upgrade pip setuptools wheel \
-    && if [ -f ./sit_be/requirements.txt ]; then /opt/venv/bin/pip install -r ./sit_be/requirements.txt; fi \
-    && /opt/venv/bin/pip install gunicorn
+RUN python -m venv /opt/venv \
+  && /opt/venv/bin/pip install --upgrade pip setuptools wheel \
+  && if [ -f ./sit_be/requirements.txt ]; then /opt/venv/bin/pip install -r ./sit_be/requirements.txt; fi \
+  && /opt/venv/bin/pip install gunicorn
 
 # Ensure files are owned by non-root user
 RUN chown -R appuser:appuser /app /opt/venv
@@ -37,10 +33,9 @@ RUN chown -R appuser:appuser /app /opt/venv
 USER appuser
 
 ENV PATH="/opt/venv/bin:$PATH"
-ENV PYTHONUNBUFFERED=1
 
-# Expose the port the app will run on
-EXPOSE 5000
+# Expose the port the app will run on (gunicorn binds to 8000 below)
+EXPOSE 8000
 
 # Default environment variables (override at runtime)
 ENV FLASK_ENV=production
@@ -49,7 +44,7 @@ ENV SKIP_EMAIL_VERIFICATION=0
 
 # Healthcheck (optional) - checks root URL
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD curl -f http://127.0.0.1:5000/ || exit 1
+  CMD curl -f http://127.0.0.1:8000/ || exit 1
 
 # Run the app with Gunicorn
 CMD ["gunicorn", "--workers", "3", "--bind", "0.0.0.0:8000", "sit_be.app:app"]

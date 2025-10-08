@@ -28,6 +28,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.frontend
+      args:
+        NEXT_PUBLIC_API_BASE_URL: "http://54.85.17.248:8000/api"
     image: sit-frontend:local
     container_name: sit-frontend
     environment:

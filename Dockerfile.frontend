@@ -11,6 +11,9 @@ RUN npm install --production=false --legacy-peer-deps
 FROM base AS build
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+// Allow injecting NEXT_PUBLIC_API_BASE_URL at build time so Next.js will bake it into the production build
+ARG NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 RUN npm run build
 
 # Production image

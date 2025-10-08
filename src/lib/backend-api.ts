@@ -1,9 +1,11 @@
 // Backend API integration for existing Flask backend
 // Based on the existing Flask app.py structure
 
+// Default to the backend port used by the Docker/Gunicorn setup (8000).
+// Allow overriding at build/runtime with NEXT_PUBLIC_API_BASE_URL.
 const API_BASE_URL = (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_API_BASE_URL)
   ? process.env.NEXT_PUBLIC_API_BASE_URL
-  : 'http://localhost:5000/api';
+  : 'http://localhost:8000/api';
 
 interface ApiResponse<T = any> {
   success: boolean;
