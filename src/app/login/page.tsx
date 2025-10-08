@@ -1,30 +1,37 @@
 "use client";
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Cloud, Eye, EyeOff, Loader2 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { useBackendAuth } from '@/hooks/useBackendAuth';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Cloud, Eye, EyeOff, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useBackendAuth } from "@/hooks/useBackendAuth";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
-  const { login, isLoading, isAuthenticated, error, clearError, isAdmin } = useBackendAuth();
+  const { login, isLoading, isAuthenticated, error, clearError, isAdmin } =
+    useBackendAuth();
 
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
       if (isAdmin) {
-        router.push('/admin');
+        router.push("/admin");
       } else {
-        router.push('/dashboard');
+        router.push("/dashboard");
       }
     }
   }, [isAuthenticated, isAdmin, router]);
@@ -38,7 +45,7 @@ const Login = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       toast({
         title: "Validation Error",
@@ -50,7 +57,7 @@ const Login = () => {
 
     try {
       const result = await login({ email, password });
-      
+
       if (result.success) {
         toast({
           title: "Login Successful",
@@ -60,12 +67,13 @@ const Login = () => {
       } else {
         toast({
           title: "Login Failed",
-          description: result.error || "Please check your credentials and try again.",
+          description:
+            result.error || "Please check your credentials and try again.",
           variant: "destructive",
         });
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
       toast({
         title: "Login Failed",
         description: "An unexpected error occurred. Please try again.",
@@ -119,11 +127,15 @@ const Login = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   disabled={isLoading}
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </Button>
               </div>
             </div>
-            
+
             {error && (
               <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md">
                 {error}
@@ -141,15 +153,21 @@ const Login = () => {
               )}
             </Button>
           </form>
-          
+
           <div className="mt-6 text-center space-y-2">
             <p className="text-sm text-gray-600">
-              Don&apos;t have an account?{' '}
-              <Link href="/signup" className="text-blue-600 hover:underline font-medium">
+              Don&apos;t have an account?{" "}
+              <Link
+                href="/signup"
+                className="text-blue-600 hover:underline font-medium"
+              >
                 Sign up
               </Link>
             </p>
-            <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
+            <Link
+              href="/forgot-password"
+              className="text-sm text-blue-600 hover:underline"
+            >
               Forgot your password?
             </Link>
           </div>
