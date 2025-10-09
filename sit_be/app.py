@@ -445,11 +445,11 @@ cors = CORS(app, resources={r"/api/*": {"origins": [
     "http://localhost:3001",
     "http://127.0.0.1:3001",
     "http://localhost:3000",
-    "http://127.0.0.1:3000"
+    "http://127.0.0.1:3000",
+    "http://54.85.17.248:3000",  
+    "http://54.85.17.248"         
 ]}}, supports_credentials=True)
 
-
-# Ensure CORS headers are added to every response (including error responses and OPTIONS preflight)
 @app.after_request
 def add_cors_headers(response):
     allowed_origins = {
@@ -457,6 +457,8 @@ def add_cors_headers(response):
         "http://127.0.0.1:3001",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
+        "http://54.85.17.248:3000",  
+        "http://54.85.17.248"       
     }
     origin = request.headers.get('Origin')
     if origin in allowed_origins:

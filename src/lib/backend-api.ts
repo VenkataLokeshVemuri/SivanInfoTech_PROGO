@@ -1,11 +1,23 @@
 // Backend API integration for existing Flask backend
 // Based on the existing Flask app.py structure
 
-// Default to the backend port used by the Docker/Gunicorn setup (8000).
-// Allow overriding at build/runtime with NEXT_PUBLIC_API_BASE_URL.
-const API_BASE_URL = (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_API_BASE_URL)
-  ? process.env.NEXT_PUBLIC_API_BASE_URL
-  : 'http://localhost:8000/api';
+// Behavior:
+// - If NEXT_PUBLIC_API_BASE_URL is provided at build/runtime, use it (explicit override).
+// - If running on the server (Node / SSR), prefer the private backend URL so server-side
+//   requests go directly to the backend at 127.0.0.1:8000.
+// - If running in the browser (client-side), use the same-origin '/api' path so requests
+//   are routed back through Next.js (and its rewrite to the private backend). This
+//   prevents the browser from attempting to contact 127.0.0.1 on the user's machine.
+let API_BASE_URL: string;
+if (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_API_BASE_URL) {
+  API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+} else if (typeof window === 'undefined') {
+  // Server-side: call backend directly on localhost (private)
+  API_BASE_URL = 'http://127.0.0.1:8000/api';
+} else {
+  // Client-side: use same-origin proxy path
+  API_BASE_URL = '/api';
+}
 
 interface ApiResponse<T = any> {
   success: boolean;
