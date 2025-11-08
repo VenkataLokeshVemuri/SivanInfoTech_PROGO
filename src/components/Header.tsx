@@ -387,245 +387,134 @@ const Header = () => {
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="lg:hidden animate-slide-down">
-            <div className="absolute top-full left-0 right-0 bg-white/95 backdrop-blur-xl border-b border-white/20 shadow-xl shadow-blue-500/10">
+            <div className="absolute top-full left-0 right-0 bg-white shadow-2xl border-b border-gray-200">
               <nav className="container mx-auto px-4 py-6">
-                <div className="flex flex-col space-y-2">
+                {/* Main Navigation Links */}
+                <div className="space-y-1 mb-6">
                   {navItems.map((item, index) => (
                     <Link
                       key={item.name}
                       href={item.href}
-                      className="relative px-4 py-3 text-slate-700 hover:text-blue-600 transition-all duration-300 font-medium rounded-xl group animate-scale-in"
+                      className="flex items-center justify-between px-4 py-3.5 rounded-lg text-gray-700 font-medium hover:bg-blue-50 hover:text-blue-700 active:bg-blue-100 transition-colors duration-150 group"
                       onClick={() => setIsMenuOpen(false)}
-                      style={{ animationDelay: `${index * 50}ms` }}
                     >
-                      <span className="relative z-10 flex items-center">
-                        {item.name}
-                        <ArrowRight className="h-4 w-4 ml-auto opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
-                      </span>
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-green-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <span className="text-base">{item.name}</span>
+                      <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-200" />
                     </Link>
                   ))}
-
-                  {/* Mobile Profile Section */}
-                  <div className="pt-4 mt-4 border-t border-slate-200/50">
-                    <div className="flex items-center px-4 py-2 mb-2">
-                      <div className="relative mr-3">
-                        <div className="h-6 w-6 bg-gradient-to-r from-blue-600 to-green-600 rounded-full flex items-center justify-center shadow-md">
-                          <User className="h-3 w-3 text-white" />
-                        </div>
-                      </div>
-                      <span className="text-sm font-semibold text-slate-600">
-                        My Profile
-                      </span>
-                    </div>
-                    {profileItems.map((item, index) => (
-                      <Link
-                        key={item.name}
-                        href={item.href}
-                        className="relative px-4 py-3 text-slate-700 hover:text-blue-600 transition-all duration-300 font-medium rounded-xl group animate-scale-in"
-                        onClick={() => setIsMenuOpen(false)}
-                        style={{
-                          animationDelay: `${(navItems.length + index) * 50}ms`,
-                        }}
-                      >
-                        <span className="relative z-10 flex items-center">
-                          <item.icon className="h-4 w-4 mr-3 opacity-60" />
-                          {item.name}
-                          {item.badge && (
-                            <span className="ml-auto text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full font-medium">
-                              {item.badge}
-                            </span>
-                          )}
-                          <ArrowRight className="h-4 w-4 ml-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
-                        </span>
-                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-green-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      </Link>
-                    ))}
-                  </div>
                 </div>
 
-                <div className="mt-6 pt-6 border-t border-slate-200/50 space-y-3">
+                {/* Profile Section */}
+                {user && (
+                  <>
+                    <div className="border-t border-gray-200 pt-6 mb-4">
+                      <div className="flex items-center px-2 mb-3">
+                        <User className="h-5 w-5 text-blue-600 mr-2" />
+                        <span className="text-sm font-semibold text-gray-700">
+                          My Account
+                        </span>
+                      </div>
+
+                      <div className="space-y-1">
+                        {profileItems.map((item, index) => (
+                          <Link
+                            key={item.name}
+                            href={item.href}
+                            className="flex items-center justify-between px-4 py-3.5 rounded-lg text-gray-700 font-medium hover:bg-purple-50 hover:text-purple-700 active:bg-purple-100 transition-colors duration-150 group"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            <div className="flex items-center">
+                              <item.icon className="h-4 w-4 mr-3 text-gray-500 group-hover:text-purple-600 transition-colors" />
+                              <span className="text-sm">{item.name}</span>
+                            </div>
+                            <div className="flex items-center">
+                              {item.badge && (
+                                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-semibold mr-2">
+                                  {item.badge}
+                                </span>
+                              )}
+                              <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all duration-200" />
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Auth Buttons */}
+                <div className="border-t border-gray-200 pt-6 space-y-3">
                   {user ? (
                     <>
-                      <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-xl border border-green-200/50">
-                        <Avatar className="h-12 w-12 border-3 border-white shadow-md">
+                      {/* User Profile Card */}
+                      <div className="flex items-center space-x-3 p-4 bg-gradient-to-r from-blue-50 to-green-50 rounded-xl border border-blue-200">
+                        <Avatar className="h-11 w-11 border-2 border-white shadow-sm">
                           <AvatarImage src="" alt={user?.name || "User"} />
-                          <AvatarFallback className="bg-gradient-to-br from-green-500 to-blue-500 text-white font-bold text-sm">
+                          <AvatarFallback className="bg-gradient-to-br from-blue-500 to-green-500 text-white font-bold text-sm">
                             {user?.name
                               ? user.name
                                   .split(" ")
                                   .map((n) => n[0])
                                   .join("")
                                   .toUpperCase()
-                              : "AU"}
+                              : "U"}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-semibold text-gray-900 truncate">
-                            {user?.name || "Admin User"}
+                            {user?.name || "User"}
                           </p>
                           <p className="text-xs text-gray-600 truncate">
-                            {user?.email || "admin@sitcloud.in"}
+                            {user?.email}
                           </p>
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mt-1">
-                            {user?.role === "admin"
-                              ? "Admin Account"
-                              : "User Account"}
+                          <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">
+                            {user?.role === "admin" ? "Admin" : "Student"}
                           </span>
                         </div>
                       </div>
+
+                      {/* Dashboard Button */}
                       <Link
                         href={
                           user.role === "admin"
                             ? "/admin/dashboard"
                             : "/dashboard"
                         }
-                        className="block"
+                        onClick={() => setIsMenuOpen(false)}
                       >
-                        <Button
-                          variant="outline"
-                          className="w-full border-green-300 text-green-700 hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 hover:border-green-400 transition-all duration-300 justify-start h-12"
-                        >
-                          <div className="flex items-center justify-center w-8 h-8 bg-green-100 text-green-600 rounded-lg mr-3">
-                            <User className="h-4 w-4" />
-                          </div>
-                          <div className="text-left">
-                            <div className="font-medium text-sm">
-                              {user.role === "admin"
-                                ? "Admin Dashboard"
-                                : "My Dashboard"}
-                            </div>
-                            <div className="text-xs text-gray-500">
-                              Manage your workspace
-                            </div>
-                          </div>
-                        </Button>
+                        <button className="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-medium rounded-lg shadow-md active:scale-95 transition-all duration-150">
+                          <User className="h-4 w-4 mr-2" />
+                          {user.role === "admin"
+                            ? "Admin Dashboard"
+                            : "My Dashboard"}
+                        </button>
                       </Link>
 
-                      {user?.role !== "admin" && (
-                        <Link href="/courses" className="block">
-                          <Button
-                            variant="outline"
-                            className="w-full border-blue-300 text-blue-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:border-blue-400 transition-all duration-300 justify-start h-12"
-                          >
-                            <div className="flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-600 rounded-lg mr-3">
-                              <BookOpen className="h-4 w-4" />
-                            </div>
-                            <div className="text-left">
-                              <div className="font-medium text-sm">
-                                My Courses
-                              </div>
-                              <div className="text-xs text-gray-500">
-                                Access your enrolled courses
-                              </div>
-                            </div>
-                            <div className="ml-auto text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full font-medium">
-                              3 Active
-                            </div>
-                          </Button>
-                        </Link>
-                      )}
-
-                      {user?.role !== "admin" && (
-                        <Link href="/progress" className="block">
-                          <Button
-                            variant="outline"
-                            className="w-full border-purple-300 text-purple-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 hover:border-purple-400 transition-all duration-300 justify-start h-12"
-                          >
-                            <div className="flex items-center justify-center w-8 h-8 bg-purple-100 text-purple-600 rounded-lg mr-3">
-                              <BarChart3 className="h-4 w-4" />
-                            </div>
-                            <div className="text-left">
-                              <div className="font-medium text-sm">
-                                Progress Tracking
-                              </div>
-                              <div className="text-xs text-gray-500">
-                                View your learning progress
-                              </div>
-                            </div>
-                            <div className="ml-auto text-xs bg-purple-100 text-purple-600 px-2 py-1 rounded-full font-medium">
-                              78%
-                            </div>
-                          </Button>
-                        </Link>
-                      )}
-
-                      {user?.role !== "admin" && (
-                        <Link href="/profile" className="block">
-                          <Button
-                            variant="outline"
-                            className="w-full border-orange-300 text-orange-700 hover:bg-gradient-to-r hover:from-orange-50 hover:to-yellow-50 hover:border-orange-400 transition-all duration-300 justify-start h-12"
-                          >
-                            <div className="flex items-center justify-center w-8 h-8 bg-orange-100 text-orange-600 rounded-lg mr-3">
-                              <Settings className="h-4 w-4" />
-                            </div>
-                            <div className="text-left">
-                              <div className="font-medium text-sm">
-                                Settings
-                              </div>
-                              <div className="text-xs text-gray-500">
-                                Profile & preferences
-                              </div>
-                            </div>
-                          </Button>
-                        </Link>
-                      )}
-
-                      {user?.role !== "admin" && (
-                        <Link href="/certificates" className="block">
-                          <Button
-                            variant="outline"
-                            className="w-full border-yellow-300 text-yellow-700 hover:bg-gradient-to-r hover:from-yellow-50 hover:to-green-50 hover:border-yellow-400 transition-all duration-300 justify-start h-12"
-                          >
-                            <div className="flex items-center justify-center w-8 h-8 bg-yellow-100 text-yellow-600 rounded-lg mr-3">
-                              <Award className="h-4 w-4" />
-                            </div>
-                            <div className="text-left">
-                              <div className="font-medium text-sm">
-                                Certificates
-                              </div>
-                              <div className="text-xs text-gray-500">
-                                View your achievements
-                              </div>
-                            </div>
-                            <div className="ml-auto text-xs bg-yellow-100 text-yellow-600 px-2 py-1 rounded-full font-medium">
-                              2 Earned
-                            </div>
-                          </Button>
-                        </Link>
-                      )}
-                      <Button
-                        onClick={logout}
-                        variant="outline"
-                        className="w-full border-red-300 text-red-700 hover:bg-red-50 hover:border-red-400 transition-all duration-300 justify-start h-12"
+                      {/* Logout Button */}
+                      <button
+                        onClick={() => {
+                          logout();
+                          setIsMenuOpen(false);
+                        }}
+                        className="w-full flex items-center justify-center px-4 py-3 bg-white hover:bg-red-50 text-red-600 font-medium rounded-lg border-2 border-red-200 hover:border-red-300 active:scale-95 transition-all duration-150"
                       >
-                        <div className="flex items-center justify-center w-8 h-8 bg-red-100 text-red-600 rounded-lg mr-3">
-                          <LogOut className="h-4 w-4" />
-                        </div>
-                        <div className="text-left">
-                          <div className="font-medium text-sm">Logout</div>
-                          <div className="text-xs text-gray-500">
-                            Sign out of your account
-                          </div>
-                        </div>
-                      </Button>
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Logout
+                      </button>
                     </>
                   ) : (
                     <>
-                      <Link href="/auth" className="block">
-                        <Button
-                          variant="outline"
-                          className="w-full border-slate-300 text-slate-700 hover:border-blue-300 hover:text-blue-600 transition-all duration-300 justify-center"
-                        >
+                      <Link href="/auth" onClick={() => setIsMenuOpen(false)}>
+                        <button className="w-full px-4 py-3 bg-white hover:bg-gray-50 text-gray-700 font-medium rounded-lg border-2 border-gray-300 hover:border-gray-400 active:scale-95 transition-all duration-150">
                           Login
-                        </Button>
+                        </button>
                       </Link>
                       <CounselorModal>
-                        <Button className="w-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 justify-center">
+                        <button className="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-medium rounded-lg shadow-md active:scale-95 transition-all duration-150">
                           <Sparkles className="h-4 w-4 mr-2" />
                           Talk to Counselor
                           <ArrowRight className="h-4 w-4 ml-2" />
-                        </Button>
+                        </button>
                       </CounselorModal>
                     </>
                   )}
