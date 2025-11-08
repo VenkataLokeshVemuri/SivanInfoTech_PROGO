@@ -5,6 +5,16 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // Configure image domains for Next.js Image optimization
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
+    unoptimized: true, // Use this if images are in public folder
+  },
   // Server-side rewrite: proxy any /api/* request to the private backend running on localhost:8000
   // This keeps the backend private (bind gunicorn to 127.0.0.1:8000) while exposing the frontend publicly.
   async rewrites() {
