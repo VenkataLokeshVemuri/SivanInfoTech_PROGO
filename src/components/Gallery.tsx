@@ -13,27 +13,27 @@ const Gallery = () => {
         "BMTC Complex, Outer Ring Rd, Old Madiwala, Kuvempu Nagar, BTM 2nd Stage, BTM Layout, Bengaluru, Karnataka 560068",
       images: [
         {
-          url: "/homepage_images/Modern Workspace with Colorful Workstations.png",
+          url: "/homepage_images/Modern-Workspace-with-Colorful-Workstations.png",
           caption: "Modern Workspace with Colorful Workstations",
           type: "workspace",
         },
         {
-          url: "/homepage_images/Corporate Building Exterior.png",
+          url: "/homepage_images/Corporate-Building-Exterior.png",
           caption: "Corporate Building Exterior",
           type: "building",
         },
         {
-          url: "/homepage_images/Meeting Rooms with Red Glass Walls.png",
+          url: "/homepage_images/Meeting-Rooms-with-Red-Glass-Walls.png",
           caption: "Meeting Rooms with Red Glass Walls",
           type: "meeting",
         },
         {
-          url: "/homepage_images/Executive Conference Room.png",
+          url: "/homepage_images/Executive-Conference-Room.png",
           caption: "Executive Conference Room",
           type: "conference",
         },
         {
-          url: "/homepage_images/Student Lounge Area.png",
+          url: "/homepage_images/Student-Lounge-Area.png",
           caption: "Student Lounge Area",
           type: "lounge",
         },
@@ -45,17 +45,17 @@ const Gallery = () => {
         "9, Sumathi Square & Madan Square, Neelamangalam, Guduvancheri, Chennai, Tamil Nadu 603202",
       images: [
         {
-          url: "/homepage_images/Office Entrance with SIVAN InfoTech Branding.png",
+          url: "/homepage_images/Office-Entrance-with-SIVAN-InfoTech-Branding.png",
           caption: "Office Entrance with SIVAN InfoTech Branding",
           type: "entrance",
         },
         {
-          url: "/homepage_images/Executive Office with Certifications Display.png",
+          url: "/homepage_images/Executive-Office-with-Certifications-Display.png",
           caption: "Executive Office with Certifications Display",
           type: "office",
         },
         {
-          url: "/homepage_images/Professional Workspace with SIVAN InfoTech Setup.png",
+          url: "/homepage_images/Professional-Workspace-with-SIVAN-InfoTech-Setup.png",
           caption: "Professional Workspace with SIVAN InfoTech Setup",
           type: "workspace",
         },
